@@ -1,0 +1,164 @@
+{
+  "current_week": 13,
+  "schedule": {
+    "11": [
+      {
+        "away": "NYJ",
+        "home": "NE",
+        "channel_name": "jets-vs-patriots"
+      },
+      {
+        "away": "WAS",
+        "home": "MIA",
+        "channel_name": "commanders-vs-dolphins"
+      },
+      {
+        "away": "CAR",
+        "home": "ATL",
+        "channel_name": "panthers-vs-falcons"
+      },
+      {
+        "away": "TB",
+        "home": "BUF",
+        "channel_name": "buccaneers-vs-bills"
+      },
+      {
+        "away": "LAC",
+        "home": "JAX",
+        "channel_name": "chargers-vs-jaguars"
+      },
+      {
+        "away": "CHI",
+        "home": "MIN",
+        "channel_name": "bears-vs-vikings"
+      },
+      {
+        "away": "GB",
+        "home": "NYG",
+        "channel_name": "packers-vs-giants"
+      },
+      {
+        "away": "CIN",
+        "home": "PIT",
+        "channel_name": "bengals-vs-steelers"
+      },
+      {
+        "away": "HOU",
+        "home": "TEN",
+        "channel_name": "texans-vs-titans"
+      },
+      {
+        "away": "SF",
+        "home": "ARI",
+        "channel_name": "49ers-vs-cardinals"
+      },
+      {
+        "away": "SEA",
+        "home": "LAR",
+        "channel_name": "seahawks-vs-rams"
+      },
+      {
+        "away": "BAL",
+        "home": "CLE",
+        "channel_name": "ravens-vs-browns"
+      },
+      {
+        "away": "KC",
+        "home": "DEN",
+        "channel_name": "chiefs-vs-broncos"
+      },
+      {
+        "away": "DET",
+        "home": "PHI",
+        "channel_name": "lions-vs-eagles"
+      },
+      {
+        "away": "DAL",
+        "home": "LV",
+        "channel_name": "cowboys-vs-raiders"
+      }
+    ],
+    "13": [
+      {
+        "away": "GB",
+        "home": "DET",
+        "channel_name": "packers-vs-lions"
+      },
+      {
+        "away": "KC",
+        "home": "DAL",
+        "channel_name": "chiefs-vs-cowboys"
+      },
+      {
+        "away": "CIN",
+        "home": "BAL",
+        "channel_name": "bengals-vs-ravens"
+      },
+      {
+        "away": "CHI",
+        "home": "PHI",
+        "channel_name": "bears-vs-eagles"
+      },
+      {
+        "away": "LAR",
+        "home": "CAR",
+        "channel_name": "rams-vs-panthers"
+      },
+      {
+        "away": "SF",
+        "home": "CLE",
+        "channel_name": "49ers-vs-browns"
+      },
+      {
+        "away": "HOU",
+        "home": "IND",
+        "channel_name": "texans-vs-colts"
+      },
+      {
+        "away": "NO",
+        "home": "MIA",
+        "channel_name": "saints-vs-dolphins"
+      },
+      {
+        "away": "ATL",
+        "home": "NYJ",
+        "channel_name": "falcons-vs-jets"
+      },
+      {
+        "away": "ARI",
+        "home": "TB",
+        "channel_name": "cardinals-vs-buccaneers"
+      },
+      {
+        "away": "JAX",
+        "home": "TEN",
+        "channel_name": "jaguars-vs-titans"
+      },
+      {
+        "away": "MIN",
+        "home": "SEA",
+        "channel_name": "vikings-vs-seahawks"
+      },
+      {
+        "away": "LV",
+        "home": "LAC",
+        "channel_name": "raiders-vs-chargers"
+      },
+      {
+        "away": "BUF",
+        "home": "PIT",
+        "channel_name": "bills-vs-steelers"
+      },
+      {
+        "away": "DEN",
+        "home": "WAS",
+        "channel_name": "broncos-vs-commanders"
+      },
+      {
+        "away": "NYG",
+        "home": "NE",
+        "channel_name": "giants-vs-patriots"
+      }
+    ]
+  }
+}

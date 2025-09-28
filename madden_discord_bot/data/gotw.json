@@ -1,0 +1,30 @@
+{
+  "current_gotw": {
+    "team1": {
+      "name": "Dallas Cowboys",
+      "abbreviation": "DAL",
+      "conference": "NFC",
+      "division": "East",
+      "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/47/Dallas_Cowboys_logo.svg",
+      "emoji": "\u2b50"
+    },
+    "team2": {
+      "name": "Detroit Lions",
+      "abbreviation": "DET",
+      "conference": "NFC",
+      "division": "North",
+      "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/71/Detroit_Lions_logo.svg",
+      "emoji": "\ud83e\udd81"
+    },
+    "created_by": 607395319990321152,
+    "created_at": "2025-08-20T00:33:30.509594",
+    "votes": {}
+  },
+  "votes": {
+    "607395319990321152": "DET",
+    "510274189400211467": "DAL",
+    "1221593772278943746": "DAL",
+    "608648741293129747": "DAL",
+    "1194639317784596490": "DET"
+  }
+}

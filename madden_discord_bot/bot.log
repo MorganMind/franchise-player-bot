@@ -1,0 +1,90 @@
+2025-09-28 18:04:33,200 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+[2025-09-28 18:04:33] [INFO    ] discord.client: logging in using static token
+2025-09-28 18:04:33,201 - discord.client - INFO - logging in using static token
+2025-09-28 18:04:34,150 - cogs.trade_calculator - INFO - ✅ TradeCalculator cog initialized
+2025-09-28 18:04:34,150 - cogs.trade_calculator - INFO - ✅ TradeCalculator cog added to bot
+2025-09-28 18:04:34,151 - cogs.points_system - INFO - ✅ PointsSystem cog initialized
+2025-09-28 18:04:34,152 - cogs.points_system - INFO - ✅ PointsSystem cog added to bot
+2025-09-28 18:04:34,153 - cogs.spending_system - INFO - ✅ SpendingSystem cog initialized
+2025-09-28 18:04:34,153 - cogs.spending_system - INFO - ✅ SpendingSystem cog added to bot
+2025-09-28 18:04:34,154 - cogs.stream_manager - INFO - ✅ StreamManager cog initialized
+2025-09-28 18:04:34,154 - cogs.stream_manager - INFO - ✅ StreamManager cog added to bot
+2025-09-28 18:04:34,156 - cogs.gotw_system - INFO - ✅ GOTWSystem cog initialized
+2025-09-28 18:04:34,176 - cogs.nfl_schedule - INFO - ✅ NFLSchedule cog initialized
+[2025-09-28 18:04:34] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 1985e5d05b8879a8099239a63539b602).
+2025-09-28 18:04:34,867 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 1985e5d05b8879a8099239a63539b602).
+[2025-09-28 18:29:46] [WARNING ] discord.webhook.async_: Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+2025-09-28 18:29:46,111 - discord.webhook.async_ - WARNING - Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+2025-09-28 18:29:46,512 - cogs.spending_system - ERROR - Error in my_cards: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-28 18:29:46] [WARNING ] discord.webhook.async_: Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+2025-09-28 18:29:46,595 - discord.webhook.async_ - WARNING - Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+[2025-09-28 18:29:46] [WARNING ] discord.webhook.async_: Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+2025-09-28 18:29:46,956 - discord.webhook.async_ - WARNING - Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+[2025-09-28 18:29:47] [WARNING ] discord.webhook.async_: Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+2025-09-28 18:29:47,336 - discord.webhook.async_ - WARNING - Webhook ID 1421987276124065976 is rate limited. Retrying in 0.30 seconds.
+[2025-09-28 18:29:47] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'mycards'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/spending_system.py", line 259, in my_cards
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/spending_system.py", line 263, in my_cards
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'mycards' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-28 18:29:47,700 - discord.app_commands.tree - ERROR - Ignoring exception in command 'mycards'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/spending_system.py", line 259, in my_cards
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/spending_system.py", line 263, in my_cards
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'mycards' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.

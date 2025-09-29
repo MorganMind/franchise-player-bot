@@ -6,10 +6,10 @@
 2. **Render Account**: Sign up at [render.com](https://render.com)
 3. **Discord Bot Token**: You'll need your Discord bot token from the Discord Developer Portal
 
-## Step 1: Create a New Web Service on Render
+## Step 1: Create a New Background Worker on Render
 
 1. Go to your Render dashboard
-2. Click "New +" → "Web Service"
+2. Click "New +" → "Background Worker" (NOT Web Service)
 3. Connect your GitHub repository
 4. Select your repository and branch
 
@@ -24,6 +24,8 @@
 ### Build & Deploy Settings
 - **Build Command**: `pip install -r madden_discord_bot/requirements.txt`
 - **Start Command**: `cd madden_discord_bot && python3 bot.py`
+
+**Important**: Background Workers don't need port configuration - they run continuously in the background.
 
 ### Advanced Settings
 - **Instance Type**: `Starter` (free tier) or `Standard` for better performance
@@ -52,7 +54,7 @@ GUILD_ID=your_discord_server_id_here
 
 ## Step 4: Deploy
 
-1. Click "Create Web Service"
+1. Click "Create Background Worker"
 2. Render will automatically build and deploy your bot
 3. Monitor the build logs for any issues
 4. Once deployed, your bot will be online 24/7

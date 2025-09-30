@@ -472,7 +472,17 @@ class PointsSystem(commands.Cog):
                         inline=False
                     )
             
-            embed.set_footer(text=f"Total users with points: {len(self.points_data.get('users', {}))}")
+            # Count users with points > 0 for accurate footer
+            users_with_points_count = 0
+            for user_id, points_data in self.points_data.get("users", {}).items():
+                if isinstance(points_data, dict):
+                    total_points = points_data.get("total", 0)
+                else:
+                    total_points = points_data
+                if total_points > 0:
+                    users_with_points_count += 1
+            
+            embed.set_footer(text=f"Total users with points: {users_with_points_count}")
             
             await interaction.followup.send(embed=embed)
             

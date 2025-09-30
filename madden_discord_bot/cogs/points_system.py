@@ -94,8 +94,20 @@ class PointsSystem(commands.Cog):
     def get_leaderboard(self, limit=None):
         """Get all users with points, sorted by points (descending)"""
         users = self.points_data.get("users", {})
-        # Filter out users with 0 points
-        users_with_points = {user_id: points for user_id, points in users.items() if points > 0}
+        
+        # Filter out users with 0 points and handle both old and new data formats
+        users_with_points = {}
+        for user_id, points_data in users.items():
+            if isinstance(points_data, dict):
+                # New format: {"total": 50, "stream_points": 30, "other_points": 20}
+                total_points = points_data.get("total", 0)
+            else:
+                # Old format: just a number
+                total_points = points_data
+            
+            if total_points > 0:
+                users_with_points[user_id] = total_points
+        
         sorted_users = sorted(users_with_points.items(), key=lambda x: x[1], reverse=True)
         
         # If limit is specified, apply it
@@ -402,6 +414,9 @@ class PointsSystem(commands.Cog):
     @app_commands.describe(limit="Number of users to show (optional, max 50)")
     async def leaderboard(self, interaction: discord.Interaction, limit: int = None):
         """Show the server's points leaderboard"""
+        # Defer the response to prevent timeouts
+        await interaction.response.defer()
+        
         try:
             # If limit is specified, validate it
             if limit is not None:
@@ -415,7 +430,7 @@ class PointsSystem(commands.Cog):
                     description="No users have points yet!",
                     color=0x0099ff
                 )
-                await interaction.response.send_message(embed=embed)
+                await interaction.followup.send(embed=embed)
                 return
             
             embed = discord.Embed(
@@ -459,20 +474,14 @@ class PointsSystem(commands.Cog):
             
             embed.set_footer(text=f"Total users with points: {len(self.points_data.get('users', {}))}")
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
             
         except Exception as e:
             logger.error(f"Error in leaderboard: {e}")
-            if not interaction.response.is_done():
-                await interaction.response.send_message(
-                    "❌ An error occurred while fetching the leaderboard.", 
-                    ephemeral=True
-                )
-            else:
-                await interaction.followup.send(
-                    "❌ An error occurred while fetching the leaderboard.", 
-                    ephemeral=True
-                )
+            await interaction.followup.send(
+                "❌ An error occurred while fetching the leaderboard.", 
+                ephemeral=True
+            )
 
 async def setup(bot):
     await bot.add_cog(PointsSystem(bot))

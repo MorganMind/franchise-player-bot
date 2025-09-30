@@ -440,20 +440,27 @@ class PointsSystem(commands.Cog):
             )
             
             for i, (user_id, points) in enumerate(leaderboard_data, 1):
-                # Try to get user from guild cache first
+                # Try to get user from guild cache first (this gives server nickname)
                 user = interaction.guild.get_member(int(user_id))
                 display_name = None
                 
                 if user:
+                    # Use server nickname (display_name) if available, otherwise use global name
                     display_name = user.display_name
                 else:
-                    # Try to fetch user from Discord API
+                    # Try to fetch user from guild (this gives server nickname)
                     try:
-                        user_obj = await interaction.client.fetch_user(int(user_id))
-                        if user_obj:
-                            display_name = user_obj.display_name
+                        user = await interaction.guild.fetch_member(int(user_id))
+                        if user:
+                            display_name = user.display_name
                     except:
-                        display_name = f"User {user_id}"
+                        # Fallback to global name if not in server
+                        try:
+                            user_obj = await interaction.client.fetch_user(int(user_id))
+                            if user_obj:
+                                display_name = user_obj.display_name
+                        except:
+                            display_name = f"User {user_id}"
                 
                 if display_name:
                     # Add medal emojis for top 3

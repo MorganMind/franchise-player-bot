@@ -189,7 +189,14 @@ class PointsSystem(commands.Cog):
         """Check points for yourself or another user"""
         try:
             target_user = user or interaction.user
+            
+            # Reload points data to ensure we have the latest
+            self.points_data = self.load_points()
             points = self.get_user_points(target_user.id)
+            
+            # Debug logging
+            logger.info(f"Checking stats for user {target_user.id} ({target_user.display_name}): {points} points")
+            logger.info(f"Points data for user {target_user.id}: {self.points_data.get('users', {}).get(str(target_user.id))}")
             
             embed = discord.Embed(
                 title="📊 Points Stats",
@@ -209,10 +216,16 @@ class PointsSystem(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in check_stats: {e}")
-            await interaction.response.send_message(
-                "❌ An error occurred while checking stats.", 
-                ephemeral=True
-            )
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "❌ An error occurred while checking stats.", 
+                    ephemeral=True
+                )
+            else:
+                await interaction.followup.send(
+                    "❌ An error occurred while checking stats.", 
+                    ephemeral=True
+                )
     
     @app_commands.command(name="addpoints", description="Add points to the mentioned user(s)")
     @app_commands.describe(
@@ -254,6 +267,10 @@ class PointsSystem(commands.Cog):
             for user in mentioned_users:
                 old_points, new_points = self.add_user_points(user.id, points)
                 results.append(f"• **{user.display_name}**: {old_points:,} → **{new_points:,}** (+{points:,})")
+                
+                # Debug logging
+                logger.info(f"Added {points} points to user {user.id} ({user.display_name}): {old_points} → {new_points}")
+                logger.info(f"Points data after add: {self.points_data.get('users', {}).get(str(user.id))}")
             
             embed = discord.Embed(
                 title="✅ Points Added Successfully",
@@ -268,7 +285,7 @@ class PointsSystem(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in add_points: {e}")
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "❌ An error occurred while adding points.", 
                 ephemeral=True
             )
@@ -327,7 +344,7 @@ class PointsSystem(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in remove_points: {e}")
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "❌ An error occurred while removing points.", 
                 ephemeral=True
             )
@@ -376,7 +393,7 @@ class PointsSystem(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in clear_points: {e}")
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 "❌ An error occurred while clearing points.", 
                 ephemeral=True
             )
@@ -446,10 +463,16 @@ class PointsSystem(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in leaderboard: {e}")
-            await interaction.response.send_message(
-                "❌ An error occurred while fetching the leaderboard.", 
-                ephemeral=True
-            )
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "❌ An error occurred while fetching the leaderboard.", 
+                    ephemeral=True
+                )
+            else:
+                await interaction.followup.send(
+                    "❌ An error occurred while fetching the leaderboard.", 
+                    ephemeral=True
+                )
 
 async def setup(bot):
     await bot.add_cog(PointsSystem(bot))

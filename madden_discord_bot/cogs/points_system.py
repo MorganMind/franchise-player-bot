@@ -116,9 +116,20 @@ class PointsSystem(commands.Cog):
         return sorted_users
     
     def has_admin_permission(self, interaction):
-        """Temporarily allowing all users for testing"""
-        logger.info(f"Temporarily allowing {interaction.user.display_name} to use admin commands")
-        return True
+        """Check if user has commish role or administrator permissions"""
+        # Check if user has administrator permission
+        if interaction.user.guild_permissions.administrator:
+            logger.info(f"Allowing {interaction.user.display_name} to use admin commands (Administrator)")
+            return True
+        
+        # Check if user has commish role
+        commish_role = discord.utils.get(interaction.guild.roles, name="commish")
+        if commish_role and commish_role in interaction.user.roles:
+            logger.info(f"Allowing {interaction.user.display_name} to use admin commands (@commish role)")
+            return True
+        
+        logger.info(f"Denying {interaction.user.display_name} access to admin commands (no @commish role or admin permissions)")
+        return False
     
     async def parse_user_mentions(self, interaction, users_string):
         """Parse user mentions from string and return list of member objects"""

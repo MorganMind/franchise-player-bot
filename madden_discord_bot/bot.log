@@ -88,3 +88,1320 @@ Traceback (most recent call last):
   File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
     raise CommandInvokeError(self, e) from e
 discord.app_commands.errors.CommandInvokeError: Command 'mycards' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-28 20:54:35] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-28 20:54:35,341 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-28 20:54:40] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 49d3dcd711ba147e006cc2e44b8da48e).
+2025-09-28 20:54:40,729 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 49d3dcd711ba147e006cc2e44b8da48e).
+[2025-09-28 21:06:35] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-28 21:06:35,030 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-28 21:06:40] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: a0060a770b0aba0bd6c48205710f8eb6).
+2025-09-28 21:06:40,538 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: a0060a770b0aba0bd6c48205710f8eb6).
+[2025-09-28 22:28:57] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session a0060a770b0aba0bd6c48205710f8eb6.
+2025-09-28 22:28:57,828 - discord.gateway - INFO - Shard ID None has successfully RESUMED session a0060a770b0aba0bd6c48205710f8eb6.
+[2025-09-29 01:59:11] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 01:59:11,251 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 01:59:17] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 01:59:17,824 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 02:15:30] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 02:15:30,239 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 02:30:56] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 02:30:56,442 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 02:46:19] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 02:46:19,747 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 03:04:09] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 03:04:09,998 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 04:13:07] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 04:13:07,474 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 04:31:04] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 04:31:04,476 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 04:46:40] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 04:46:40,833 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 05:03:31] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 05:03:31,997 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 05:19:14] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 05:19:14,053 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 05:34:32] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 05:34:32,838 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 05:34:38] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 6071b7846ac6e4e3d2198301bc44e4f9).
+2025-09-29 05:34:38,163 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 6071b7846ac6e4e3d2198301bc44e4f9).
+[2025-09-29 07:16:54] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 07:16:54,305 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 07:32:45] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 07:32:45,487 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 07:49:50] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 07:49:50,828 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 07:49:56] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: f629a18bf6e41115a2c8986fde47526a).
+2025-09-29 07:49:56,121 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: f629a18bf6e41115a2c8986fde47526a).
+[2025-09-29 09:29:08] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 09:29:08,590 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 09:45:43] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 09:45:43,867 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 10:02:33] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 10:02:33,911 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 10:19:23] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 10:19:23,042 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 10:37:00] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 10:37:00,823 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 10:37:06] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 9da0c2dd63e7c8b7b7251986a7eb9fd4).
+2025-09-29 10:37:06,107 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 9da0c2dd63e7c8b7b7251986a7eb9fd4).
+[2025-09-29 12:14:07] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 12:14:07,316 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 12:30:43] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 12:30:43,530 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 12:46:19] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 12:46:19,852 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 13:01:35] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 13:01:35,136 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 13:18:09] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 13:18:09,797 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 14:57:21] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 14:57:21,483 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 15:12:49] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 15:12:49,683 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 15:28:39] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 15:28:39,910 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 17:12:11] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 17:12:11,636 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 17:29:56] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 17:29:56,906 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 17:47:51] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 17:47:51,147 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 18:05:07] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 18:05:07,432 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 18:20:44] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 18:20:44,594 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 18:38:35] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 18:38:35,719 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 18:53:54] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 18:53:54,988 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 19:11:16] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 19:11:16,744 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 19:11:22] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 06755b9781f955b5c11cf3f532e96a16).
+2025-09-29 19:11:22,078 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 06755b9781f955b5c11cf3f532e96a16).
+[2025-09-29 19:28:51] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 19:28:51,835 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 19:28:57] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 2847555f739a86ddd2e2239d83997b0e).
+2025-09-29 19:28:57,109 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 2847555f739a86ddd2e2239d83997b0e).
+[2025-09-29 21:09:44] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 21:09:44,905 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 21:27:11] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 21:27:11,095 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 21:44:30] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 21:44:30,252 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:01:13] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 22:01:13,507 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:17:22] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 22:17:22,642 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:25:48] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 22:25:48,247 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:25:57] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 22:25:57,420 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:26:07] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-29 22:26:07,770 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-29 22:26:13] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 2ec5e04e7bed04300f18d710cf8f370a).
+2025-09-29 22:26:13,069 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 2ec5e04e7bed04300f18d710cf8f370a).
+[2025-09-30 00:23:47] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 00:23:47,069 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 00:39:22] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 00:39:22,726 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 00:39:28] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 15b00da36f97d0a2fd46778224a0d49e).
+2025-09-30 00:39:28,014 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 15b00da36f97d0a2fd46778224a0d49e).
+[2025-09-30 02:19:21] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 02:19:21,365 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 02:36:55] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 02:36:55,566 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 02:54:40] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 02:54:40,790 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 03:10:43] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 03:10:43,960 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 03:27:11] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 03:27:11,132 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 03:44:19] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 03:44:19,330 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 05:27:54] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 05:27:54,394 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 05:43:04] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 05:43:04,363 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 05:59:02] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 05:59:02,532 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 06:15:06] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 06:15:06,767 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 07:53:27] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 07:53:27,273 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 08:09:46] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 08:09:46,573 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 08:26:27] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 08:26:27,675 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 08:42:53] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 08:42:53,946 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 08:58:08] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 08:58:08,023 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 09:14:18] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 09:14:18,749 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 10:58:31] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 10:58:31,746 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 11:13:49] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 11:13:49,886 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 11:30:19] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 11:30:19,100 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 11:47:54] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 11:47:54,276 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 12:03:30] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 12:03:30,675 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 12:19:29] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 12:19:29,873 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 12:35:03] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 12:35:03,996 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 12:50:31] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 12:50:31,679 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 12:50:36] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 5aa08fae77593ba107847d1f138f92a7).
+2025-09-30 12:50:36,969 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 5aa08fae77593ba107847d1f138f92a7).
+[2025-09-30 14:28:51] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 14:28:51,624 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 14:46:04] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 14:46:04,830 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 15:02:28] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 15:02:28,028 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 15:19:23] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 15:19:23,294 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 15:36:09] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 15:36:09,526 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 15:51:43] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 15:51:43,745 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 16:08:22] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 16:08:22,988 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 16:23:28] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 16:23:28,773 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:04:15] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:04:15,404 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:10:16] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:10:16,217 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:10:24] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:10:24,064 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:10:34] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:10:34,009 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:10:44] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:10:44,207 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:10:54] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:10:54,463 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:11:04] [INFO    ] discord.gateway: Shard ID None session has been invalidated.
+2025-09-30 18:11:04,701 - discord.gateway - INFO - Shard ID None session has been invalidated.
+[2025-09-30 18:11:10] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 7b1b7b3be8f7abe8dd9aec507383d194).
+2025-09-30 18:11:10,370 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 7b1b7b3be8f7abe8dd9aec507383d194).
+2025-09-30 19:15:56,581 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:15:56] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:15:56,655 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:15:57,325 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:15:57] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:15:57,391 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:16:04,229 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:16:04] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.response.defer()
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-09-30 19:16:04,300 - discord.app_commands.tree - ERROR - Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.response.defer()
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2025-09-30 19:16:19] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:19,009 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:19] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:19,363 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:19] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:19,725 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:20,088 - cogs.points_system - ERROR - Error in check_stats: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:16:20] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:20,137 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:20] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:20,494 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:20] [WARNING ] discord.webhook.async_: Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:20,850 - discord.webhook.async_ - WARNING - Webhook ID 1422723766605185065 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:21] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:16:21,221 - discord.app_commands.tree - ERROR - Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:16:34,160 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:16:34] [WARNING ] discord.webhook.async_: Webhook ID 1422723830232907866 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:34,221 - discord.webhook.async_ - WARNING - Webhook ID 1422723830232907866 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:34] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    await interaction.response.defer()
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:16:34,575 - discord.app_commands.tree - ERROR - Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    await interaction.response.defer()
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:16:44] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:44,118 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:44] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:44,487 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:44,854 - cogs.points_system - ERROR - Error in check_stats: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:16:44] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:44,911 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:45] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:45,264 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:45] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:45,627 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:45] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:45,981 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:46] [WARNING ] discord.webhook.async_: Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:16:46,340 - discord.webhook.async_ - WARNING - Webhook ID 1422723871810781379 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:16:46] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:16:46,642 - discord.app_commands.tree - ERROR - Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:16:59,342 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:16:59] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:16:59,407 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    await interaction.response.send_message(embed=embed)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    await interaction.response.send_message(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:29:28,598 - cogs.points_system - ERROR - Error in check_stats: 404 Not Found (error code: 10062): Unknown interaction
+[2025-09-30 19:29:28] [WARNING ] discord.webhook.async_: Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:28,655 - discord.webhook.async_ - WARNING - Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:29,016 - discord.webhook.async_ - WARNING - Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:29,375 - discord.webhook.async_ - WARNING - Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:29,741 - discord.webhook.async_ - WARNING - Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:30] [WARNING ] discord.webhook.async_: Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:30,093 - discord.webhook.async_ - WARNING - Webhook ID 1422727077886689300 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:30] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:29:30,396 - discord.app_commands.tree - ERROR - Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:29:41,323 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:29:41] [WARNING ] discord.webhook.async_: Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:41,402 - discord.webhook.async_ - WARNING - Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:41] [WARNING ] discord.webhook.async_: Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:41,758 - discord.webhook.async_ - WARNING - Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:42] [WARNING ] discord.webhook.async_: Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:42,123 - discord.webhook.async_ - WARNING - Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:42] [WARNING ] discord.webhook.async_: Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:42,477 - discord.webhook.async_ - WARNING - Webhook ID 1422727131938689209 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:42] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    "❌ You need administrator permissions or the 'commish' role to use this command.",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:29:42,845 - discord.app_commands.tree - ERROR - Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    "❌ You need administrator permissions or the 'commish' role to use this command.",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:29:58,111 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:29:58] [WARNING ] discord.webhook.async_: Webhook ID 1422727202545471558 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:58,262 - discord.webhook.async_ - WARNING - Webhook ID 1422727202545471558 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:58] [WARNING ] discord.webhook.async_: Webhook ID 1422727202545471558 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:29:58,617 - discord.webhook.async_ - WARNING - Webhook ID 1422727202545471558 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:29:58] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.followup.send(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:29:58,985 - discord.app_commands.tree - ERROR - Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.followup.send(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:30:28,780 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:30:28] [WARNING ] discord.webhook.async_: Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:30:28,894 - discord.webhook.async_ - WARNING - Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:30:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:30:29,248 - discord.webhook.async_ - WARNING - Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:30:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:30:29,619 - discord.webhook.async_ - WARNING - Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:30:29] [WARNING ] discord.webhook.async_: Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:30:29,993 - discord.webhook.async_ - WARNING - Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:30:30] [WARNING ] discord.webhook.async_: Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:30:30,351 - discord.webhook.async_ - WARNING - Webhook ID 1422727331193163896 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:30:30] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    "❌ You need administrator permissions or the 'commish' role to use this command.",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:30:30,652 - discord.app_commands.tree - ERROR - Ignoring exception in command 'addpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 239, in add_points
+    "❌ You need administrator permissions or the 'commish' role to use this command.",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'addpoints' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+[2025-09-30 19:32:09] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.43 seconds.
+2025-09-30 19:32:09,118 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.43 seconds.
+[2025-09-30 19:32:09] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.84 seconds.
+2025-09-30 19:32:09,708 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.84 seconds.
+[2025-09-30 19:32:10] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.85 seconds.
+2025-09-30 19:32:10,689 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.85 seconds.
+[2025-09-30 19:32:11] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.86 seconds.
+2025-09-30 19:32:11,683 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.86 seconds.
+[2025-09-30 19:32:12] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.82 seconds.
+2025-09-30 19:32:12,732 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.82 seconds.
+[2025-09-30 19:32:13] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/510274189400211467 responded with 429. Retrying in 0.84 seconds.
+2025-09-30 19:32:13,694 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/510274189400211467 responded with 429. Retrying in 0.84 seconds.
+2025-09-30 19:33:15,109 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:33:15] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    if i == 1:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    elif i == 3:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:33:15,173 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    if i == 1:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    elif i == 3:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:33:21] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 7b1b7b3be8f7abe8dd9aec507383d194.
+2025-09-30 19:33:21,878 - discord.gateway - INFO - Shard ID None has successfully RESUMED session 7b1b7b3be8f7abe8dd9aec507383d194.
+2025-09-30 19:34:01,737 - cogs.points_system - ERROR - Error in check_stats: 404 Not Found (error code: 10062): Unknown interaction
+[2025-09-30 19:34:01] [WARNING ] discord.webhook.async_: Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:01,799 - discord.webhook.async_ - WARNING - Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:02] [WARNING ] discord.webhook.async_: Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:02,154 - discord.webhook.async_ - WARNING - Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:02] [WARNING ] discord.webhook.async_: Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:02,511 - discord.webhook.async_ - WARNING - Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:02] [WARNING ] discord.webhook.async_: Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:02,881 - discord.webhook.async_ - WARNING - Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:03] [WARNING ] discord.webhook.async_: Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:03,233 - discord.webhook.async_ - WARNING - Webhook ID 1422728223694786601 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:03] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+2025-09-30 19:34:03,534 - discord.app_commands.tree - ERROR - Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+[2025-09-30 19:34:09] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.53 seconds.
+2025-09-30 19:34:09,458 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.53 seconds.
+[2025-09-30 19:34:10] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.87 seconds.
+2025-09-30 19:34:10,120 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.87 seconds.
+[2025-09-30 19:34:11] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.87 seconds.
+2025-09-30 19:34:11,114 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.87 seconds.
+[2025-09-30 19:34:12] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.85 seconds.
+2025-09-30 19:34:12,135 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/248569618807914496 responded with 429. Retrying in 0.85 seconds.
+2025-09-30 19:34:23,789 - cogs.points_system - INFO - Temporarily allowing Raiders | Nash ⚫ to use admin commands
+[2025-09-30 19:34:23] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.followup.send(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+2025-09-30 19:34:23,861 - discord.app_commands.tree - ERROR - Ignoring exception in command 'clearpoints'
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 347, in clear_points
+    await interaction.followup.send(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 844, in defer
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 224, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'clearpoints' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2025-09-30 19:34:27] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:27,943 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:28] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:28,309 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:28] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:28,681 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:29] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:29,060 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:29] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:29,427 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:29,728 - cogs.points_system - ERROR - Error in check_stats: 429 Too Many Requests (error code: 0): You are being rate limited.
+[2025-09-30 19:34:29] [WARNING ] discord.webhook.async_: Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+2025-09-30 19:34:29,787 - discord.webhook.async_ - WARNING - Webhook ID 1422728333963038865 is rate limited. Retrying in 0.30 seconds.
+[2025-09-30 19:34:30] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:34:30,180 - discord.app_commands.tree - ERROR - Ignoring exception in command 'checkstats'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 208, in check_stats
+    value=f"**{points:,}** points",
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 237, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being rate limited.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 212, in check_stats
+    embed.set_thumbnail(url=target_user.display_avatar.url)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'checkstats' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:35:13,275 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:35:13] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    display_name = user.display_name
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    user_obj = await interaction.client.fetch_user(int(user_id))
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:35:13,349 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    display_name = user.display_name
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    user_obj = await interaction.client.fetch_user(int(user_id))
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:38:18] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.42 seconds.
+2025-09-30 19:38:18,123 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.42 seconds.
+[2025-09-30 19:38:18] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.86 seconds.
+2025-09-30 19:38:18,696 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.86 seconds.
+[2025-09-30 19:38:19] [WARNING ] discord.http: We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.87 seconds.
+2025-09-30 19:38:19,677 - discord.http - WARNING - We are being rate limited. GET https://discord.com/api/v10/users/786102284325093406 responded with 429. Retrying in 0.87 seconds.
+2025-09-30 19:38:51,416 - cogs.points_system - ERROR - Error in leaderboard: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+[2025-09-30 19:38:51] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    display_name = None
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    else:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+2025-09-30 19:38:51,478 - discord.app_commands.tree - ERROR - Ignoring exception in command 'leaderboard'
+Traceback (most recent call last):
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 445, in leaderboard
+    display_name = None
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 857, in _do_call
+    return await self._callback(self.binding, interaction, **params)  # type: ignore
+  File "/Users/nash/onyxcompany/franchise-player-bot/madden_discord_bot/cogs/points_system.py", line 449, in leaderboard
+    else:
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/interactions.py", line 1004, in send_message
+    response = await adapter.create_interaction_response(
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/webhook/async_.py", line 226, in request
+    raise HTTPException(response, data)
+discord.errors.HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/tree.py", line 1310, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 883, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/Users/nash/Library/Python/3.9/lib/python/site-packages/discord/app_commands/commands.py", line 876, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'leaderboard' raised an exception: HTTPException: 400 Bad Request (error code: 40060): Interaction has already been acknowledged.

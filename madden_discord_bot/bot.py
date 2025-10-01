@@ -36,18 +36,18 @@ class MaddenBot(commands.Bot):
             print(f"❌ Failed to load trade calculator cog: {e}")
             return
         
-        # Load our points system cog
+        # Load our points system cog (Supabase version)
         try:
-            await self.load_extension('cogs.points_system')
-            print("✅ Points system cog loaded")
+            await self.load_extension('cogs.points_system_supabase')
+            print("✅ Points system cog (Supabase) loaded")
         except Exception as e:
             print(f"❌ Failed to load points system cog: {e}")
             return
         
-        # Load our spending system cog
+        # Load our spending system cog (Supabase version)
         try:
-            await self.load_extension('cogs.spending_system')
-            print("✅ Spending system cog loaded")
+            await self.load_extension('cogs.spending_system_supabase')
+            print("✅ Spending system cog (Supabase) loaded")
         except Exception as e:
             print(f"❌ Failed to load spending system cog: {e}")
             return

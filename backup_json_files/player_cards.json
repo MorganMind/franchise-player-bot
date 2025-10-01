@@ -1,0 +1,32 @@
+{
+  "users": {
+    "607395319990321152": {
+      "QB Josh Allen": {
+        "position": "QB",
+        "player_name": "Josh Allen",
+        "attributes": {
+          "DAC": 1,
+          "MAC": 1,
+          "SAC": 1
+        },
+        "attribute_points_spent": {
+          "DAC": 3,
+          "MAC": 3,
+          "SAC": 3
+        },
+        "total_points_spent": 9
+      },
+      "HB Breece Hall": {
+        "position": "HB",
+        "player_name": "Breece Hall",
+        "attributes": {
+          "TOR": 1
+        },
+        "attribute_points_spent": {
+          "TOR": 2
+        },
+        "total_points_spent": 2
+      }
+    }
+  }
+}

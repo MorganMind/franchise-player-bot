@@ -357,6 +357,60 @@ class SpendingSystemSupabase(commands.Cog):
                     "❌ An error occurred while fetching your cards.", 
                     ephemeral=True
                 )
+
+    @app_commands.command(name="clear_cards", description="Clear all player cards for a user (Admin only)")
+    @app_commands.describe(user="User to clear cards for")
+    async def clear_cards(self, interaction: discord.Interaction, user: discord.Member):
+        """Clear all player cards for a specific user"""
+        try:
+            # Check if user has admin permissions
+            if not interaction.user.guild_permissions.administrator:
+                await interaction.response.send_message(
+                    "❌ You need administrator permissions to use this command.", 
+                    ephemeral=True
+                )
+                return
+            
+            # Get user's current cards
+            user_cards = await self.get_user_cards(user.id)
+            
+            if not user_cards:
+                await interaction.response.send_message(
+                    f"ℹ️ {user.display_name} doesn't have any player cards to clear.", 
+                    ephemeral=True
+                )
+                return
+            
+            # Clear all cards for the user
+            result = self.supabase.table("player_cards").delete().eq("user_id", user.id).execute()
+            
+            if result.data:
+                embed = discord.Embed(
+                    title="🗑️ Cards Cleared",
+                    description=f"Successfully cleared all player cards for **{user.display_name}**",
+                    color=0xff6b6b
+                )
+                embed.add_field(
+                    name="Cards Removed",
+                    value=f"{len(user_cards)} player card(s)",
+                    inline=False
+                )
+                embed.set_thumbnail(url=user.display_avatar.url)
+                embed.set_footer(text=f"Cleared by {interaction.user.display_name}")
+                
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.response.send_message(
+                    f"❌ Failed to clear cards for {user.display_name}. Please try again.", 
+                    ephemeral=True
+                )
+                
+        except Exception as e:
+            logger.error(f"Error in clear_cards: {e}")
+            await interaction.response.send_message(
+                "❌ An error occurred while clearing cards.", 
+                ephemeral=True
+            )
     
     @app_commands.command(name="upgrade", description="Upgrade a player card attribute")
     @app_commands.describe(

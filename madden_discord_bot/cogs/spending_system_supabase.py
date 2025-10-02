@@ -75,7 +75,7 @@ class SpendingSystemSupabase(commands.Cog):
                 ("Run Block Power", "RBP"),("Run Block Finesse", "RBF"),("Lead Block", "LBK"),("Impact Block", "IBK"),
                 ("Awareness", "AWR")
             ],
-            "Edge": [
+            "EDGE": [
                 ("Finesse Moves", "FMV"),("Power Moves", "PMV"),("Block Shedding", "BSH"),("Tackling", "TAK"),
                 ("Play Recognition", "PRC"),("Pursuit", "PUR"),("Awareness", "AWR")
             ],
@@ -111,26 +111,46 @@ class SpendingSystemSupabase(commands.Cog):
         logger.info("✅ SpendingSystemSupabase cog initialized")
     
     async def attribute_autocomplete(self, interaction: discord.Interaction, current: str):
-        """Autocomplete provider for the attribute option, dependent on selected position."""
+        """Autocomplete provider for the attribute option, dependent on selected position.
+        Falls back to a merged list when position isn't available yet.
+        """
         try:
             # Retrieve the selected position value from interaction namespace if present
             selected_position = None
-            if interaction.namespace and hasattr(interaction.namespace, 'position'):
+            if getattr(interaction, 'namespace', None) is not None and hasattr(interaction.namespace, 'position'):
                 pos = interaction.namespace.position
                 selected_position = pos.value if isinstance(pos, app_commands.Choice) else str(pos)
-            
-            if not selected_position:
-                return []
-            
-            attrs = self.ATTRIBUTES.get(selected_position.upper(), [])
+
+            # Build attribute pool
+            if selected_position and selected_position.upper() in self.ATTRIBUTES:
+                attrs = self.ATTRIBUTES[selected_position.upper()]
+            else:
+                # Fallback: merge all unique attributes (limit to 25 in the UI)
+                seen = set()
+                merged = []
+                for pairs in self.ATTRIBUTES.values():
+                    for display_name, code in pairs:
+                        if code not in seen:
+                            seen.add(code)
+                            merged.append((display_name, code))
+                attrs = merged
+
             # Filter by current input
+            current_lower = (current or "").lower()
             choices = []
             for display_name, code in attrs:
                 label = f"{display_name} ({code})"
-                if current.lower() in label.lower():
-                    choices.append(app_commands.Choice(name=label, value=code))
-            return choices[:25]
-        except Exception:
+                if current_lower in label.lower():
+                    choices.append(app_commands.Choice(name=label[:100], value=code[:100]))
+                if len(choices) >= 25:
+                    break
+            # Ensure we always return something to avoid client error
+            if not choices:
+                for display_name, code in attrs[:10]:
+                    choices.append(app_commands.Choice(name=f"{display_name} ({code})"[:100], value=code[:100]))
+            return choices
+        except Exception as e:
+            logger.exception(f"Attribute autocomplete error: {e}")
             return []
     
     async def get_user_points(self, user_id):
@@ -259,6 +279,113 @@ class SpendingSystemSupabase(commands.Cog):
         logger.info(f"Denying {interaction.user.display_name} access to admin commands (no @commish role or admin permissions)")
         return False
     
+    @app_commands.command(name="testupgrade", description="Preview upgrade flow with select menus (no changes made)")
+    @app_commands.describe(
+        position="Player position",
+        player_name="Player name"
+    )
+    @app_commands.choices(
+        position=[
+            app_commands.Choice(name=p, value=p) for p in [
+                "QB", "RB", "WR", "TE",
+                "LT/RT", "LG/RG", "C",
+                "Edge", "LB", "CB", "S",
+                "FB", "K", "P"
+            ]
+        ]
+    )
+    async def test_upgrade(self, interaction: discord.Interaction, position: app_commands.Choice[str], player_name: str):
+        """Preview upgrade flow with attribute and amount selects (no DB writes)."""
+        try:
+            position_value = position.value if isinstance(position, app_commands.Choice) else str(position)
+            attributes = self.ATTRIBUTES.get(position_value.upper(), [])
+            if not attributes:
+                await interaction.response.send_message(
+                    f"No attributes configured for {position_value} yet.", ephemeral=True
+                )
+                return
+
+            # Determine user's available points to bound the amount choices
+            try:
+                current_points = await self.get_user_points(interaction.user.id)
+            except Exception:
+                current_points = 0
+
+            # Build a Select menu of attributes for the chosen position, then amount
+            class AmountSelect(discord.ui.Select):
+                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str):
+                    capped = max(1, min(25, max_amount))
+                    options = [
+                        discord.SelectOption(label=f"{i}", value=str(i)) for i in range(1, capped + 1)
+                    ]
+                    super().__init__(placeholder="Choose amount to spend", min_values=1, max_values=1, options=options)
+                    self.chosen_attr_code = chosen_attr_code
+                    self.chosen_attr_label = chosen_attr_label
+
+                async def callback(self, inner_interaction: discord.Interaction):
+                    amount_str = self.values[0]
+                    amount = int(amount_str)
+                    remaining = max(0, current_points - amount)
+                    summary = discord.Embed(
+                        title="Test Upgrade Summary",
+                        description=(
+                            f"Position: **{position_value.upper()}**\n"
+                            f"Player: **{player_name}**\n"
+                            f"Attribute: **{self.chosen_attr_label} ({self.chosen_attr_code})**\n"
+                            f"Amount: **{amount}** point(s)\n"
+                            f"Remaining Points (simulated): **{remaining}**"
+                        ),
+                        color=0x00cc66
+                    )
+                    await inner_interaction.response.send_message(embed=summary, ephemeral=True)
+
+            class AttributeSelect(discord.ui.Select):
+                def __init__(self, attrs: list[tuple[str, str]]):
+                    options = [
+                        discord.SelectOption(label=disp_name[:100], value=code[:100])
+                        for disp_name, code in attrs[:25]
+                    ]
+                    super().__init__(placeholder="Choose an attribute", min_values=1, max_values=1, options=options)
+
+                async def callback(self, inner_interaction: discord.Interaction):
+                    chosen_code = self.values[0]
+                    # Find display label
+                    label = next((d for d, c in attributes if c == chosen_code), chosen_code)
+                    # Swap the view to show amount choices
+                    amount_view = discord.ui.View(timeout=180)
+                    amount_view.add_item(AmountSelect(current_points, chosen_code, label))
+                    await inner_interaction.response.send_message(
+                        f"Now choose how many points to spend (you have {current_points}).",
+                        view=amount_view,
+                        ephemeral=True
+                    )
+
+            class TestUpgradeView(discord.ui.View):
+                def __init__(self, attrs: list[tuple[str, str]]):
+                    super().__init__(timeout=180)
+                    self.add_item(AttributeSelect(attrs))
+
+            view = TestUpgradeView(attributes)
+            header = discord.Embed(
+                title="Test Upgrade",
+                description=(
+                    f"Pick an attribute for {position_value.upper()} {player_name}.\n"
+                    f"Then pick an amount to spend. This is a preview only; no points are deducted.\n"
+                    f"Your current points: **{current_points}**"
+                ),
+                color=0x0099ff
+            )
+            # Use defer + followup to avoid 'Unknown interaction' and ensure subsequent UI steps render
+            if not interaction.response.is_done():
+                await interaction.response.defer(ephemeral=True)
+            await interaction.followup.send(embed=header, view=view, ephemeral=True)
+        except Exception as e:
+            logger.error(f"Error in test_upgrade: {e}")
+            if not interaction.response.is_done():
+                await interaction.response.send_message("❌ Failed to show test upgrade menu.", ephemeral=True)
+            else:
+                await interaction.followup.send("❌ Failed to show test upgrade menu.", ephemeral=True)
+
     @app_commands.command(name="my_cards", description="View your player cards and their upgrades")
     async def my_cards(self, interaction: discord.Interaction):
         """View user's player cards"""
@@ -284,8 +411,13 @@ class SpendingSystemSupabase(commands.Cog):
                 if attributes:
                     attr_text = []
                     for attr, value in attributes.items():
-                        if value > 0:
-                            attr_text.append(f"**{attr}**: +{value}")
+                        try:
+                            numeric_value = int(value)
+                        except Exception:
+                            # Skip non-numeric values gracefully
+                            continue
+                        if numeric_value > 0:
+                            attr_text.append(f"**{attr}**: +{numeric_value}")
                     
                     if attr_text:
                         embed.add_field(

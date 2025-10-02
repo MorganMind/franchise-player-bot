@@ -96,6 +96,19 @@ class MaddenBot(commands.Bot):
         for guild in self.guilds:
             print(f"  - {guild.name} (ID: {guild.id})")
         
+        # Perform per-guild sync so new/updated slash commands appear instantly
+        try:
+            for guild in self.guilds:
+                print(f"🔄 Syncing commands for guild: {guild.name} ({guild.id})")
+                # Copy global commands to this guild and sync (instant availability)
+                self.tree.copy_global_to(guild=guild)
+                guild_synced = await self.tree.sync(guild=guild)
+                print(f"✅ Guild sync complete: {len(guild_synced)} command(s) for {guild.name}")
+        except Exception as e:
+            print(f"❌ Failed per-guild sync: {e}")
+            import traceback
+            traceback.print_exc()
+
         # List all available commands
         print(f"📋 Available commands: {len(self.tree.get_commands())}")
         for cmd in self.tree.get_commands():

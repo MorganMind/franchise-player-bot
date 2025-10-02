@@ -504,7 +504,8 @@ class SpendingSystemSupabase(commands.Cog):
                                 f"Player: **{self.player_name_val}**\n"
                                 f"Attribute: **{self.chosen_attr_label} ({self.chosen_attr_code})**\n"
                                 f"Amount: **{amount}** point(s)\n"
-                                f"Remaining Points: **{new_points}**"
+                                f"Remaining Points: **{new_points}**\n"
+                                f"Upgraded by: **{inner_interaction.user.display_name}**"
                             ),
                             color=0x00ff00
                         )

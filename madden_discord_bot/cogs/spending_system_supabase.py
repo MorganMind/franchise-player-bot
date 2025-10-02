@@ -278,108 +278,6 @@ class SpendingSystemSupabase(commands.Cog):
         
         logger.info(f"Denying {interaction.user.display_name} access to admin commands (no @commish role or admin permissions)")
         return False
-    
-    @app_commands.command(name="testupgrade", description="Preview upgrade flow with select menus (no changes made)")
-    @app_commands.describe(
-        position="Player position",
-        player_name="Player name"
-    )
-    @app_commands.choices(
-        position=[
-            app_commands.Choice(name=p, value=p) for p in [
-                "QB", "RB", "WR", "TE",
-                "LT/RT", "LG/RG", "C",
-                "EDGE", "LB", "CB", "S",
-                "FB", "K", "P"
-            ]
-        ]
-    )
-    async def test_upgrade(self, interaction: discord.Interaction, position: app_commands.Choice[str], player_name: str):
-        """Preview upgrade flow with attribute and amount selects (no DB writes)."""
-        try:
-            position_value = position.value if isinstance(position, app_commands.Choice) else str(position)
-            attributes = self.ATTRIBUTES.get(position_value.upper(), [])
-            if not attributes:
-                await interaction.response.send_message(
-                    f"No attributes configured for {position_value} yet.", ephemeral=True
-                )
-                return
-
-            # Determine user's available points to bound the amount choices
-            try:
-                current_points = await self.get_user_points(interaction.user.id)
-            except Exception:
-                current_points = 0
-
-            # Build a Select menu of attributes for the chosen position, then amount
-            class AmountSelect(discord.ui.Select):
-                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str):
-                    capped = max(1, min(25, max_amount))
-                    options = [
-                        discord.SelectOption(label=f"{i}", value=str(i)) for i in range(1, capped + 1)
-                    ]
-                    super().__init__(placeholder="Choose amount to spend", min_values=1, max_values=1, options=options)
-                    self.chosen_attr_code = chosen_attr_code
-                    self.chosen_attr_label = chosen_attr_label
-
-                async def callback(self, inner_interaction: discord.Interaction):
-                    amount_str = self.values[0]
-                    amount = int(amount_str)
-                    remaining = max(0, current_points - amount)
-                    summary = discord.Embed(
-                        title="Test Upgrade Summary",
-                        description=(
-                            f"Position: **{position_value.upper()}**\n"
-                            f"Player: **{player_name}**\n"
-                            f"Attribute: **{self.chosen_attr_label} ({self.chosen_attr_code})**\n"
-                            f"Amount: **{amount}** point(s)\n"
-                            f"Remaining Points (simulated): **{remaining}**"
-                        ),
-                        color=0x00cc66
-                    )
-                    await inner_interaction.response.send_message(embed=summary, ephemeral=True)
-
-            class AttributeSelect(discord.ui.Select):
-                def __init__(self, attrs: list[tuple[str, str]]):
-                    options = [
-                        discord.SelectOption(label=disp_name[:100], value=code[:100])
-                        for disp_name, code in attrs[:25]
-                    ]
-                    super().__init__(placeholder="Choose an attribute", min_values=1, max_values=1, options=options)
-
-                async def callback(self, inner_interaction: discord.Interaction):
-                    chosen_code = self.values[0]
-                    # Find display label
-                    label = next((d for d, c in attributes if c == chosen_code), chosen_code)
-                    # Swap the view to show amount choices
-                    amount_view = discord.ui.View(timeout=180)
-                    amount_view.add_item(AmountSelect(current_points, chosen_code, label))
-                    await inner_interaction.response.edit_message(
-                        content=f"Now choose how many points to spend (you have {current_points}).",
-                        view=amount_view
-                    )
-
-            class TestUpgradeView(discord.ui.View):
-                def __init__(self, attrs: list[tuple[str, str]]):
-                    super().__init__(timeout=180)
-                    self.add_item(AttributeSelect(attrs))
-
-            view = TestUpgradeView(attributes)
-            header = discord.Embed(
-                title="Test Upgrade",
-                description=(
-                    f"Pick an attribute for {position_value.upper()} {player_name}.\n"
-                    f"Then pick an amount to spend. This is a preview only; no points are deducted.\n"
-                    f"Your current points: **{current_points}**"
-                ),
-                color=0x0099ff
-            )
-            # Send the initial message with the attribute selection
-            await interaction.response.send_message(embed=header, view=view, ephemeral=True)
-        except Exception as e:
-            logger.error(f"Error in test_upgrade: {e}")
-            if not interaction.response.is_done():
-                await interaction.response.send_message("❌ Failed to show test upgrade menu.", ephemeral=True)
 
     @app_commands.command(name="my_cards", description="View your player cards and their upgrades")
     async def my_cards(self, interaction: discord.Interaction):
@@ -443,9 +341,7 @@ class SpendingSystemSupabase(commands.Cog):
     @app_commands.command(name="upgrade", description="Upgrade a player card attribute")
     @app_commands.describe(
         position="Player position",
-        player_name="Player name",
-        attribute="Attribute to upgrade",
-        amount="Number of points to apply (min 1)"
+        player_name="Player name"
     )
     @app_commands.choices(
         position=[
@@ -457,32 +353,17 @@ class SpendingSystemSupabase(commands.Cog):
             ]
         ]
     )
-    @app_commands.autocomplete(attribute=attribute_autocomplete)
-    async def upgrade(self, interaction: discord.Interaction, position: app_commands.Choice[str], player_name: str, attribute: str, amount: app_commands.Range[int, 1, 999]):
-        """Upgrade a player card attribute"""
+    async def upgrade(self, interaction: discord.Interaction, position: app_commands.Choice[str], player_name: str):
+        """Upgrade a player card attribute with multi-step flow"""
         try:
-            # Extract actual string value from choice
             position_value = position.value if isinstance(position, app_commands.Choice) else str(position)
+            attributes = self.ATTRIBUTES.get(position_value.upper(), [])
+            if not attributes:
+                await interaction.response.send_message(
+                    f"No attributes configured for {position_value} yet.", ephemeral=True
+                )
+                return
 
-            # Validate position (from dropdown, but keep guard for safety)
-            if position_value.upper() not in self.POSITIONS:
-                await interaction.response.send_message(
-                    f"❌ Invalid position. Available positions: {', '.join(self.POSITIONS)}", 
-                    ephemeral=True
-                )
-                return
-            
-            # Validate attribute
-            valid_attr_pairs = self.ATTRIBUTES.get(position_value.upper())
-            valid_codes = [code for (_name, code) in (valid_attr_pairs or [])]
-            # Only enforce validation when we have a predefined attribute list for the position
-            if valid_attr_pairs and attribute.upper() not in valid_codes:
-                await interaction.response.send_message(
-                    f"❌ Invalid attribute for {position_value}. Available: {', '.join(valid_codes)}", 
-                    ephemeral=True
-                )
-                return
-            
             # Check user total points threshold
             current_points = await self.get_user_points(interaction.user.id)
             if current_points < 2:
@@ -491,67 +372,98 @@ class SpendingSystemSupabase(commands.Cog):
                     ephemeral=True
                 )
                 return
-            
-            # Amount validation: must be <= points remaining
-            if amount < 1:
-                await interaction.response.send_message(
-                    "❌ Amount must be at least 1.",
-                    ephemeral=True
-                )
-                return
-            if amount > current_points:
-                await interaction.response.send_message(
-                    f"❌ You tried to spend {amount} points, but you only have {current_points}.",
-                    ephemeral=True
-                )
-                return
-            
-            # Add the upgrade
-            success = await self.add_player_upgrade(
-                interaction.user.id, 
-                position_value.upper(), 
-                player_name, 
-                attribute.upper(), 
-                amount,
-                interaction.user.display_name,
-                interaction.user.name
+
+            # Build a Select menu of attributes for the chosen position, then amount
+            class AmountSelect(discord.ui.Select):
+                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str):
+                    capped = max(1, min(25, max_amount))
+                    options = [
+                        discord.SelectOption(label=f"{i}", value=str(i)) for i in range(1, capped + 1)
+                    ]
+                    super().__init__(placeholder="Choose amount to spend", min_values=1, max_values=1, options=options)
+                    self.chosen_attr_code = chosen_attr_code
+                    self.chosen_attr_label = chosen_attr_label
+
+                async def callback(self, inner_interaction: discord.Interaction):
+                    amount_str = self.values[0]
+                    amount = int(amount_str)
+                    
+                    # Actually perform the upgrade
+                    success = await self.add_player_upgrade(
+                        inner_interaction.user.id, 
+                        position_value.upper(), 
+                        player_name, 
+                        self.chosen_attr_code.upper(), 
+                        amount,
+                        inner_interaction.user.display_name,
+                        inner_interaction.user.name
+                    )
+                    
+                    if success:
+                        new_points = await self.get_user_points(inner_interaction.user.id)
+                        summary = discord.Embed(
+                            title="✅ Upgrade Successful!",
+                            description=(
+                                f"Position: **{position_value.upper()}**\n"
+                                f"Player: **{player_name}**\n"
+                                f"Attribute: **{self.chosen_attr_label} ({self.chosen_attr_code})**\n"
+                                f"Amount: **{amount}** point(s)\n"
+                                f"Remaining Points: **{new_points}**"
+                            ),
+                            color=0x00ff00
+                        )
+                        await inner_interaction.response.send_message(embed=summary)
+                    else:
+                        await inner_interaction.response.send_message(
+                            "❌ Failed to process upgrade. Please try again.", 
+                            ephemeral=True
+                        )
+
+            class AttributeSelect(discord.ui.Select):
+                def __init__(self, attrs: list[tuple[str, str]]):
+                    options = [
+                        discord.SelectOption(label=disp_name[:100], value=code[:100])
+                        for disp_name, code in attrs[:25]
+                    ]
+                    super().__init__(placeholder="Choose an attribute", min_values=1, max_values=1, options=options)
+
+                async def callback(self, inner_interaction: discord.Interaction):
+                    chosen_code = self.values[0]
+                    # Find display label
+                    label = next((d for d, c in attributes if c == chosen_code), chosen_code)
+                    # Swap the view to show amount choices
+                    amount_view = discord.ui.View(timeout=180)
+                    amount_view.add_item(AmountSelect(current_points, chosen_code, label))
+                    await inner_interaction.response.edit_message(
+                        content=f"Now choose how many points to spend (you have {current_points}).",
+                        view=amount_view
+                    )
+
+            class UpgradeView(discord.ui.View):
+                def __init__(self, attrs: list[tuple[str, str]]):
+                    super().__init__(timeout=180)
+                    self.add_item(AttributeSelect(attrs))
+
+            view = UpgradeView(attributes)
+            header = discord.Embed(
+                title="Upgrade Player",
+                description=(
+                    f"Pick an attribute for {position_value.upper()} {player_name}.\n"
+                    f"Then pick an amount to spend.\n"
+                    f"Your current points: **{current_points}**"
+                ),
+                color=0x0099ff
             )
-            
-            if success:
-                new_points = await self.get_user_points(interaction.user.id)
-                embed = discord.Embed(
-                    title="✅ Upgrade Successful!",
-                    description=f"Upgraded **{attribute.upper()}** for **{position_value.upper()} {player_name}**",
-                    color=0x00ff00
-                )
-                embed.add_field(
-                    name="Cost",
-                    value=f"{amount} points",
-                    inline=True
-                )
-                embed.add_field(
-                    name="Remaining Points",
-                    value=f"{new_points:,} points",
-                    inline=True
-                )
-                await interaction.response.send_message(embed=embed)
-            else:
-                await interaction.response.send_message(
-                    "❌ Failed to process upgrade. Please try again.", 
-                    ephemeral=True
-                )
-            
+            await interaction.response.send_message(embed=header, view=view, ephemeral=True)
         except Exception as e:
             logger.error(f"Error in upgrade: {e}")
             if not interaction.response.is_done():
                 await interaction.response.send_message(
-                    "❌ An error occurred while processing your upgrade.", 
-                    ephemeral=True
+                    "❌ Failed to show upgrade menu.", ephemeral=True
                 )
             else:
                 await interaction.followup.send(
-                    "❌ An error occurred while processing your upgrade.", 
-                    ephemeral=True
+                    "❌ Failed to show upgrade menu.", ephemeral=True
                 )
 
 async def setup(bot):

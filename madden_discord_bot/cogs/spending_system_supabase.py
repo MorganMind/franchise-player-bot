@@ -374,16 +374,12 @@ class SpendingSystemSupabase(commands.Cog):
                 ),
                 color=0x0099ff
             )
-            # Use defer + followup to avoid 'Unknown interaction' and ensure subsequent UI steps render
-            if not interaction.response.is_done():
-                await interaction.response.defer(ephemeral=True)
-            await interaction.followup.send(embed=header, view=view, ephemeral=True)
+            # Send the initial message with the attribute selection
+            await interaction.response.send_message(embed=header, view=view, ephemeral=True)
         except Exception as e:
             logger.error(f"Error in test_upgrade: {e}")
             if not interaction.response.is_done():
                 await interaction.response.send_message("❌ Failed to show test upgrade menu.", ephemeral=True)
-            else:
-                await interaction.followup.send("❌ Failed to show test upgrade menu.", ephemeral=True)
 
     @app_commands.command(name="my_cards", description="View your player cards and their upgrades")
     async def my_cards(self, interaction: discord.Interaction):

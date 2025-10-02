@@ -395,7 +395,7 @@ class SpendingSystemSupabase(commands.Cog):
 
             # Build a Select menu of attributes for the chosen position, then amount
             class AmountSelect(discord.ui.Select):
-                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str):
+                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str, cog_instance):
                     capped = max(1, min(25, max_amount))
                     options = [
                         discord.SelectOption(label=f"{i}", value=str(i)) for i in range(1, capped + 1)
@@ -403,13 +403,14 @@ class SpendingSystemSupabase(commands.Cog):
                     super().__init__(placeholder="Choose amount to spend", min_values=1, max_values=1, options=options)
                     self.chosen_attr_code = chosen_attr_code
                     self.chosen_attr_label = chosen_attr_label
+                    self.cog = cog_instance
 
                 async def callback(self, inner_interaction: discord.Interaction):
                     amount_str = self.values[0]
                     amount = int(amount_str)
                     
                     # Actually perform the upgrade
-                    success = await self.add_player_upgrade(
+                    success = await self.cog.add_player_upgrade(
                         inner_interaction.user.id, 
                         position_value.upper(), 
                         player_name, 
@@ -420,7 +421,7 @@ class SpendingSystemSupabase(commands.Cog):
                     )
                     
                     if success:
-                        new_points = await self.get_user_points(inner_interaction.user.id)
+                        new_points = await self.cog.get_user_points(inner_interaction.user.id)
                         summary = discord.Embed(
                             title="✅ Upgrade Successful!",
                             description=(
@@ -453,7 +454,7 @@ class SpendingSystemSupabase(commands.Cog):
                     label = next((d for d, c in attributes if c == chosen_code), chosen_code)
                     # Swap the view to show amount choices
                     amount_view = discord.ui.View(timeout=180)
-                    amount_view.add_item(AmountSelect(current_points, chosen_code, label))
+                    amount_view.add_item(AmountSelect(current_points, chosen_code, label, self))
                     await inner_interaction.response.edit_message(
                         content=f"Now choose how many points to spend (you have {current_points}).",
                         view=amount_view

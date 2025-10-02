@@ -24,17 +24,114 @@ class SpendingSystemSupabase(commands.Cog):
         self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
         
         # Position and attribute definitions
-        self.POSITIONS = ["QB", "WR", "HB"]
+        # Expanded positions for dropdown selection
+        self.POSITIONS = [
+            "QB", "RB", "WR", "TE",
+            "LT/RT", "LG/RG", "C",
+            "Edge", "LB", "CB", "S",
+            "FB", "K", "P"
+        ]
+        # Attribute definitions per position. Each entry is (Display Name, Code)
         self.ATTRIBUTES = {
-            "QB": ["MAC", "DAC", "SAC", "TUP", "TOR"],
-            "WR": ["MAC", "DAC", "SAC", "TUP", "TOR"],  # Same for now, will be customized later
-            "HB": ["MAC", "DAC", "SAC", "TUP", "TOR"]   # Same for now, will be customized later
+            "QB": [
+                ("Throw Accuracy Short", "SAC"),
+                ("Throw Accuracy Medium", "MAC"),
+                ("Throw Accuracy Deep", "DAC"),
+                ("Throw on the Run", "RUN"),
+                ("Play Action", "PAC"),
+                ("Throw Under Pressure", "TUP"),
+                ("Awareness", "AWR"),
+                ("Break Sack", "BSK"),
+                ("Carrying", "CAR"),
+            ],
+            "RB": [
+                ("Carrying", "CAR"),("Ball Carrier Vision", "BCV"),("Stiff Arm", "SFA"),("Spin Move", "SPM"),
+                ("Juke Move", "JKM"),("Trucking", "TRK"),("Break Tackle", "BTK"),("Catching", "CTH"),
+                ("Catch in Traffic", "CIT"),("Short Route Running", "SRR"),("Medium Route Running", "MRR"),
+                ("Release", "RLS"),("Awareness", "AWR")
+            ],
+            "WR": [
+                ("Catching", "CTH"),("Catch in Traffic", "CIT"),("Spectacular Catch", "SPC"),("Release", "RLS"),
+                ("Short Route Running", "SRR"),("Medium Route Running", "MRR"),("Deep Route Running", "DRR"),
+                ("Awareness", "AWR")
+            ],
+            "TE": [
+                ("Catching", "CTH"),("Catch in Traffic", "CIT"),("Spectacular Catch", "SPC"),("Release", "RLS"),
+                ("Short Route Running", "SRR"),("Medium Route Running", "MRR"),("Run Block", "RBK"),
+                ("Pass Block", "PBK"),("Lead Block", "LBK"),("Impact Block", "IBK"),("Awareness", "AWR")
+            ],
+            "LT/RT": [
+                ("Pass Block", "PBK"),("Pass Block Power", "PBP"),("Pass Block Finesse", "PBF"),("Run Block", "RBK"),
+                ("Run Block Power", "RBP"),("Run Block Finesse", "RBF"),("Lead Block", "LBK"),("Impact Block", "IBK"),
+                ("Awareness", "AWR")
+            ],
+            "LG/RG": [
+                ("Pass Block", "PBK"),("Pass Block Power", "PBP"),("Pass Block Finesse", "PBF"),("Run Block", "RBK"),
+                ("Run Block Power", "RBP"),("Run Block Finesse", "RBF"),("Lead Block", "LBK"),("Impact Block", "IBK"),
+                ("Awareness", "AWR")
+            ],
+            "C": [
+                ("Pass Block", "PBK"),("Pass Block Power", "PBP"),("Pass Block Finesse", "PBF"),("Run Block", "RBK"),
+                ("Run Block Power", "RBP"),("Run Block Finesse", "RBF"),("Lead Block", "LBK"),("Impact Block", "IBK"),
+                ("Awareness", "AWR")
+            ],
+            "Edge": [
+                ("Finesse Moves", "FMV"),("Power Moves", "PMV"),("Block Shedding", "BSH"),("Tackling", "TAK"),
+                ("Play Recognition", "PRC"),("Pursuit", "PUR"),("Awareness", "AWR")
+            ],
+            "LB": [
+                ("Tackling", "TAK"),("Play Recognition", "PRC"),("Block Shedding", "BSH"),("Pursuit", "PUR"),
+                ("Awareness", "AWR"),("Finesse Moves", "FMV"),("Power Moves", "PMV"),("Zone Coverage", "ZCV"),
+                ("Man Coverage", "MCV"),("Catching", "CTH")
+            ],
+            "CB": [
+                ("Man Coverage", "MCV"),("Zone Coverage", "ZCV"),("Press", "PRS"),("Play Recognition", "PRC"),
+                ("Awareness", "AWR"),("Catching", "CTH"),("Catch in Traffic", "CIT"),("Pursuit", "PUR")
+            ],
+            "S": [
+                ("Zone Coverage", "ZCV"),("Man Coverage", "MCV"),("Play Recognition", "PRC"),("Pursuit", "PUR"),
+                ("Awareness", "AWR"),("Catching", "CTH"),("Catch in Traffic", "CIT"),("Tackling", "TAK")
+            ],
+            "FB": [
+                ("Run Block", "RBK"),("Lead Block", "LBK"),("Impact Block", "IBK"),("Catching", "CTH"),
+                ("Catch in Traffic", "CIT"),("Short Route Running", "SRR"),("Trucking", "TRK"),("Stiff Arm", "SFA"),
+                ("Carrying", "CAR"),("Awareness", "AWR")
+            ],
+            "K": [
+                ("Kick Accuracy", "KAC"),("Awareness", "AWR")
+            ],
+            "P": [
+                ("Kick Accuracy", "KAC"),("Awareness", "AWR")
+            ],
         }
         
         # Cost per attribute point
         self.ATTRIBUTE_COST = 1  # 1 point per +1 attribute
         
         logger.info("✅ SpendingSystemSupabase cog initialized")
+    
+    async def attribute_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete provider for the attribute option, dependent on selected position."""
+        try:
+            # Retrieve the selected position value from interaction namespace if present
+            selected_position = None
+            if interaction.namespace and hasattr(interaction.namespace, 'position'):
+                pos = interaction.namespace.position
+                selected_position = pos.value if isinstance(pos, app_commands.Choice) else str(pos)
+            
+            if not selected_position:
+                return []
+            
+            attrs = self.ATTRIBUTES.get(selected_position.upper(), [])
+            # Filter by current input
+            choices = []
+            for display_name, code in attrs:
+                label = f"{display_name} ({code})"
+                if current.lower() in label.lower():
+                    choices.append(app_commands.Choice(name=label, value=code))
+            return choices[:25]
+        except Exception:
+            return []
     
     async def get_user_points(self, user_id):
         """Get user's current points from the points system"""
@@ -124,14 +221,14 @@ class SpendingSystemSupabase(commands.Cog):
                 # Update existing card
                 card = existing_result.data[0]
                 attributes = card["attributes"]
-                attributes[attribute] = attributes.get(attribute, 0) + 1
+                attributes[attribute] = attributes.get(attribute, 0) + int(points_spent)
                 
                 result = self.supabase.table("player_cards").update({
                     "attributes": attributes
                 }).eq("id", card["id"]).execute()
             else:
                 # Create new card
-                attributes = {attribute: 1}
+                attributes = {attribute: int(points_spent)}
                 result = self.supabase.table("player_cards").insert({
                     "user_id": user_id,
                     "position": f"{position} {player_name}",
@@ -218,15 +315,30 @@ class SpendingSystemSupabase(commands.Cog):
     
     @app_commands.command(name="upgrade", description="Upgrade a player card attribute")
     @app_commands.describe(
-        position="Player position (QB, WR, HB)",
+        position="Player position",
         player_name="Player name",
-        attribute="Attribute to upgrade"
+        attribute="Attribute to upgrade",
+        amount="Number of points to apply (min 1)"
     )
-    async def upgrade(self, interaction: discord.Interaction, position: str, player_name: str, attribute: str):
+    @app_commands.choices(
+        position=[
+            app_commands.Choice(name=p, value=p) for p in [
+                "QB", "RB", "WR", "TE",
+                "LT/RT", "LG/RG", "C",
+                "Edge", "LB", "CB", "S",
+                "FB", "K", "P"
+            ]
+        ]
+    )
+    @app_commands.autocomplete(attribute=attribute_autocomplete)
+    async def upgrade(self, interaction: discord.Interaction, position: app_commands.Choice[str], player_name: str, attribute: str, amount: app_commands.Range[int, 1, 999]):
         """Upgrade a player card attribute"""
         try:
-            # Validate position
-            if position.upper() not in self.POSITIONS:
+            # Extract actual string value from choice
+            position_value = position.value if isinstance(position, app_commands.Choice) else str(position)
+
+            # Validate position (from dropdown, but keep guard for safety)
+            if position_value.upper() not in self.POSITIONS:
                 await interaction.response.send_message(
                     f"❌ Invalid position. Available positions: {', '.join(self.POSITIONS)}", 
                     ephemeral=True
@@ -234,19 +346,35 @@ class SpendingSystemSupabase(commands.Cog):
                 return
             
             # Validate attribute
-            valid_attributes = self.ATTRIBUTES.get(position.upper(), [])
-            if attribute.upper() not in valid_attributes:
+            valid_attr_pairs = self.ATTRIBUTES.get(position_value.upper())
+            valid_codes = [code for (_name, code) in (valid_attr_pairs or [])]
+            # Only enforce validation when we have a predefined attribute list for the position
+            if valid_attr_pairs and attribute.upper() not in valid_codes:
                 await interaction.response.send_message(
-                    f"❌ Invalid attribute for {position}. Available attributes: {', '.join(valid_attributes)}", 
+                    f"❌ Invalid attribute for {position_value}. Available: {', '.join(valid_codes)}", 
                     ephemeral=True
                 )
                 return
             
-            # Check if user has enough points
+            # Check user total points threshold
             current_points = await self.get_user_points(interaction.user.id)
-            if current_points < self.ATTRIBUTE_COST:
+            if current_points < 2:
                 await interaction.response.send_message(
-                    f"❌ You don't have enough points! You need {self.ATTRIBUTE_COST} points, but you only have {current_points}.", 
+                    "❌ You need at least 2 total points to use the upgrade system.", 
+                    ephemeral=True
+                )
+                return
+            
+            # Amount validation: must be <= points remaining
+            if amount < 1:
+                await interaction.response.send_message(
+                    "❌ Amount must be at least 1.",
+                    ephemeral=True
+                )
+                return
+            if amount > current_points:
+                await interaction.response.send_message(
+                    f"❌ You tried to spend {amount} points, but you only have {current_points}.",
                     ephemeral=True
                 )
                 return
@@ -254,10 +382,10 @@ class SpendingSystemSupabase(commands.Cog):
             # Add the upgrade
             success = await self.add_player_upgrade(
                 interaction.user.id, 
-                position.upper(), 
+                position_value.upper(), 
                 player_name, 
                 attribute.upper(), 
-                self.ATTRIBUTE_COST,
+                amount,
                 interaction.user.display_name,
                 interaction.user.name
             )
@@ -266,12 +394,12 @@ class SpendingSystemSupabase(commands.Cog):
                 new_points = await self.get_user_points(interaction.user.id)
                 embed = discord.Embed(
                     title="✅ Upgrade Successful!",
-                    description=f"Upgraded **{attribute.upper()}** for **{position.upper()} {player_name}**",
+                    description=f"Upgraded **{attribute.upper()}** for **{position_value.upper()} {player_name}**",
                     color=0x00ff00
                 )
                 embed.add_field(
                     name="Cost",
-                    value=f"{self.ATTRIBUTE_COST} points",
+                    value=f"{amount} points",
                     inline=True
                 )
                 embed.add_field(

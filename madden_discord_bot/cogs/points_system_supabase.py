@@ -230,6 +230,9 @@ class PointsSystemSupabase(commands.Cog):
         try:
             target_user = user or interaction.user
             
+            # Defer the response immediately to prevent timeout
+            await interaction.response.defer()
+            
             points = await self.get_user_points(target_user.id)
             
             # Debug logging
@@ -249,7 +252,7 @@ class PointsSystemSupabase(commands.Cog):
             embed.set_thumbnail(url=target_user.display_avatar.url)
             embed.set_footer(text=f"User ID: {target_user.id}")
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
             
         except Exception as e:
             logger.error(f"Error in check_stats: {e}")
@@ -477,7 +480,10 @@ class PointsSystemSupabase(commands.Cog):
                 color=0x0099ff
             )
             
-            for i, (user_id, points) in enumerate(leaderboard_data, 1):
+            # Limit to 20 fields (Discord limit)
+            max_fields = min(len(leaderboard_data), 20)
+            
+            for i, (user_id, points) in enumerate(leaderboard_data[:max_fields], 1):
                 # Try to get user from guild cache first (this gives server nickname)
                 user = interaction.guild.get_member(int(user_id))
                 display_name = None
@@ -516,6 +522,14 @@ class PointsSystemSupabase(commands.Cog):
                         value=f"**{points:,}** points",
                         inline=False
                     )
+            
+            # Add note if we truncated the list
+            if len(leaderboard_data) > 20:
+                embed.add_field(
+                    name="",
+                    value=f"... and {len(leaderboard_data) - 20} more users",
+                    inline=False
+                )
             
             # Count users with points > 0 for accurate footer
             try:

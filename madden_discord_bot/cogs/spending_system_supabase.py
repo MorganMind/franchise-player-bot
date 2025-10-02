@@ -395,7 +395,7 @@ class SpendingSystemSupabase(commands.Cog):
 
             # Build a Select menu of attributes for the chosen position, then amount
             class AmountSelect(discord.ui.Select):
-                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str, cog_instance):
+                def __init__(self, max_amount: int, chosen_attr_code: str, chosen_attr_label: str, cog_instance, position_val, player_name_val):
                     capped = max(1, min(25, max_amount))
                     options = [
                         discord.SelectOption(label=f"{i}", value=str(i)) for i in range(1, capped + 1)
@@ -404,6 +404,8 @@ class SpendingSystemSupabase(commands.Cog):
                     self.chosen_attr_code = chosen_attr_code
                     self.chosen_attr_label = chosen_attr_label
                     self.cog = cog_instance
+                    self.position_val = position_val
+                    self.player_name_val = player_name_val
 
                 async def callback(self, inner_interaction: discord.Interaction):
                     amount_str = self.values[0]
@@ -411,7 +413,7 @@ class SpendingSystemSupabase(commands.Cog):
                     
                     # Check if this upgrade would exceed the 90 attribute limit
                     user_cards = await self.cog.get_user_cards(inner_interaction.user.id)
-                    player_key = f"{position_value.upper()} {player_name}"
+                    player_key = f"{self.position_val.upper()} {self.player_name_val}"
                     current_attr_value = 0
                     
                     if player_key in user_cards:
@@ -431,8 +433,8 @@ class SpendingSystemSupabase(commands.Cog):
                     # Actually perform the upgrade
                     success = await self.cog.add_player_upgrade(
                         inner_interaction.user.id, 
-                        position_value.upper(), 
-                        player_name, 
+                        self.position_val.upper(), 
+                        self.player_name_val, 
                         self.chosen_attr_code.upper(), 
                         amount,
                         inner_interaction.user.display_name,
@@ -444,8 +446,8 @@ class SpendingSystemSupabase(commands.Cog):
                         summary = discord.Embed(
                             title="✅ Upgrade Successful!",
                             description=(
-                                f"Position: **{position_value.upper()}**\n"
-                                f"Player: **{player_name}**\n"
+                                f"Position: **{self.position_val.upper()}**\n"
+                                f"Player: **{self.player_name_val}**\n"
                                 f"Attribute: **{self.chosen_attr_label} ({self.chosen_attr_code})**\n"
                                 f"Amount: **{amount}** point(s)\n"
                                 f"Remaining Points: **{new_points}**"
@@ -460,12 +462,13 @@ class SpendingSystemSupabase(commands.Cog):
                         )
 
             class AttributeSelect(discord.ui.Select):
-                def __init__(self, attrs: list[tuple[str, str]]):
+                def __init__(self, attrs: list[tuple[str, str]], cog_instance):
                     options = [
                         discord.SelectOption(label=disp_name[:100], value=code[:100])
                         for disp_name, code in attrs[:25]
                     ]
                     super().__init__(placeholder="Choose an attribute", min_values=1, max_values=1, options=options)
+                    self.cog = cog_instance
 
                 async def callback(self, inner_interaction: discord.Interaction):
                     chosen_code = self.values[0]
@@ -473,18 +476,18 @@ class SpendingSystemSupabase(commands.Cog):
                     label = next((d for d, c in attributes if c == chosen_code), chosen_code)
                     # Swap the view to show amount choices
                     amount_view = discord.ui.View(timeout=180)
-                    amount_view.add_item(AmountSelect(current_points, chosen_code, label, self))
+                    amount_view.add_item(AmountSelect(current_points, chosen_code, label, self.cog, position_value, player_name))
                     await inner_interaction.response.edit_message(
                         content=f"Now choose how many points to spend (you have {current_points}).",
                         view=amount_view
                     )
 
             class UpgradeView(discord.ui.View):
-                def __init__(self, attrs: list[tuple[str, str]]):
+                def __init__(self, attrs: list[tuple[str, str]], cog_instance):
                     super().__init__(timeout=180)
-                    self.add_item(AttributeSelect(attrs))
+                    self.add_item(AttributeSelect(attrs, cog_instance))
 
-            view = UpgradeView(attributes)
+            view = UpgradeView(attributes, self)
             header = discord.Embed(
                 title="Upgrade Player",
                 description=(

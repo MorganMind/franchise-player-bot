@@ -14,6 +14,7 @@ logging.basicConfig(
 intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True   # Required to see guild information
+intents.presences = True  # Required to see user activities (streaming, playing games, etc.)
 # Note: members and presences intents require special permissions in Discord Developer Portal
 
 class MaddenBot(commands.Bot):

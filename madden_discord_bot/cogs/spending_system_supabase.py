@@ -28,7 +28,7 @@ class SpendingSystemSupabase(commands.Cog):
         self.POSITIONS = [
             "QB", "RB", "WR", "TE",
             "LT/RT", "LG/RG", "C",
-            "Edge", "LB", "CB", "S",
+            "Edge", "DT", "LB", "CB", "S",
             "FB", "K", "P"
         ]
         # Attribute definitions per position. Each entry is (Display Name, Code)
@@ -76,6 +76,10 @@ class SpendingSystemSupabase(commands.Cog):
                 ("Awareness", "AWR")
             ],
             "EDGE": [
+                ("Finesse Moves", "FMV"),("Power Moves", "PMV"),("Block Shedding", "BSH"),("Tackling", "TAK"),
+                ("Play Recognition", "PRC"),("Pursuit", "PUR"),("Awareness", "AWR")
+            ],
+            "DT": [
                 ("Finesse Moves", "FMV"),("Power Moves", "PMV"),("Block Shedding", "BSH"),("Tackling", "TAK"),
                 ("Play Recognition", "PRC"),("Pursuit", "PUR"),("Awareness", "AWR")
             ],

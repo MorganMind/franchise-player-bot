@@ -354,10 +354,9 @@ class SpendingSystemSupabase(commands.Cog):
                     # Swap the view to show amount choices
                     amount_view = discord.ui.View(timeout=180)
                     amount_view.add_item(AmountSelect(current_points, chosen_code, label))
-                    await inner_interaction.response.send_message(
-                        f"Now choose how many points to spend (you have {current_points}).",
-                        view=amount_view,
-                        ephemeral=True
+                    await inner_interaction.response.edit_message(
+                        content=f"Now choose how many points to spend (you have {current_points}).",
+                        view=amount_view
                     )
 
             class TestUpgradeView(discord.ui.View):

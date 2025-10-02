@@ -972,16 +972,27 @@ class StreamManager(commands.Cog):
             logger.info(f"Activity type: {type(interaction.user.activity)}")
             logger.info(f"Is streaming: {isinstance(interaction.user.activity, discord.Streaming)}")
             
-            # Check if user is currently streaming in Discord
-            if not interaction.user.activity or not isinstance(interaction.user.activity, discord.Streaming):
+            # Check if user is currently streaming in Discord (Go Live) OR screen sharing
+            is_streaming_activity = interaction.user.activity and isinstance(interaction.user.activity, discord.Streaming)
+            is_screen_sharing = False
+            
+            # Check if user is in a voice channel and screen sharing
+            if interaction.user.voice:
+                voice_state = interaction.user.voice
+                # Check if user is screen sharing (self_video is True when screen sharing)
+                is_screen_sharing = voice_state.self_video or voice_state.self_stream
+            
+            # User must be either streaming (Go Live) OR screen sharing
+            if not is_streaming_activity and not is_screen_sharing:
                 await interaction.response.send_message(
                     "❌ **Not Streaming in Discord**\n\n"
                     "You need to be streaming in Discord to use this command.\n\n"
                     "**How to stream in Discord:**\n"
                     "1. Join a voice channel\n"
-                    "2. Click 'Go Live' or 'Screen Share'\n"
-                    "3. Start your stream\n"
-                    "4. Then use this command again",
+                    "2. Click 'Go Live' (for streaming) OR 'Screen Share' (for sharing)\n"
+                    "3. Start your stream/screen share\n"
+                    "4. Then use this command again\n\n"
+                    "**Note:** Both 'Go Live' and 'Screen Share' work with this command!",
                     ephemeral=True
                 )
                 return
@@ -1009,10 +1020,18 @@ class StreamManager(commands.Cog):
             stream_name = stream_activity.name if stream_activity else "Unknown"
             stream_url = stream_activity.url if stream_activity else None
             
+            # Determine what type of streaming they're doing
+            if is_streaming_activity:
+                stream_type = "Go Live Stream"
+                stream_description = f"**{interaction.user.display_name}** is now streaming in Discord!"
+            else:
+                stream_type = "Screen Share"
+                stream_description = f"**{interaction.user.display_name}** is now screen sharing in Discord!"
+            
             # Create verification embed (similar to Twitch stream style)
             embed = discord.Embed(
                 title="🎮 Live Stream Started!",
-                description=f"**{interaction.user.display_name}** is now streaming in Discord!",
+                description=stream_description,
                 color=0x9146ff,  # Discord purple
                 url=stream_url
             )
@@ -1020,6 +1039,12 @@ class StreamManager(commands.Cog):
             embed.add_field(
                 name="🎯 Streamer",
                 value=f"**{interaction.user.display_name}**",
+                inline=True
+            )
+            
+            embed.add_field(
+                name="📺 Stream Type",
+                value=f"**{stream_type}**",
                 inline=True
             )
             

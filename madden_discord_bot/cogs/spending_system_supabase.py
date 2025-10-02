@@ -287,22 +287,31 @@ class SpendingSystemSupabase(commands.Cog):
             
             if not user_cards:
                 embed = discord.Embed(
-                    title="🃏 Your Player Cards",
+                    title="📝 Your Player Cards",
                     description="You don't have any player cards yet! Use `/upgrade` to create some.",
                     color=0x0099ff
                 )
                 await interaction.response.send_message(embed=embed)
                 return
             
+            # Count total cards
+            total_cards = len([pos for pos, attrs in user_cards.items() if attrs])
+            
             embed = discord.Embed(
-                title="🃏 Your Player Cards",
-                description="Here are your current player cards and upgrades:",
+                title="📝 Your Player Cards",
+                description=f"You have {total_cards} player card(s):",
                 color=0x0099ff
             )
             
+            # Build the description with clean formatting
+            description_parts = []
+            
             for position, attributes in user_cards.items():
                 if attributes:
-                    attr_text = []
+                    # Calculate total points spent for this player
+                    total_spent = 0
+                    upgrade_lines = []
+                    
                     for attr, value in attributes.items():
                         try:
                             numeric_value = int(value)
@@ -310,18 +319,29 @@ class SpendingSystemSupabase(commands.Cog):
                             # Skip non-numeric values gracefully
                             continue
                         if numeric_value > 0:
-                            attr_text.append(f"**{attr}**: +{numeric_value}")
+                            total_spent += numeric_value
+                            upgrade_lines.append(f"  +{numeric_value} {attr}")
                     
-                    if attr_text:
-                        embed.add_field(
-                            name=position,
-                            value="\n".join(attr_text),
-                            inline=True
-                        )
+                    if upgrade_lines:
+                        # Add player name
+                        description_parts.append(f"**{position}**")
+                        # Add upgrades (indented)
+                        description_parts.extend(upgrade_lines)
+                        # Add total points spent
+                        description_parts.append(f"  Total Points Spent: {total_spent}")
+                        # Add spacing between players
+                        description_parts.append("")
+            
+            # Join all parts and add to embed
+            if description_parts:
+                # Remove the last empty line
+                if description_parts[-1] == "":
+                    description_parts.pop()
+                embed.description = f"You have {total_cards} player card(s):\n\n" + "\n".join(description_parts)
             
             # Add current points
             current_points = await self.get_user_points(interaction.user.id)
-            embed.set_footer(text=f"Current Points: {current_points:,}")
+            embed.set_footer(text=f"Current Points: {current_points}")
             
             await interaction.response.send_message(embed=embed)
             

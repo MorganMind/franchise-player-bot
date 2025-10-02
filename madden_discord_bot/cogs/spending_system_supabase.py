@@ -409,6 +409,25 @@ class SpendingSystemSupabase(commands.Cog):
                     amount_str = self.values[0]
                     amount = int(amount_str)
                     
+                    # Check if this upgrade would exceed the 90 attribute limit
+                    user_cards = await self.cog.get_user_cards(inner_interaction.user.id)
+                    player_key = f"{position_value.upper()} {player_name}"
+                    current_attr_value = 0
+                    
+                    if player_key in user_cards:
+                        current_attr_value = user_cards[player_key].get(self.chosen_attr_code.upper(), 0)
+                    
+                    if current_attr_value + amount > 90:
+                        await inner_interaction.response.send_message(
+                            f"❌ **No attribute can be increased over 90!**\n"
+                            f"Current {self.chosen_attr_label}: **{current_attr_value}**\n"
+                            f"Attempted upgrade: **+{amount}**\n"
+                            f"Would result in: **{current_attr_value + amount}**\n\n"
+                            f"*Check your players and reduce the amount.*",
+                            ephemeral=True
+                        )
+                        return
+                    
                     # Actually perform the upgrade
                     success = await self.cog.add_player_upgrade(
                         inner_interaction.user.id, 
@@ -471,7 +490,8 @@ class SpendingSystemSupabase(commands.Cog):
                 description=(
                     f"Pick an attribute for {position_value.upper()} {player_name}.\n"
                     f"Then pick an amount to spend.\n"
-                    f"Your current points: **{current_points}**"
+                    f"Your current points: **{current_points}**\n\n"
+                    f"⚠️ **Note: No attribute can be increased over 90!**"
                 ),
                 color=0x0099ff
             )

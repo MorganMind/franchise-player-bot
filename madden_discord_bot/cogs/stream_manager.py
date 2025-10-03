@@ -253,6 +253,8 @@ class StreamManager(commands.Cog):
     async def get_twitch_profile_info(self, username):
         """Get Twitch profile information including avatar and details"""
         try:
+            import aiohttp
+            
             # Try multiple Twitch profile image URL formats
             profile_image_urls = [
                 f"https://static-cdn.jtvnw.net/jtv_user_pictures/{username}-profile_image-300x300.png",
@@ -260,15 +262,26 @@ class StreamManager(commands.Cog):
                 f"https://static-cdn.jtvnw.net/jtv_user_pictures/{username}-profile_image-70x70.png"
             ]
             
-            # For now, use the first URL format (most common)
-            profile_image_url = profile_image_urls[0]
+            # Try to find a valid profile image URL
+            valid_profile_image = None
+            async with aiohttp.ClientSession() as session:
+                for url in profile_image_urls:
+                    try:
+                        async with session.head(url) as response:
+                            if response.status == 200:
+                                valid_profile_image = url
+                                logger.info(f"Found valid Twitch profile image for {username}: {url}")
+                                break
+                    except Exception as e:
+                        logger.debug(f"Failed to validate Twitch profile URL {url}: {e}")
+                        continue
             
-            # Log for debugging
-            logger.info(f"Generated Twitch profile URL for {username}: {profile_image_url}")
+            if not valid_profile_image:
+                logger.warning(f"No valid Twitch profile image found for {username}")
             
             return {
                 "username": username,
-                "profile_image": profile_image_url,
+                "profile_image": valid_profile_image,
                 "display_name": username,
                 "description": f"Twitch streamer {username}"
             }

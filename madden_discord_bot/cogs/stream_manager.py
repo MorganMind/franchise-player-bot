@@ -84,23 +84,18 @@ class StreamManager(commands.Cog):
         self.stream_channel_data["guilds"][str(guild_id)] = channel_id
         self.save_stream_channel()
     
-    def get_user_points(self, user_id):
-        """Get user's current points from the points system"""
+    async def get_user_points(self, user_id):
+        """Get user's current points from the Supabase points system"""
         try:
-            points_file = "data/points.json"
-            if os.path.exists(points_file):
-                with open(points_file, 'r') as f:
-                    points_data = json.load(f)
-                    user_data = points_data.get("users", {}).get(str(user_id))
-                    if user_data and isinstance(user_data, dict):
-                        return user_data.get("total", 0)
-                    elif user_data:
-                        # Handle old format (just a number)
-                        return user_data
-                    return 0
-            return 0
+            # Import the points system cog to get points from Supabase
+            points_cog = self.bot.get_cog('PointsSystemSupabase')
+            if points_cog:
+                return await points_cog.get_user_points(user_id)
+            else:
+                logger.error("PointsSystemSupabase cog not found")
+                return 0
         except Exception as e:
-            logger.error(f"Error getting user points: {e}")
+            logger.error(f"Error getting user points from Supabase: {e}")
             return 0
     
     def check_stream_cooldown(self, user_id):
@@ -132,54 +127,22 @@ class StreamManager(commands.Cog):
             logger.error(f"Error checking stream cooldown: {e}")
             return True, 0  # Error, allow it
     
-    def add_user_points(self, user_id, points_to_add, point_type="stream"):
-        """Add points to user's account with type tracking"""
+    async def add_user_points(self, user_id, points_to_add, point_type="stream"):
+        """Add points to user's account using Supabase"""
         try:
-            points_file = "data/points.json"
-            if os.path.exists(points_file):
-                with open(points_file, 'r') as f:
-                    points_data = json.load(f)
+            # Import the points system cog to add points via Supabase
+            points_cog = self.bot.get_cog('PointsSystemSupabase')
+            if points_cog:
+                # Add points using the Supabase system
+                await points_cog.add_user_points(user_id, points_to_add)
+                # Get the new total
+                new_total = await points_cog.get_user_points(user_id)
+                return new_total
             else:
-                points_data = {"users": {}, "point_history": {}}
-            
-            # Initialize user data if not exists
-            if str(user_id) not in points_data["users"]:
-                points_data["users"][str(user_id)] = {"total": 0, "stream_points": 0, "other_points": 0}
-            
-            # Add points to total and specific category
-            current_total = points_data["users"][str(user_id)]["total"]
-            new_total = current_total + points_to_add
-            points_data["users"][str(user_id)]["total"] = new_total
-            
-            if point_type == "stream":
-                current_stream = points_data["users"][str(user_id)]["stream_points"]
-                points_data["users"][str(user_id)]["stream_points"] = current_stream + points_to_add
-            else:
-                current_other = points_data["users"][str(user_id)]["other_points"]
-                points_data["users"][str(user_id)]["other_points"] = current_other + points_to_add
-            
-            # Track point history
-            if "point_history" not in points_data:
-                points_data["point_history"] = {}
-            
-            if str(user_id) not in points_data["point_history"]:
-                points_data["point_history"][str(user_id)] = []
-            
-            # Add to history
-            history_entry = {
-                "timestamp": time.time(),
-                "points": points_to_add,
-                "type": point_type,
-                "total_after": new_total
-            }
-            points_data["point_history"][str(user_id)].append(history_entry)
-            
-            with open(points_file, 'w') as f:
-                json.dump(points_data, f, indent=2)
-            
-            return new_total
+                logger.error("PointsSystemSupabase cog not found")
+                return 0
         except Exception as e:
-            logger.error(f"Error adding user points: {e}")
+            logger.error(f"Error adding user points via Supabase: {e}")
             return 0
     
     def get_user_stream_link(self, user_id):
@@ -349,7 +312,7 @@ class StreamManager(commands.Cog):
             
             # Add points for streaming
             points_earned = 1
-            new_total = self.add_user_points(interaction.user.id, points_earned, "stream")
+            new_total = await self.add_user_points(interaction.user.id, points_earned, "stream")
             
             # Create stream announcement embed
             embed = discord.Embed(
@@ -888,7 +851,7 @@ class StreamManager(commands.Cog):
             
             # Add points for streaming
             points_earned = 1
-            new_total = self.add_user_points(member.id, points_earned, "stream")
+            new_total = await self.add_user_points(member.id, points_earned, "stream")
             
             # Store active stream info
             self.active_streams[member.id] = {
@@ -1013,7 +976,7 @@ class StreamManager(commands.Cog):
             
             # Add points for streaming
             points_earned = 1
-            new_total = self.add_user_points(interaction.user.id, points_earned, "stream")
+            new_total = await self.add_user_points(interaction.user.id, points_earned, "stream")
             
             # Get stream info
             stream_activity = interaction.user.activity
@@ -1060,8 +1023,24 @@ class StreamManager(commands.Cog):
                 inline=False
             )
             
-            # Add Discord icon as thumbnail
-            embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
+            # Try to get Twitch profile photo if user has registered stream link
+            stream_link = self.get_user_stream_link(interaction.user.id)
+            if stream_link:
+                username = self.extract_twitch_username(stream_link)
+                if username:
+                    profile_info = await self.get_twitch_profile_info(username)
+                    if profile_info['profile_image']:
+                        embed.set_thumbnail(url=profile_info['profile_image'])
+                        logger.info(f"Using Twitch profile photo for {username}: {profile_info['profile_image']}")
+                    else:
+                        embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
+                        logger.warning(f"No Twitch profile image available for {username}")
+                else:
+                    embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
+            else:
+                # No registered stream link, use Discord icon
+                embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
+            
             embed.set_footer(text=f"Total Points: {new_total:,}")
             
             # Post in designated stream channel if set

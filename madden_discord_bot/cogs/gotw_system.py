@@ -70,6 +70,94 @@ class DeclareWinnerButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name)
 
+class TeamSelect(discord.ui.Select):
+    def __init__(self, cog, team_number, guild):
+        self.cog = cog
+        self.team_number = team_number
+        self.guild = guild
+        
+        # Create options from teams
+        options = []
+        for team in cog.teams.values():
+            emoji = cog.get_team_emoji(guild, team['abbreviation'])
+            display_name = f"{emoji} {team['name']} ({team['abbreviation']})"
+            options.append(discord.SelectOption(
+                label=team['name'],
+                description=f"{team['conference']} {team['division']}",
+                value=team['abbreviation'],
+                emoji=emoji
+            ))
+        
+        super().__init__(
+            placeholder=f"Select Team {team_number}",
+            min_values=1,
+            max_values=1,
+            options=options[:25]  # Discord limit
+        )
+    
+    async def callback(self, interaction: discord.Interaction):
+        # Update the view's selected teams
+        view = self.view
+        if self.team_number == 1:
+            view.team1_selected = self.values[0]
+        else:
+            view.team2_selected = self.values[0]
+        
+        # Update the create button state
+        view.update_create_button()
+        
+        # Update the message
+        await interaction.response.edit_message(view=view)
+
+class CreateGOTWButton(discord.ui.Button):
+    def __init__(self, cog):
+        super().__init__(
+            style=discord.ButtonStyle.success,
+            label="Create GOTW",
+            custom_id="create_gotw",
+            emoji="⭐",
+            disabled=True
+        )
+        self.cog = cog
+    
+    async def callback(self, interaction: discord.Interaction):
+        view = self.view
+        if not view.team1_selected or not view.team2_selected:
+            await interaction.response.send_message("❌ Please select both teams first!", ephemeral=True)
+            return
+        
+        if view.team1_selected == view.team2_selected:
+            await interaction.response.send_message("❌ Cannot create GOTW with the same team!", ephemeral=True)
+            return
+        
+        # Create the GOTW
+        await self.cog.create_gotw(interaction, view.team1_selected, view.team2_selected)
+
+class GOTWSetupView(discord.ui.View):
+    def __init__(self, cog, guild):
+        super().__init__(timeout=300)  # 5 minute timeout
+        self.cog = cog
+        self.guild = guild
+        self.team1_selected = None
+        self.team2_selected = None
+        
+        # Add team selectors
+        self.add_item(TeamSelect(cog, 1, guild))
+        self.add_item(TeamSelect(cog, 2, guild))
+        
+        # Add create button
+        self.create_button = CreateGOTWButton(cog)
+        self.add_item(self.create_button)
+    
+    def update_create_button(self):
+        """Update the create button state based on selections"""
+        if self.team1_selected and self.team2_selected and self.team1_selected != self.team2_selected:
+            self.create_button.disabled = False
+            self.create_button.style = discord.ButtonStyle.success
+        else:
+            self.create_button.disabled = True
+            self.create_button.style = discord.ButtonStyle.secondary
+
 class GOTWView(discord.ui.View):
     def __init__(self, cog, team1, team2, is_locked=False, guild=None):
         super().__init__(timeout=None)  # No timeout
@@ -209,42 +297,15 @@ class GOTWSystem(commands.Cog):
             logger.error(f"Error getting team emoji for {team_abbreviation}: {e}")
             return '🏈'
 
-    async def team_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
-        """Autocomplete for team selection"""
-        try:
-            choices = []
-            for team in self.teams.values():
-                # Get custom emoji with fallback
-                emoji = self.get_team_emoji(interaction.guild, team['abbreviation'])
-                
-                # Create display name with emoji and abbreviation
-                display_name = f"{emoji} {team['name']} ({team['abbreviation']})"
-                # Use abbreviation as value for easy lookup
-                value = team['abbreviation']
-                
-                # Filter based on current input
-                if current.lower() in display_name.lower() or current.lower() in team['name'].lower() or current.lower() in team['abbreviation'].lower():
-                    choices.append(app_commands.Choice(name=display_name, value=value))
-            
-            # Sort by name and limit to 25 choices
-            choices.sort(key=lambda x: x.name)
-            return choices[:25]
-        except Exception as e:
-            logger.error(f"Error in team autocomplete: {e}")
-            return []
     
     @app_commands.command(name="gotw", description="Game of the Week commands")
     @app_commands.describe(
-        action="Action to perform: create, vote, list, clear",
-        team1="First team",
-        team2="Second team"
+        action="Action to perform: create, vote, list, clear"
     )
-    @app_commands.autocomplete(team1=team_autocomplete)
-    @app_commands.autocomplete(team2=team_autocomplete)
-    async def gotw(self, interaction: discord.Interaction, action: str, team1: str = None, team2: str = None):
+    async def gotw(self, interaction: discord.Interaction, action: str):
         """Main GOTW command"""
         if action.lower() == "create":
-            await self.create_gotw(interaction, team1, team2)
+            await self.setup_gotw_creation(interaction)
         elif action.lower() == "vote":
             await self.show_vote_card(interaction)
         elif action.lower() == "list":
@@ -253,6 +314,23 @@ class GOTWSystem(commands.Cog):
             await self.clear_gotw(interaction)
         else:
             await interaction.response.send_message("❌ Invalid action. Use: create, vote, list, or clear", ephemeral=True)
+    
+    async def setup_gotw_creation(self, interaction: discord.Interaction):
+        """Setup interactive GOTW creation with team selection"""
+        embed = discord.Embed(
+            title="⭐ Create Game of the Week",
+            description="Select two teams for the matchup",
+            color=0x00ff00
+        )
+        
+        embed.add_field(
+            name="Instructions",
+            value="1. Select Team 1 from the first dropdown\n2. Select Team 2 from the second dropdown\n3. Click 'Create GOTW' when both teams are selected",
+            inline=False
+        )
+        
+        view = GOTWSetupView(self, interaction.guild)
+        await interaction.response.send_message(embed=embed, view=view)
     
     async def create_gotw(self, interaction: discord.Interaction, team1_abbrev: str, team2_abbrev: str):
         """Create a new Game of the Week"""
@@ -311,7 +389,7 @@ class GOTWSystem(commands.Cog):
         
         # Create embed
         embed = discord.Embed(
-            title="🏈 GAME OF THE WEEK 🏈",
+            title="⭐ GAME OF THE WEEK ⭐",
             description="**Head to Head Matchup**",
             color=0x00ff00
         )

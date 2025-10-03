@@ -1286,7 +1286,7 @@ class StreamManager(commands.Cog):
             
             embed.add_field(
                 name="Stream Points",
-                value=f"**{current_stream_points}**" + (f"/8" if current_stream_points <= 8 else " (over limit)"),
+                value=f"**{min(current_stream_points, 8)}/8**",
                 inline=True
             )
             

@@ -546,8 +546,9 @@ class GOTWSystem(commands.Cog):
         embed.set_image(url=team2['helmet_url'])
         
         # Add voting information
-        team1_votes = len([v for v in self.votes.values() if v == team1['abbreviation']])
-        team2_votes = len([v for v in self.votes.values() if v == team2['abbreviation']])
+        poll_votes = self.votes.get(gotw_id, {})
+        team1_votes = len([v for v in poll_votes.values() if v == team1['abbreviation']])
+        team2_votes = len([v for v in poll_votes.values() if v == team2['abbreviation']])
         
         embed.add_field(
             name="📊 Current Votes",
@@ -558,14 +559,19 @@ class GOTWSystem(commands.Cog):
         embed.set_footer(text="Click the buttons below to vote!")
         
         # Create view with voting buttons
-        is_locked = self.current_gotw.get('is_locked', False)
-        view = GOTWView(self, team1, team2, is_locked=is_locked, guild=interaction.guild)
+        is_locked = self.active_gotws[gotw_id].get('is_locked', False)
+        view = GOTWView(self, team1, team2, gotw_id, is_locked=is_locked, guild=interaction.guild)
         
         # Get league role for mention
         league_role = discord.utils.get(interaction.guild.roles, name="League")
         league_mention = league_role.mention if league_role else "@League"
         
-        await interaction.response.send_message(content=league_mention, embed=embed, view=view)
+        message = await interaction.response.send_message(content=league_mention, embed=embed, view=view)
+        
+        # Store the message ID with the poll data
+        if hasattr(message, 'id'):
+            self.active_gotws[gotw_id]['message_id'] = message.id
+            self.save_gotw_data()
     
     async def show_vote_card(self, interaction: discord.Interaction):
         """Show the current GOTW voting card"""
@@ -731,34 +737,39 @@ class GOTWSystem(commands.Cog):
         
         return False
     
-    async def handle_vote(self, interaction: discord.Interaction, team_abbreviation: str):
+    async def handle_vote(self, interaction: discord.Interaction, team_abbreviation: str, gotw_id: str):
         """Handle a user's vote"""
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+        if gotw_id not in self.active_gotws:
+            await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
             return
         
+        gotw_data = self.active_gotws[gotw_id]
+        
         # Check if poll is locked
-        if self.current_gotw.get('is_locked', False):
+        if gotw_data.get('is_locked', False):
             await interaction.response.send_message("🔒 **Poll is locked!** No more votes can be cast.", ephemeral=True)
             return
         
         user_id = str(interaction.user.id)
         
-        # Check if user already voted
-        if user_id in self.votes:
-            old_vote = self.votes[user_id]
+        # Check if user already voted in this specific poll
+        if gotw_id not in self.votes:
+            self.votes[gotw_id] = {}
+            
+        if user_id in self.votes[gotw_id]:
+            old_vote = self.votes[gotw_id][user_id]
             if old_vote == team_abbreviation:
                 await interaction.response.send_message("❌ You already voted for this team!", ephemeral=True)
                 return
             else:
                 # Update existing vote
-                self.votes[user_id] = team_abbreviation
-                logger.info(f"Updated vote for user {user_id}: {old_vote} -> {team_abbreviation}")
+                self.votes[gotw_id][user_id] = team_abbreviation
+                logger.info(f"Updated vote for user {user_id} in poll {gotw_id}: {old_vote} -> {team_abbreviation}")
                 await interaction.response.send_message(f"✅ Vote changed to {team_abbreviation}!", ephemeral=True)
         else:
             # New vote
-            self.votes[user_id] = team_abbreviation
-            logger.info(f"New vote recorded for user {user_id}: {team_abbreviation}")
+            self.votes[gotw_id][user_id] = team_abbreviation
+            logger.info(f"New vote recorded for user {user_id} in poll {gotw_id}: {team_abbreviation}")
             await interaction.response.send_message(f"✅ Vote recorded for {team_abbreviation}!", ephemeral=True)
         
         logger.info(f"Votes before save: {self.votes}")
@@ -767,15 +778,21 @@ class GOTWSystem(commands.Cog):
         
         # Update the original message with new vote counts
         try:
-            # Find the original GOTW message in the channel
-            async for message in interaction.channel.history(limit=50):
-                if (message.embeds and 
-                    len(message.embeds) > 0 and 
-                    message.embeds[0].title and 
-                    "GAME OF THE WEEK" in message.embeds[0].title and
-                    message.author == self.bot.user):
-                    await self.update_vote_message(message)
-                    break
+            # Find the specific GOTW message using stored message ID
+            message_id = gotw_data.get('message_id')
+            if message_id:
+                message = await interaction.channel.fetch_message(message_id)
+                await self.update_vote_message(message, gotw_id)
+            else:
+                # Fallback: find by searching (less reliable)
+                async for message in interaction.channel.history(limit=50):
+                    if (message.embeds and 
+                        len(message.embeds) > 0 and 
+                        message.embeds[0].title and 
+                        "GAME OF THE WEEK" in message.embeds[0].title and
+                        message.author == self.bot.user):
+                        await self.update_vote_message(message, gotw_id)
+                        break
         except Exception as e:
             logger.error(f"Failed to update vote message: {e}")
             # Don't fail the vote if message update fails
@@ -886,21 +903,24 @@ class GOTWSystem(commands.Cog):
         
         await interaction.response.send_message(content=league_mention, embed=embed)
 
-    async def update_vote_message(self, message, is_locked=None):
+    async def update_vote_message(self, message, gotw_id, is_locked=None):
         """Update the vote message with current counts and lock status"""
         try:
-            if not self.current_gotw:
-                logger.warning("No current GOTW found when trying to update vote message")
+            if gotw_id not in self.active_gotws:
+                logger.warning(f"No GOTW found with ID {gotw_id} when trying to update vote message")
                 return
+            
+            gotw_data = self.active_gotws[gotw_id]
             
             # Update the embed
             embed = message.embeds[0]
             
-            team1 = self.current_gotw['team1']
-            team2 = self.current_gotw['team2']
+            team1 = gotw_data['team1']
+            team2 = gotw_data['team2']
             
-            team1_votes = len([v for v in self.votes.values() if v == team1['abbreviation']])
-            team2_votes = len([v for v in self.votes.values() if v == team2['abbreviation']])
+            poll_votes = self.votes.get(gotw_id, {})
+            team1_votes = len([v for v in poll_votes.values() if v == team1['abbreviation']])
+            team2_votes = len([v for v in poll_votes.values() if v == team2['abbreviation']])
             
             logger.info(f"Updating vote message: {team1['name']}={team1_votes}, {team2['name']}={team2_votes}")
             logger.info(f"Total votes in self.votes: {len(self.votes)}")
@@ -919,7 +939,7 @@ class GOTWSystem(commands.Cog):
             
             # Update footer based on lock status
             if is_locked is None:
-                is_locked = self.current_gotw.get('is_locked', False)
+                is_locked = gotw_data.get('is_locked', False)
             
             if is_locked:
                 embed.set_footer(text="🔒 Poll Locked - No more votes can be cast")
@@ -927,7 +947,7 @@ class GOTWSystem(commands.Cog):
                 embed.set_footer(text="Click the buttons below to vote!")
             
             # Create new view with updated lock status
-            view = GOTWView(self, team1, team2, is_locked=is_locked, guild=message.guild)
+            view = GOTWView(self, team1, team2, gotw_id, is_locked=is_locked, guild=message.guild)
             
             # Get league role for mention
             league_role = discord.utils.get(message.guild.roles, name="League")

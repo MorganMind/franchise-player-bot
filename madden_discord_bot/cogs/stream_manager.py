@@ -434,8 +434,8 @@ class StreamManager(commands.Cog):
             # Set footer with updated values
             embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
-            # Post in the current channel
-            await interaction.response.send_message(embed=embed)
+            # Post in the current channel with league mention
+            await interaction.response.send_message(content="@league", embed=embed)
             
             # Cross-post to hardcoded stream channel if different from current channel
             # Hardcoded channel ID: 1039342527330910265
@@ -473,7 +473,7 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        await designated_channel.send(embed=cross_post_embed)
+                        await designated_channel.send(content="@league", embed=cross_post_embed)
                         
                 except Exception as e:
                     logger.error(f"Error cross-posting to designated channel: {e}")
@@ -991,7 +991,7 @@ class StreamManager(commands.Cog):
                 try:
                     designated_channel = member.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
-                        await designated_channel.send(embed=embed)
+                        await designated_channel.send(content="@league", embed=embed)
                         logger.info(f"Auto-announced stream for {member.display_name} in {designated_channel.name}")
                 except Exception as e:
                     logger.error(f"Error posting auto-announcement: {e}")
@@ -1162,12 +1162,12 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        await designated_channel.send(embed=cross_post_embed)
+                        await designated_channel.send(content="@league", embed=cross_post_embed)
                         
                 except Exception as e:
                     logger.error(f"Error cross-posting Discord stream: {e}")
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(content="@league", embed=embed)
             
         except Exception as e:
             logger.error(f"Error in stream_discord: {e}")
@@ -1218,6 +1218,55 @@ class StreamManager(commands.Cog):
             logger.error(f"Error in active_streams: {e}")
             await interaction.response.send_message(
                 "❌ An error occurred while fetching active streams.",
+                ephemeral=True
+            )
+
+    @app_commands.command(name="addstreampoint", description="Add a stream point to a user (Commish only)")
+    @app_commands.describe(user="User to add stream point to")
+    async def add_stream_point(self, interaction: discord.Interaction, user: discord.Member):
+        """Add a stream point to a specific user (Commish only)"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message(
+                "❌ You need administrator permissions or the 'commish' role to use this command.", 
+                ephemeral=True
+            )
+            return
+        
+        try:
+            # Add 1 stream point to the user
+            points_earned = 1
+            new_total = await self.add_user_points(user.id, points_earned, "stream")
+            
+            # Get current stream points for display
+            current_stream_points = await self.get_user_stream_points(user.id)
+            
+            embed = discord.Embed(
+                title="🎯 Stream Point Added",
+                description=f"Successfully added **{points_earned}** stream point to **{user.display_name}**",
+                color=0x00ff00
+            )
+            
+            embed.add_field(
+                name="Stream Points",
+                value=f"**{current_stream_points}/8**",
+                inline=True
+            )
+            
+            embed.add_field(
+                name="Total Points",
+                value=f"**{new_total:,}**",
+                inline=True
+            )
+            
+            embed.set_thumbnail(url=user.display_avatar.url)
+            embed.set_footer(text=f"Added by {interaction.user.display_name}")
+            
+            await interaction.response.send_message(embed=embed)
+            
+        except Exception as e:
+            logger.error(f"Error in add_stream_point: {e}")
+            await interaction.response.send_message(
+                "❌ An error occurred while adding stream point.", 
                 ephemeral=True
             )
 

@@ -419,21 +419,55 @@ class TeamClaimSystem(commands.Cog):
             afc_teams.sort()
             nfc_teams.sort()
             
-            # Add AFC teams
+            # Add AFC teams (split into multiple fields if needed)
             afc_text = "\n".join(afc_teams)
-            embed.add_field(
-                name="🏈 AFC Teams (16)",
-                value=afc_text[:1024] if len(afc_text) > 1024 else afc_text,
-                inline=False
-            )
+            if len(afc_text) <= 1024:
+                embed.add_field(
+                    name="🏈 AFC Teams (16)",
+                    value=afc_text,
+                    inline=False
+                )
+            else:
+                # Split AFC teams into two fields
+                mid_point = len(afc_teams) // 2
+                afc_part1 = "\n".join(afc_teams[:mid_point])
+                afc_part2 = "\n".join(afc_teams[mid_point:])
+                
+                embed.add_field(
+                    name="🏈 AFC Teams (Part 1)",
+                    value=afc_part1,
+                    inline=False
+                )
+                embed.add_field(
+                    name="🏈 AFC Teams (Part 2)",
+                    value=afc_part2,
+                    inline=False
+                )
             
-            # Add NFC teams
+            # Add NFC teams (split into multiple fields if needed)
             nfc_text = "\n".join(nfc_teams)
-            embed.add_field(
-                name="🏈 NFC Teams (16)",
-                value=nfc_text[:1024] if len(nfc_text) > 1024 else nfc_text,
-                inline=False
-            )
+            if len(nfc_text) <= 1024:
+                embed.add_field(
+                    name="🏈 NFC Teams (16)",
+                    value=nfc_text,
+                    inline=False
+                )
+            else:
+                # Split NFC teams into two fields
+                mid_point = len(nfc_teams) // 2
+                nfc_part1 = "\n".join(nfc_teams[:mid_point])
+                nfc_part2 = "\n".join(nfc_teams[mid_point:])
+                
+                embed.add_field(
+                    name="🏈 NFC Teams (Part 1)",
+                    value=nfc_part1,
+                    inline=False
+                )
+                embed.add_field(
+                    name="🏈 NFC Teams (Part 2)",
+                    value=nfc_part2,
+                    inline=False
+                )
             
             # Add summary
             claimed_count = len(claims_dict)

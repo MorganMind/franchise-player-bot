@@ -408,9 +408,10 @@ class GOTWSystem(commands.Cog):
         teams = []
         for team in self.teams.values():
             if current.lower() in team['name'].lower() or current.lower() in team['abbreviation'].lower():
-                emoji = self.get_team_emoji(interaction.guild, team['abbreviation'])
+                # Use default emoji instead of custom emoji for autocomplete
+                default_emoji = team.get('emoji', '🏈')
                 teams.append(app_commands.Choice(
-                    name=f"{emoji} {team['name']} ({team['abbreviation']})",
+                    name=f"{default_emoji} {team['name']} ({team['abbreviation']})",
                     value=team['abbreviation']
                 ))
         

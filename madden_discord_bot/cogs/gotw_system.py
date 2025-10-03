@@ -464,6 +464,10 @@ class GOTWSystem(commands.Cog):
         team1 = self.current_gotw['team1']
         team2 = self.current_gotw['team2']
         
+        # Get custom emojis with fallbacks
+        team1_emoji = self.get_team_emoji(interaction.guild, team1['abbreviation'])
+        team2_emoji = self.get_team_emoji(interaction.guild, team2['abbreviation'])
+        
         team1_votes = [user_id for user_id, vote in self.votes.items() if vote == team1['abbreviation']]
         team2_votes = [user_id for user_id, vote in self.votes.items() if vote == team2['abbreviation']]
         
@@ -474,13 +478,13 @@ class GOTWSystem(commands.Cog):
         )
         
         embed.add_field(
-            name=f"{team1['emoji']} {team1['name']} ({len(team1_votes)} votes)",
+            name=f"{team1_emoji} {team1['name']} ({len(team1_votes)} votes)",
             value="\n".join([f"<@{user_id}>" for user_id in team1_votes]) if team1_votes else "No votes yet",
             inline=True
         )
         
         embed.add_field(
-            name=f"{team2['emoji']} {team2['name']} ({len(team2_votes)} votes)",
+            name=f"{team2_emoji} {team2['name']} ({len(team2_votes)} votes)",
             value="\n".join([f"<@{user_id}>" for user_id in team2_votes]) if team2_votes else "No votes yet",
             inline=True
         )
@@ -492,7 +496,7 @@ class GOTWSystem(commands.Cog):
             
             embed.add_field(
                 name="📈 Percentages",
-                value=f"{team1['name']}: {team1_percentage:.1f}%\n{team2['name']}: {team2_percentage:.1f}%",
+                value=f"{team1_emoji} {team1['name']}: {team1_percentage:.1f}%\n{team2_emoji} {team2['name']}: {team2_percentage:.1f}%",
                 inline=False
             )
         
@@ -510,8 +514,8 @@ class GOTWSystem(commands.Cog):
         else:
             # Add winner declaration buttons for commish
             view = discord.ui.View(timeout=None)
-            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1['emoji'], guild=interaction.guild))
-            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2['emoji'], guild=interaction.guild))
+            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1_emoji, guild=interaction.guild))
+            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2_emoji, guild=interaction.guild))
             
             await interaction.response.send_message(embed=embed, view=view)
             return

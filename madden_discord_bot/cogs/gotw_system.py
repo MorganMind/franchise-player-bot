@@ -184,12 +184,35 @@ class GOTWSystem(commands.Cog):
         
         return None
     
+    async def team_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+        """Autocomplete for team selection"""
+        try:
+            choices = []
+            for team in self.teams.values():
+                # Create display name with emoji and abbreviation
+                display_name = f"{team['emoji']} {team['name']} ({team['abbreviation']})"
+                # Use abbreviation as value for easy lookup
+                value = team['abbreviation']
+                
+                # Filter based on current input
+                if current.lower() in display_name.lower() or current.lower() in team['name'].lower() or current.lower() in team['abbreviation'].lower():
+                    choices.append(app_commands.Choice(name=display_name, value=value))
+            
+            # Sort by name and limit to 25 choices
+            choices.sort(key=lambda x: x.name)
+            return choices[:25]
+        except Exception as e:
+            logger.error(f"Error in team autocomplete: {e}")
+            return []
+    
     @app_commands.command(name="gotw", description="Game of the Week commands")
     @app_commands.describe(
         action="Action to perform: create, vote, list, clear",
-        team1="First team (name or abbreviation)",
-        team2="Second team (name or abbreviation)"
+        team1="First team",
+        team2="Second team"
     )
+    @app_commands.autocomplete(team1=team_autocomplete)
+    @app_commands.autocomplete(team2=team_autocomplete)
     async def gotw(self, interaction: discord.Interaction, action: str, team1: str = None, team2: str = None):
         """Main GOTW command"""
         if action.lower() == "create":
@@ -203,21 +226,22 @@ class GOTWSystem(commands.Cog):
         else:
             await interaction.response.send_message("❌ Invalid action. Use: create, vote, list, or clear", ephemeral=True)
     
-    async def create_gotw(self, interaction: discord.Interaction, team1_name: str, team2_name: str):
+    async def create_gotw(self, interaction: discord.Interaction, team1_abbrev: str, team2_abbrev: str):
         """Create a new Game of the Week"""
-        if not team1_name or not team2_name:
-            await interaction.response.send_message("❌ Please provide both team names", ephemeral=True)
+        if not team1_abbrev or not team2_abbrev:
+            await interaction.response.send_message("❌ Please select both teams", ephemeral=True)
             return
         
-        team1 = self.get_team_by_name(team1_name)
-        team2 = self.get_team_by_name(team2_name)
+        # Get teams by abbreviation (from autocomplete)
+        team1 = self.teams.get(team1_abbrev.upper())
+        team2 = self.teams.get(team2_abbrev.upper())
         
         if not team1:
-            await interaction.response.send_message(f"❌ Team '{team1_name}' not found", ephemeral=True)
+            await interaction.response.send_message(f"❌ Team '{team1_abbrev}' not found", ephemeral=True)
             return
         
         if not team2:
-            await interaction.response.send_message(f"❌ Team '{team2_name}' not found", ephemeral=True)
+            await interaction.response.send_message(f"❌ Team '{team2_abbrev}' not found", ephemeral=True)
             return
         
         if team1['abbreviation'] == team2['abbreviation']:
@@ -437,7 +461,7 @@ class GOTWSystem(commands.Cog):
             
             embed.add_field(
                 name="🎯 Quick Start",
-                value="Try: `/gotw create DAL PHI` to create a Cowboys vs Eagles matchup!",
+                value="Try: `/gotw create` and select teams from the dropdown menus!",
                 inline=False
             )
             

@@ -41,21 +41,22 @@ class LockButton(discord.ui.Button):
         await self.cog.handle_lock_poll(interaction)
 
 class ResultsButton(discord.ui.Button):
-    def __init__(self, cog):
+    def __init__(self, cog, gotw_id):
         super().__init__(
             style=discord.ButtonStyle.secondary,
             label="Show Results",
-            custom_id="show_results",
+            custom_id=f"show_results_{gotw_id}",
             emoji="📊"
         )
         self.cog = cog
+        self.gotw_id = gotw_id
     
     async def callback(self, interaction: discord.Interaction):
         # Check if user is administrator
         if not interaction.user.guild_permissions.administrator:
             await interaction.response.send_message("❌ Only administrators can view results.", ephemeral=True)
             return
-        await self.cog.handle_show_results(interaction)
+        await self.cog.handle_show_results(interaction, self.gotw_id)
 
 class DeclareWinnerButton(discord.ui.Button):
     def __init__(self, cog, team_abbreviation, team_name, team_emoji, guild=None):
@@ -267,7 +268,7 @@ class GOTWView(discord.ui.View):
         self.add_item(VoteButton(team2, cog, gotw_id, disabled=is_locked, guild=guild))
         
         # Add results button (always available)
-        self.add_item(ResultsButton(cog))
+        self.add_item(ResultsButton(cog, gotw_id))
         
         # Add lock button (only if not locked and user has permission)
         if not is_locked:
@@ -577,21 +578,23 @@ class GOTWSystem(commands.Cog):
         """Show the current GOTW voting card"""
         await self.show_gotw_card(interaction)
     
-    async def show_results(self, interaction: discord.Interaction):
-        """Show detailed voting results"""
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+    async def handle_show_results(self, interaction: discord.Interaction, gotw_id: str):
+        """Handle showing results from the button"""
+        if gotw_id not in self.active_gotws:
+            await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
             return
         
-        team1 = self.current_gotw['team1']
-        team2 = self.current_gotw['team2']
+        gotw_data = self.active_gotws[gotw_id]
+        team1 = gotw_data['team1']
+        team2 = gotw_data['team2']
         
         # Get custom emojis with fallbacks
         team1_emoji = self.get_team_emoji(interaction.guild, team1['abbreviation'])
         team2_emoji = self.get_team_emoji(interaction.guild, team2['abbreviation'])
         
-        team1_votes = [user_id for user_id, vote in self.votes.items() if vote == team1['abbreviation']]
-        team2_votes = [user_id for user_id, vote in self.votes.items() if vote == team2['abbreviation']]
+        poll_votes = self.votes.get(gotw_id, {})
+        team1_votes = [user_id for user_id, vote in poll_votes.items() if vote == team1['abbreviation']]
+        team2_votes = [user_id for user_id, vote in poll_votes.items() if vote == team2['abbreviation']]
         
         embed = discord.Embed(
             title="📊 GOTW Voting Results",

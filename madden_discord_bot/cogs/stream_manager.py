@@ -448,7 +448,9 @@ class StreamManager(commands.Cog):
             embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
             # Post in the current channel with league mention
-            await interaction.response.send_message(content="@league", embed=embed)
+            league_role = discord.utils.get(interaction.guild.roles, name="league")
+            league_mention = league_role.mention if league_role else "@league"
+            await interaction.response.send_message(content=league_mention, embed=embed)
             
             # Cross-post to hardcoded stream channel if different from current channel
             # Hardcoded channel ID: 1039342527330910265
@@ -486,7 +488,9 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        await designated_channel.send(content="@league", embed=cross_post_embed)
+                        league_role = discord.utils.get(interaction.guild.roles, name="league")
+                        league_mention = league_role.mention if league_role else "@league"
+                        await designated_channel.send(content=league_mention, embed=cross_post_embed)
                         
                 except Exception as e:
                     logger.error(f"Error cross-posting to designated channel: {e}")
@@ -1004,7 +1008,9 @@ class StreamManager(commands.Cog):
                 try:
                     designated_channel = member.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
-                        await designated_channel.send(content="@league", embed=embed)
+                        league_role = discord.utils.get(member.guild.roles, name="league")
+                        league_mention = league_role.mention if league_role else "@league"
+                        await designated_channel.send(content=league_mention, embed=embed)
                         logger.info(f"Auto-announced stream for {member.display_name} in {designated_channel.name}")
                 except Exception as e:
                     logger.error(f"Error posting auto-announcement: {e}")
@@ -1175,12 +1181,16 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        await designated_channel.send(content="@league", embed=cross_post_embed)
+                        league_role = discord.utils.get(interaction.guild.roles, name="league")
+                        league_mention = league_role.mention if league_role else "@league"
+                        await designated_channel.send(content=league_mention, embed=cross_post_embed)
                         
                 except Exception as e:
                     logger.error(f"Error cross-posting Discord stream: {e}")
             
-            await interaction.response.send_message(content="@league", embed=embed)
+            league_role = discord.utils.get(interaction.guild.roles, name="league")
+            league_mention = league_role.mention if league_role else "@league"
+            await interaction.response.send_message(content=league_mention, embed=embed)
             
         except Exception as e:
             logger.error(f"Error in stream_discord: {e}")

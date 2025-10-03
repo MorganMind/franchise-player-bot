@@ -4,6 +4,7 @@ from discord import app_commands
 import json
 import os
 import logging
+import asyncio
 from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
@@ -286,81 +287,6 @@ class GOTWSystem(commands.Cog):
         self.load_teams()
         logger.info("✅ GOTWSystem cog initialized")
     
-    @commands.Cog.listener()
-    async def on_interaction(self, interaction: discord.Interaction):
-        """Handle button interactions for backward compatibility"""
-        if not interaction.type == discord.InteractionType.component:
-            return
-        
-        if not interaction.data or 'custom_id' not in interaction.data:
-            return
-        
-        custom_id = interaction.data['custom_id']
-        
-        # Handle old format vote buttons (without gotw_id)
-        if custom_id.startswith('vote_'):
-            # Old format: vote_BUF
-            # New format: vote_gotw_id_BUF
-            parts = custom_id.split('_')
-            if len(parts) == 2:  # Old format
-                team_abbrev = parts[1]
-                logger.info(f"Handling old format vote button for team: {team_abbrev}")
-                
-                # Find the correct GOTW by looking at the message that contains this button
-                # We need to find which GOTW message this button belongs to
-                try:
-                    # Get the message that contains this button
-                    message = interaction.message
-                    if message and message.id:
-                        # Look for a GOTW with this message_id
-                        for gotw_id, gotw_data in self.active_gotws.items():
-                            if gotw_data.get('message_id') == message.id:
-                                # Check if this team is in this specific GOTW
-                                if (gotw_data.get('team1', {}).get('abbreviation') == team_abbrev or 
-                                    gotw_data.get('team2', {}).get('abbreviation') == team_abbrev):
-                                    logger.info(f"Found matching GOTW {gotw_id} for old vote button by message_id")
-                                    await self.handle_vote(interaction, team_abbrev, gotw_id)
-                                    return
-                    
-                    # Fallback: if we can't find by message_id, try to find the oldest GOTW with this team
-                    # This helps when message_id isn't stored properly
-                    oldest_gotw = None
-                    oldest_timestamp = float('inf')
-                    for gotw_id, gotw_data in self.active_gotws.items():
-                        if (gotw_data.get('team1', {}).get('abbreviation') == team_abbrev or 
-                            gotw_data.get('team2', {}).get('abbreviation') == team_abbrev):
-                            # Try to extract timestamp from gotw_id
-                            try:
-                                timestamp = int(gotw_id.split('_')[-1])
-                                if timestamp < oldest_timestamp:
-                                    oldest_timestamp = timestamp
-                                    oldest_gotw = gotw_id
-                            except:
-                                # If we can't parse timestamp, use this as fallback
-                                if oldest_gotw is None:
-                                    oldest_gotw = gotw_id
-                    
-                    if oldest_gotw:
-                        logger.info(f"Found oldest GOTW {oldest_gotw} for old vote button")
-                        await self.handle_vote(interaction, team_abbrev, oldest_gotw)
-                        return
-                        
-                except Exception as e:
-                    logger.error(f"Error finding GOTW for old vote button: {e}")
-                
-                # If no active GOTW found, try to find in current_gotw (fallback)
-                if hasattr(self, 'current_gotw') and self.current_gotw:
-                    if (self.current_gotw.get('team1', {}).get('abbreviation') == team_abbrev or 
-                        self.current_gotw.get('team2', {}).get('abbreviation') == team_abbrev):
-                        logger.info("Using current_gotw fallback for old vote button")
-                        # Create a temporary gotw_id for the old format
-                        temp_gotw_id = f"legacy_{interaction.user.id}_{int(interaction.created_at.timestamp())}"
-                        await self.handle_vote(interaction, team_abbrev, temp_gotw_id)
-                        return
-                
-                # No matching GOTW found
-                await interaction.response.send_message("❌ This poll is no longer active.", ephemeral=True)
-                return
     
     def load_teams(self):
         """Load NFL teams data"""
@@ -664,12 +590,22 @@ class GOTWSystem(commands.Cog):
         league_role = discord.utils.get(interaction.guild.roles, name="League")
         league_mention = league_role.mention if league_role else "@League"
         
-        message = await interaction.response.send_message(content=league_mention, embed=embed, view=view)
+        await interaction.response.send_message(content=league_mention, embed=embed, view=view)
         
-        # Store the message ID with the poll data
-        if hasattr(message, 'id'):
-            self.active_gotws[gotw_id]['message_id'] = message.id
-            self.save_gotw_data()
+        # Get the message ID from the interaction response
+        # For response messages, we need to fetch the message after sending
+        try:
+            # Wait a moment for the message to be sent
+            await asyncio.sleep(0.1)
+            # Get the message from the channel
+            async for message in interaction.channel.history(limit=1):
+                if message.author == self.bot.user and message.embeds and "GAME OF THE WEEK" in message.embeds[0].title:
+                    self.active_gotws[gotw_id]['message_id'] = message.id
+                    self.save_gotw_data()
+                    logger.info(f"Stored message_id {message.id} for GOTW {gotw_id}")
+                    break
+        except Exception as e:
+            logger.error(f"Failed to store message_id for GOTW {gotw_id}: {e}")
     
     async def show_vote_card(self, interaction: discord.Interaction):
         """Show the current GOTW voting card"""

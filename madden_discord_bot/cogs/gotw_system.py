@@ -148,6 +148,27 @@ class CreateGOTWButton(discord.ui.Button):
         
         # Create the GOTW
         await self.cog.create_gotw(interaction, view.team1_selected, view.team2_selected)
+        
+        # Dismiss the setup message after successful creation
+        try:
+            await interaction.delete_original_response()
+        except:
+            pass  # Ignore if message is already deleted
+
+class DismissButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(
+            style=discord.ButtonStyle.secondary,
+            label="Dismiss",
+            custom_id="dismiss_setup",
+            emoji="❌"
+        )
+    
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            await interaction.delete_original_response()
+        except:
+            await interaction.response.send_message("Setup dismissed.", ephemeral=True)
 
 class GOTWSetupView(discord.ui.View):
     def __init__(self, cog, guild):
@@ -168,6 +189,9 @@ class GOTWSetupView(discord.ui.View):
         # Add create button
         self.create_button = CreateGOTWButton(cog)
         self.add_item(self.create_button)
+        
+        # Add dismiss button
+        self.add_item(DismissButton())
     
     def update_create_button(self):
         """Update the create button state based on selections"""
@@ -177,6 +201,22 @@ class GOTWSetupView(discord.ui.View):
         else:
             self.create_button.disabled = True
             self.create_button.style = discord.ButtonStyle.secondary
+    
+    async def on_timeout(self):
+        """Handle timeout by disabling all buttons"""
+        for item in self.children:
+            item.disabled = True
+        
+        # Try to edit the message to show it's expired
+        try:
+            embed = discord.Embed(
+                title="⏰ GOTW Setup Expired",
+                description="This setup session has timed out. Use `/gotw` to start a new one.",
+                color=0xff6b6b
+            )
+            await self.message.edit(embed=embed, view=self)
+        except:
+            pass  # Ignore if message is already deleted
 
 class GOTWView(discord.ui.View):
     def __init__(self, cog, team1, team2, is_locked=False, guild=None):
@@ -338,7 +378,7 @@ class GOTWSystem(commands.Cog):
         )
         
         view = GOTWSetupView(self, interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
     
     async def create_gotw(self, interaction: discord.Interaction, team1_abbrev: str, team2_abbrev: str):
         """Create a new Game of the Week"""

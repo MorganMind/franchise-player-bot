@@ -9,12 +9,15 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 class VoteButton(discord.ui.Button):
-    def __init__(self, team, cog, disabled=False):
+    def __init__(self, team, cog, disabled=False, guild=None):
+        # Get custom emoji with fallback
+        emoji = cog.get_team_emoji(guild, team['abbreviation']) if guild else team.get('emoji', '🏈')
+        
         super().__init__(
             style=discord.ButtonStyle.primary,
             label=f"Vote {team['name']}",
             custom_id=f"vote_{team['abbreviation']}",
-            emoji=team.get('emoji', '🏈'),
+            emoji=emoji,
             disabled=disabled
         )
         self.team = team
@@ -50,12 +53,15 @@ class ResultsButton(discord.ui.Button):
         await self.cog.handle_show_results(interaction)
 
 class DeclareWinnerButton(discord.ui.Button):
-    def __init__(self, cog, team_abbreviation, team_name, team_emoji):
+    def __init__(self, cog, team_abbreviation, team_name, team_emoji, guild=None):
+        # Get custom emoji with fallback
+        emoji = cog.get_team_emoji(guild, team_abbreviation) if guild else team_emoji
+        
         super().__init__(
             style=discord.ButtonStyle.success,
             label=f"Winner: {team_name}",
             custom_id=f"winner_{team_abbreviation}",
-            emoji=team_emoji
+            emoji=emoji
         )
         self.cog = cog
         self.team_abbreviation = team_abbreviation
@@ -65,16 +71,17 @@ class DeclareWinnerButton(discord.ui.Button):
         await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name)
 
 class GOTWView(discord.ui.View):
-    def __init__(self, cog, team1, team2, is_locked=False):
+    def __init__(self, cog, team1, team2, is_locked=False, guild=None):
         super().__init__(timeout=None)  # No timeout
         self.cog = cog
         self.team1 = team1
         self.team2 = team2
         self.is_locked = is_locked
+        self.guild = guild
         
         # Create buttons for voting
-        self.add_item(VoteButton(team1, cog, disabled=is_locked))
-        self.add_item(VoteButton(team2, cog, disabled=is_locked))
+        self.add_item(VoteButton(team1, cog, disabled=is_locked, guild=guild))
+        self.add_item(VoteButton(team2, cog, disabled=is_locked, guild=guild))
         
         # Add results button (always available)
         self.add_item(ResultsButton(cog))
@@ -184,13 +191,34 @@ class GOTWSystem(commands.Cog):
         
         return None
     
+    def get_team_emoji(self, guild, team_abbreviation):
+        """Get custom emoji for team with fallback to Unicode emoji"""
+        try:
+            # Try to find custom emoji by team abbreviation
+            custom_emoji = discord.utils.get(guild.emojis, name=team_abbreviation.lower())
+            if custom_emoji:
+                return str(custom_emoji)
+            
+            # Fallback to Unicode emoji from team data
+            team = self.teams.get(team_abbreviation.upper())
+            if team:
+                return team.get('emoji', '🏈')
+            
+            return '🏈'  # Default fallback
+        except Exception as e:
+            logger.error(f"Error getting team emoji for {team_abbreviation}: {e}")
+            return '🏈'
+
     async def team_autocomplete(self, interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
         """Autocomplete for team selection"""
         try:
             choices = []
             for team in self.teams.values():
+                # Get custom emoji with fallback
+                emoji = self.get_team_emoji(interaction.guild, team['abbreviation'])
+                
                 # Create display name with emoji and abbreviation
-                display_name = f"{team['emoji']} {team['name']} ({team['abbreviation']})"
+                display_name = f"{emoji} {team['name']} ({team['abbreviation']})"
                 # Use abbreviation as value for easy lookup
                 value = team['abbreviation']
                 
@@ -288,9 +316,13 @@ class GOTWSystem(commands.Cog):
             color=0x00ff00
         )
         
+        # Get custom emojis with fallbacks
+        team1_emoji = self.get_team_emoji(interaction.guild, team1['abbreviation'])
+        team2_emoji = self.get_team_emoji(interaction.guild, team2['abbreviation'])
+        
         # Add team information
         embed.add_field(
-            name=f"{team1['emoji']} {team1['name']} ({team1['abbreviation']})",
+            name=f"{team1_emoji} {team1['name']} ({team1['abbreviation']})",
             value=f"Conference: {team1['conference']}\nDivision: {team1['division']}",
             inline=True
         )
@@ -302,7 +334,7 @@ class GOTWSystem(commands.Cog):
         )
         
         embed.add_field(
-            name=f"{team2['emoji']} {team2['name']} ({team2['abbreviation']})",
+            name=f"{team2_emoji} {team2['name']} ({team2['abbreviation']})",
             value=f"Conference: {team2['conference']}\nDivision: {team2['division']}",
             inline=True
         )
@@ -325,7 +357,7 @@ class GOTWSystem(commands.Cog):
         
         # Create view with voting buttons
         is_locked = self.current_gotw.get('is_locked', False)
-        view = GOTWView(self, team1, team2, is_locked=is_locked)
+        view = GOTWView(self, team1, team2, is_locked=is_locked, guild=interaction.guild)
         
         # Get league role for mention
         league_role = discord.utils.get(interaction.guild.roles, name="League")
@@ -392,8 +424,8 @@ class GOTWSystem(commands.Cog):
         else:
             # Add winner declaration buttons for commish
             view = discord.ui.View(timeout=None)
-            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1['emoji']))
-            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2['emoji']))
+            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1['emoji'], guild=interaction.guild))
+            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2['emoji'], guild=interaction.guild))
             
             await interaction.response.send_message(embed=embed, view=view)
             return
@@ -677,7 +709,7 @@ class GOTWSystem(commands.Cog):
                 embed.set_footer(text="Click the buttons below to vote!")
             
             # Create new view with updated lock status
-            view = GOTWView(self, team1, team2, is_locked=is_locked)
+            view = GOTWView(self, team1, team2, is_locked=is_locked, guild=message.guild)
             
             # Get league role for mention
             league_role = discord.utils.get(message.guild.roles, name="League")

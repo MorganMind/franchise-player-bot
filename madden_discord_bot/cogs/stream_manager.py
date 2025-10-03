@@ -98,34 +98,36 @@ class StreamManager(commands.Cog):
             logger.error(f"Error getting user points from Supabase: {e}")
             return 0
     
-    def check_stream_cooldown(self, user_id):
+    async def check_stream_cooldown(self, user_id):
         """Check if user is on cooldown for stream points"""
         try:
-            points_file = "data/points.json"
-            if os.path.exists(points_file):
-                with open(points_file, 'r') as f:
-                    points_data = json.load(f)
-                    
-                    # Check point history for recent stream points
-                    history = points_data.get("point_history", {}).get(str(user_id), [])
-                    current_time = time.time()
-                    
-                    # Look for the most recent stream point
-                    for entry in reversed(history):
-                        if entry.get("type") == "stream":
-                            last_stream_time = entry.get("timestamp", 0)
-                            time_since_last = current_time - last_stream_time
-                            
-                            if time_since_last < self.STREAM_COOLDOWN:
-                                remaining_time = self.STREAM_COOLDOWN - time_since_last
-                                return False, remaining_time
-                            break
-                    
-                    return True, 0  # No cooldown
+            # Import Supabase client
+            from config.supabase_config import supabase
+            
+            # Get user's point history from Supabase
+            result = supabase.table("users").select("point_history").eq("id", user_id).execute()
+            
+            if result.data:
+                user_data = result.data[0]
+                history = user_data.get("point_history", [])
+                current_time = time.time()
+                
+                # Look for the most recent stream point entry
+                for entry in reversed(history):
+                    if entry.get("type") == "stream":
+                        last_stream_time = entry.get("timestamp", 0)
+                        time_since_last = current_time - last_stream_time
+                        
+                        if time_since_last < self.STREAM_COOLDOWN:
+                            remaining_time = self.STREAM_COOLDOWN - time_since_last
+                            return False, remaining_time
+                        break
+                
+                return True, 0  # No cooldown
             return True, 0  # No history, no cooldown
         except Exception as e:
             logger.error(f"Error checking stream cooldown: {e}")
-            return True, 0  # Error, allow it
+            return True, 0  # Default to no cooldown on error
     
     async def add_user_points(self, user_id, points_to_add, point_type="stream"):
         """Add points to user's account using Supabase"""
@@ -297,7 +299,7 @@ class StreamManager(commands.Cog):
             profile_info = await self.get_twitch_profile_info(username)
             
             # Check stream cooldown
-            can_stream, remaining_time = self.check_stream_cooldown(interaction.user.id)
+            can_stream, remaining_time = await self.check_stream_cooldown(interaction.user.id)
             
             if not can_stream:
                 minutes_remaining = int(remaining_time // 60)
@@ -845,7 +847,7 @@ class StreamManager(commands.Cog):
                 return
             
             # Check cooldown
-            can_stream, remaining_time = self.check_stream_cooldown(member.id)
+            can_stream, remaining_time = await self.check_stream_cooldown(member.id)
             if not can_stream:
                 logger.info(f"User {member.display_name} is on cooldown, skipping auto-announcement")
                 return
@@ -963,7 +965,7 @@ class StreamManager(commands.Cog):
                 return
             
             # Check stream cooldown
-            can_stream, remaining_time = self.check_stream_cooldown(interaction.user.id)
+            can_stream, remaining_time = await self.check_stream_cooldown(interaction.user.id)
             
             if not can_stream:
                 minutes_remaining = int(remaining_time // 60)

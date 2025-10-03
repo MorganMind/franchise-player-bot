@@ -377,5 +377,160 @@ class TeamClaimSystem(commands.Cog):
             logger.error(f"Error getting team claimed user for {team_abbrev}: {e}")
             return None
 
+    @app_commands.command(name="teamslist", description="List all NFL teams and their claimed status")
+    async def teams_list(self, interaction: discord.Interaction):
+        """List all teams and show who has claimed them"""
+        if not self.supabase:
+            await interaction.response.send_message("❌ Database connection error. Please try again later.", ephemeral=True)
+            return
+        
+        try:
+            # Get all team claims
+            claims_result = self.supabase.table("team_claims").select("team_abbreviation, display_name").execute()
+            claims_dict = {claim["team_abbreviation"]: claim["display_name"] for claim in claims_result.data}
+            
+            # Create embed
+            embed = discord.Embed(
+                title="🏈 NFL Teams Status",
+                description="All 32 NFL teams and their claimed status",
+                color=0x00ff00
+            )
+            
+            # Group teams by conference
+            afc_teams = []
+            nfc_teams = []
+            
+            for team in self.teams.values():
+                team_abbrev = team['abbreviation']
+                emoji = self.get_team_emoji(interaction.guild, team_abbrev)
+                claimed_by = claims_dict.get(team_abbrev)
+                
+                if claimed_by:
+                    status = f"✅ Claimed by **{claimed_by}**"
+                else:
+                    status = "❌ Available"
+                
+                team_info = f"{emoji} **{team['name']}** ({team_abbrev}) - {status}"
+                
+                if team['conference'] == 'AFC':
+                    afc_teams.append(team_info)
+                else:
+                    nfc_teams.append(team_info)
+            
+            # Sort teams alphabetically
+            afc_teams.sort()
+            nfc_teams.sort()
+            
+            # Add AFC teams
+            afc_text = "\n".join(afc_teams)
+            embed.add_field(
+                name="🏈 AFC Teams (16)",
+                value=afc_text[:1024] if len(afc_text) > 1024 else afc_text,
+                inline=False
+            )
+            
+            # Add NFC teams
+            nfc_text = "\n".join(nfc_teams)
+            embed.add_field(
+                name="🏈 NFC Teams (16)",
+                value=nfc_text[:1024] if len(nfc_text) > 1024 else nfc_text,
+                inline=False
+            )
+            
+            # Add summary
+            claimed_count = len(claims_dict)
+            available_count = 32 - claimed_count
+            embed.add_field(
+                name="📊 Summary",
+                value=f"**Claimed:** {claimed_count}/32 teams\n**Available:** {available_count}/32 teams",
+                inline=False
+            )
+            
+            await interaction.response.send_message(embed=embed)
+            
+        except Exception as e:
+            logger.error(f"Error listing teams: {e}")
+            await interaction.response.send_message("❌ Error retrieving team list. Please try again later.", ephemeral=True)
+
+    @app_commands.command(name="removeteam", description="Remove a team claim (Commissioner only)")
+    @app_commands.describe(team="Team abbreviation to remove claim from")
+    async def remove_team(self, interaction: discord.Interaction, team: str):
+        """Remove a team claim - Commissioner only"""
+        # Check if user is administrator
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("❌ This command is only available to administrators.", ephemeral=True)
+            return
+        
+        if not self.supabase:
+            await interaction.response.send_message("❌ Database connection error. Please try again later.", ephemeral=True)
+            return
+        
+        team_abbrev = team.upper()
+        team_data = self.teams.get(team_abbrev)
+        
+        if not team_data:
+            await interaction.response.send_message(f"❌ Invalid team abbreviation: {team}", ephemeral=True)
+            return
+        
+        try:
+            # Check if team is claimed
+            claim_result = self.supabase.table("team_claims").select("user_id, display_name").eq("team_abbreviation", team_abbrev).execute()
+            
+            if not claim_result.data:
+                await interaction.response.send_message(f"❌ **{team_data['name']}** is not currently claimed.", ephemeral=True)
+                return
+            
+            # Remove the claim
+            self.supabase.table("team_claims").delete().eq("team_abbreviation", team_abbrev).execute()
+            
+            emoji = self.get_team_emoji(interaction.guild, team_abbrev)
+            claimed_by = claim_result.data[0]["display_name"]
+            
+            embed = discord.Embed(
+                title="🏈 Team Claim Removed",
+                description=f"Successfully removed team claim for **{team_data['name']}**",
+                color=0xff6b6b
+            )
+            
+            embed.add_field(
+                name="Team Details",
+                value=f"{emoji} **{team_data['name']}** ({team_abbrev})\n"
+                      f"Conference: {team_data['conference']}\n"
+                      f"Division: {team_data['division']}",
+                inline=False
+            )
+            
+            embed.add_field(
+                name="Removed From",
+                value=f"**{claimed_by}**",
+                inline=False
+            )
+            
+            embed.set_footer(text=f"Removed by {interaction.user.display_name}")
+            
+            await interaction.response.send_message(embed=embed)
+            logger.info(f"Team {team_abbrev} claim removed by {interaction.user.display_name}")
+            
+        except Exception as e:
+            logger.error(f"Error removing team claim: {e}")
+            await interaction.response.send_message("❌ Error removing team claim. Please try again later.", ephemeral=True)
+
+    @remove_team.autocomplete('team')
+    async def team_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete for team removal"""
+        teams = []
+        for team in self.teams.values():
+            if current.lower() in team['name'].lower() or current.lower() in team['abbreviation'].lower():
+                # Use default emoji for autocomplete
+                default_emoji = team.get('emoji', '🏈')
+                teams.append(app_commands.Choice(
+                    name=f"{default_emoji} {team['name']} ({team['abbreviation']})",
+                    value=team['abbreviation']
+                ))
+        
+        # Sort by name and return first 25
+        teams.sort(key=lambda x: x.name)
+        return teams[:25]
+
 async def setup(bot):
     await bot.add_cog(TeamClaimSystem(bot))

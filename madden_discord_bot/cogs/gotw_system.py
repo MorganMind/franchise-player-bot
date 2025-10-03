@@ -28,17 +28,18 @@ class VoteButton(discord.ui.Button):
         await self.cog.handle_vote(interaction, self.team['abbreviation'], self.gotw_id)
 
 class LockButton(discord.ui.Button):
-    def __init__(self, cog):
+    def __init__(self, cog, gotw_id):
         super().__init__(
             style=discord.ButtonStyle.danger,
             label="Lock Poll",
-            custom_id="lock_poll",
+            custom_id=f"lock_poll_{gotw_id}",
             emoji="🔒"
         )
         self.cog = cog
+        self.gotw_id = gotw_id
     
     async def callback(self, interaction: discord.Interaction):
-        await self.cog.handle_lock_poll(interaction)
+        await self.cog.handle_lock_poll(interaction, self.gotw_id)
 
 class ResultsButton(discord.ui.Button):
     def __init__(self, cog, gotw_id):
@@ -272,7 +273,7 @@ class GOTWView(discord.ui.View):
         
         # Add lock button (only if not locked and user has permission)
         if not is_locked:
-            self.add_item(LockButton(cog))
+            self.add_item(LockButton(cog, gotw_id))
 
 class GOTWSystem(commands.Cog):
     def __init__(self, bot):
@@ -800,35 +801,27 @@ class GOTWSystem(commands.Cog):
             logger.error(f"Failed to update vote message: {e}")
             # Don't fail the vote if message update fails
 
-    async def handle_lock_poll(self, interaction: discord.Interaction):
+    async def handle_lock_poll(self, interaction: discord.Interaction, gotw_id: str):
         """Handle locking the poll"""
         if not self.has_admin_permission(interaction):
             await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to lock the poll.", ephemeral=True)
             return
         
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+        if gotw_id not in self.active_gotws:
+            await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
             return
         
         # Lock the poll
-        self.current_gotw['is_locked'] = True
-        self.current_gotw['locked_by'] = interaction.user.id
-        self.current_gotw['locked_at'] = datetime.now().isoformat()
+        self.active_gotws[gotw_id]['is_locked'] = True
+        self.active_gotws[gotw_id]['locked_by'] = interaction.user.id
+        self.active_gotws[gotw_id]['locked_at'] = datetime.now().isoformat()
         
         self.save_gotw_data()
         
         # Update the message with locked status
-        await self.update_vote_message(interaction.message, is_locked=True)
+        await self.update_vote_message(interaction.message, gotw_id, is_locked=True)
         
         await interaction.response.send_message("🔒 **Poll locked!** No more votes can be cast.", ephemeral=True)
-
-    async def handle_show_results(self, interaction: discord.Interaction):
-        """Handle showing results from the button"""
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
-            return
-        
-        await self.show_results(interaction)
 
     async def handle_declare_winner(self, interaction: discord.Interaction, team_abbreviation: str, team_name: str):
         """Handle declaring a winner and awarding points"""

@@ -449,7 +449,13 @@ class StreamManager(commands.Cog):
             
             # Post in the current channel with league mention
             league_role = discord.utils.get(interaction.guild.roles, name="league")
+            logger.info(f"Looking for 'league' role in guild {interaction.guild.name}. Found: {league_role}")
+            if not league_role:
+                # Try case-insensitive search
+                league_role = discord.utils.get(interaction.guild.roles, name__iexact="league")
+                logger.info(f"Case-insensitive search for 'league' role. Found: {league_role}")
             league_mention = league_role.mention if league_role else "@league"
+            logger.info(f"Using league mention: {league_mention}")
             await interaction.response.send_message(content=league_mention, embed=embed)
             
             # Cross-post to hardcoded stream channel if different from current channel
@@ -1259,6 +1265,55 @@ class StreamManager(commands.Cog):
         
         logger.info(f"Denying {interaction.user.display_name} access to admin commands")
         return False
+
+    @app_commands.command(name="debugroles", description="Debug: List all roles in the server (Admin only)")
+    async def debug_roles(self, interaction: discord.Interaction):
+        """Debug command to list all roles in the server"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message(
+                "❌ You need administrator permissions or the 'commish' role to use this command.", 
+                ephemeral=True
+            )
+            return
+        
+        try:
+            roles_list = []
+            for role in interaction.guild.roles:
+                roles_list.append(f"• {role.name} (ID: {role.id})")
+            
+            roles_text = "\n".join(roles_list[:50])  # Limit to first 50 roles
+            if len(roles_list) > 50:
+                roles_text += f"\n... and {len(roles_list) - 50} more roles"
+            
+            embed = discord.Embed(
+                title="🔍 Server Roles Debug",
+                description=f"**Total roles: {len(roles_list)}**\n\n{roles_text}",
+                color=0x00ff00
+            )
+            
+            # Check specifically for league role
+            league_role = discord.utils.get(interaction.guild.roles, name="league")
+            if league_role:
+                embed.add_field(
+                    name="✅ League Role Found",
+                    value=f"**{league_role.name}** (ID: {league_role.id})\nMention: {league_role.mention}",
+                    inline=False
+                )
+            else:
+                embed.add_field(
+                    name="❌ League Role Not Found",
+                    value="No role named 'league' found. Check the list above for similar names.",
+                    inline=False
+                )
+            
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            
+        except Exception as e:
+            logger.error(f"Error in debug_roles: {e}")
+            await interaction.response.send_message(
+                "❌ An error occurred while fetching roles.", 
+                ephemeral=True
+            )
 
     @app_commands.command(name="addstreampoint", description="Add a stream point to a user (Commish only)")
     @app_commands.describe(user="User to add stream point to")

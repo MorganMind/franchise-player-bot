@@ -140,15 +140,27 @@ class TeamClaimSystem(commands.Cog):
         self.bot = bot
         self.teams_file = "data/nfl_teams.json"
         self.teams = {}
-        self.load_teams_data()
+        
+        try:
+            self.load_teams_data()
+            logger.info(f"✅ TeamClaimSystem: Loaded {len(self.teams)} teams")
+        except Exception as e:
+            logger.error(f"❌ TeamClaimSystem: Failed to load teams data: {e}")
+            self.teams = {}
         
         # Import Supabase client
         try:
             from config.supabase_config import supabase
             self.supabase = supabase
-        except ImportError:
-            logger.error("Supabase config not found")
+            logger.info("✅ TeamClaimSystem: Supabase client loaded")
+        except ImportError as e:
+            logger.error(f"❌ TeamClaimSystem: Supabase config not found: {e}")
             self.supabase = None
+        except Exception as e:
+            logger.error(f"❌ TeamClaimSystem: Failed to load Supabase client: {e}")
+            self.supabase = None
+        
+        logger.info("✅ TeamClaimSystem cog initialized")
 
     def load_teams_data(self):
         """Load NFL teams data"""

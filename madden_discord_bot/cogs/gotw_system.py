@@ -402,7 +402,7 @@ class GOTWSystem(commands.Cog):
         
         embed.add_field(
             name="Instructions",
-            value="1. Select Team 1 from the first dropdown\n2. Select Team 2 from the second dropdown\n3. Click 'Create GOTW' when both teams are selected",
+            value="1. Select Team 1 from either AFC or NFC dropdown\n2. Select Team 2 from either AFC or NFC dropdown\n3. Click 'Create GOTW' when both teams are selected\n\n**Note:** Teams are split by conference to show all 32 teams",
             inline=False
         )
         

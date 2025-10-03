@@ -434,13 +434,17 @@ class GOTWSystem(commands.Cog):
             else:
                 # Update existing vote
                 self.votes[user_id] = team_abbreviation
+                logger.info(f"Updated vote for user {user_id}: {old_vote} -> {team_abbreviation}")
                 await interaction.response.send_message(f"✅ Vote changed to {team_abbreviation}!", ephemeral=True)
         else:
             # New vote
             self.votes[user_id] = team_abbreviation
+            logger.info(f"New vote recorded for user {user_id}: {team_abbreviation}")
             await interaction.response.send_message(f"✅ Vote recorded for {team_abbreviation}!", ephemeral=True)
         
+        logger.info(f"Votes before save: {self.votes}")
         self.save_gotw_data()
+        logger.info(f"Votes after save: {self.votes}")
         
         # Update the original message with new vote counts
         await self.update_vote_message(interaction.message)
@@ -471,6 +475,7 @@ class GOTWSystem(commands.Cog):
         """Update the vote message with current counts and lock status"""
         try:
             if not self.current_gotw:
+                logger.warning("No current GOTW found when trying to update vote message")
                 return
             
             # Update the embed
@@ -482,10 +487,15 @@ class GOTWSystem(commands.Cog):
             team1_votes = len([v for v in self.votes.values() if v == team1['abbreviation']])
             team2_votes = len([v for v in self.votes.values() if v == team2['abbreviation']])
             
+            logger.info(f"Updating vote message: {team1['name']}={team1_votes}, {team2['name']}={team2_votes}")
+            logger.info(f"Total votes in self.votes: {len(self.votes)}")
+            logger.info(f"Votes dict: {self.votes}")
+            
             # Update the votes field
             for field in embed.fields:
                 if field.name == "📊 Current Votes":
                     field.value = f"{team1['emoji']} {team1['name']}: **{team1_votes}**\n{team2['emoji']} {team2['name']}: **{team2_votes}**"
+                    logger.info(f"Updated field value: {field.value}")
                     break
             
             # Update footer based on lock status
@@ -501,9 +511,12 @@ class GOTWSystem(commands.Cog):
             view = GOTWView(self, team1, team2, is_locked=is_locked)
             
             await message.edit(embed=embed, view=view)
+            logger.info("Successfully updated vote message")
             
         except Exception as e:
             logger.error(f"Error updating vote message: {e}")
+            import traceback
+            logger.error(f"Full traceback: {traceback.format_exc()}")
 
 async def setup(bot):
     await bot.add_cog(GOTWSystem(bot))

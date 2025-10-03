@@ -61,8 +61,28 @@ class ClaimTeamButton(discord.ui.Button):
         view: TeamClaimView = self.view
         if view.selected_team:
             await self.cog.claim_team(interaction, view.selected_team)
+            # Dismiss the setup message after successful claim
+            try:
+                await interaction.delete_original_response()
+            except:
+                pass  # Ignore if message is already deleted
         else:
             await interaction.response.send_message("❌ Please select a team first!", ephemeral=True)
+
+class DismissButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(
+            style=discord.ButtonStyle.secondary,
+            label="Dismiss",
+            custom_id="dismiss_claim",
+            emoji="❌"
+        )
+    
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            await interaction.delete_original_response()
+        except:
+            await interaction.response.send_message("Setup dismissed.", ephemeral=True)
 
 class TeamClaimView(discord.ui.View):
     def __init__(self, cog, guild):
@@ -78,6 +98,9 @@ class TeamClaimView(discord.ui.View):
         # Add claim button
         self.claim_button = ClaimTeamButton(cog)
         self.add_item(self.claim_button)
+        
+        # Add dismiss button
+        self.add_item(DismissButton())
     
     def update_claim_button(self):
         """Update the claim button state based on selection"""
@@ -87,6 +110,22 @@ class TeamClaimView(discord.ui.View):
         else:
             self.claim_button.disabled = True
             self.claim_button.style = discord.ButtonStyle.secondary
+    
+    async def on_timeout(self):
+        """Handle timeout by disabling all buttons"""
+        for item in self.children:
+            item.disabled = True
+        
+        # Try to edit the message to show it's expired
+        try:
+            embed = discord.Embed(
+                title="⏰ Team Claim Setup Expired",
+                description="This setup session has timed out. Use `/claimteam` to start a new one.",
+                color=0xff6b6b
+            )
+            await self.message.edit(embed=embed, view=self)
+        except:
+            pass  # Ignore if message is already deleted
 
 class TeamClaimSystem(commands.Cog):
     def __init__(self, bot):
@@ -153,7 +192,7 @@ class TeamClaimSystem(commands.Cog):
         
         embed = discord.Embed(
             title="🏈 Claim Your Team",
-            description="Select your favorite NFL team to claim it as yours!",
+            description="Select your current NFL team to claim it as yours!",
             color=0x00ff00
         )
         
@@ -186,12 +225,12 @@ class TeamClaimSystem(commands.Cog):
         
         embed.add_field(
             name="Benefits",
-            value="• Show your team affiliation in GOTW polls\n• Get +2 points when your team wins GOTW\n• Team integration in streams and upgrades",
+            value="• Get +2 points when your team wins GOTW\n• Team integration in streams and upgrades",
             inline=False
         )
         
         view = TeamClaimView(self, interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view)
+        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
     async def claim_team(self, interaction: discord.Interaction, team_abbrev: str):
         """Process team claim"""

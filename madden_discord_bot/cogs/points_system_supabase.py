@@ -27,7 +27,7 @@ class PointsSystemSupabase(commands.Cog):
     async def get_user_points(self, user_id):
         """Get points for a specific user"""
         try:
-            result = self.supabase.table("users").select("total_points").eq("id", user_id).execute()
+            result = self.supabase.table("users").select("total_points").eq("id", str(user_id)).execute()
             
             if result.data and len(result.data) > 0:
                 return result.data[0]["total_points"]
@@ -43,7 +43,7 @@ class PointsSystemSupabase(commands.Cog):
         """Create a new user in the database"""
         try:
             user_data = {
-                "id": user_id,
+                "id": str(user_id),
                 "total_points": 0,
                 "stream_points": 0,
                 "other_points": 0
@@ -65,7 +65,7 @@ class PointsSystemSupabase(commands.Cog):
         """Set points for a specific user"""
         try:
             user_data = {
-                "id": user_id,
+                "id": str(user_id),
                 "total_points": points
             }
             

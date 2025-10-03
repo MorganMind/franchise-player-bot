@@ -71,16 +71,16 @@ class DeclareWinnerButton(discord.ui.Button):
         await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name)
 
 class TeamSelect(discord.ui.Select):
-    def __init__(self, cog, team_number, guild):
+    def __init__(self, cog, team_number, guild, teams_subset, conference_name):
         self.cog = cog
         self.team_number = team_number
         self.guild = guild
+        self.conference_name = conference_name
         
-        # Create options from teams
+        # Create options from teams subset
         options = []
-        for team in cog.teams.values():
+        for team in teams_subset:
             emoji = cog.get_team_emoji(guild, team['abbreviation'])
-            display_name = f"{emoji} {team['name']} ({team['abbreviation']})"
             options.append(discord.SelectOption(
                 label=team['name'],
                 description=f"{team['conference']} {team['division']}",
@@ -89,10 +89,10 @@ class TeamSelect(discord.ui.Select):
             ))
         
         super().__init__(
-            placeholder=f"Select Team {team_number}",
+            placeholder=f"Select Team {team_number} ({conference_name})",
             min_values=1,
             max_values=1,
-            options=options[:25]  # Discord limit
+            options=options
         )
     
     def update_placeholder(self, selected_team_abbrev=None):
@@ -105,19 +105,31 @@ class TeamSelect(discord.ui.Select):
             else:
                 self.placeholder = f"Team {self.team_number} Selected"
         else:
-            self.placeholder = f"Select Team {self.team_number}"
+            self.placeholder = f"Select Team {self.team_number} ({self.conference_name})"
     
     async def callback(self, interaction: discord.Interaction):
         # Update the view's selected teams
         view = self.view
+        selected_team = self.values[0]
+        
         if self.team_number == 1:
-            view.team1_selected = self.values[0]
-            # Update this select's placeholder
-            self.update_placeholder(self.values[0])
+            view.team1_selected = selected_team
+            # Update all Team 1 selectors
+            for item in view.children:
+                if isinstance(item, TeamSelect) and item.team_number == 1:
+                    if item == self:
+                        item.update_placeholder(selected_team)
+                    else:
+                        item.update_placeholder(None)  # Reset other Team 1 selectors
         else:
-            view.team2_selected = self.values[0]
-            # Update this select's placeholder
-            self.update_placeholder(self.values[0])
+            view.team2_selected = selected_team
+            # Update all Team 2 selectors
+            for item in view.children:
+                if isinstance(item, TeamSelect) and item.team_number == 2:
+                    if item == self:
+                        item.update_placeholder(selected_team)
+                    else:
+                        item.update_placeholder(None)  # Reset other Team 2 selectors
         
         # Update the create button state
         view.update_create_button()
@@ -178,13 +190,30 @@ class GOTWSetupView(discord.ui.View):
         self.team1_selected = None
         self.team2_selected = None
         
-        # Create team selectors and store references
-        self.team1_select = TeamSelect(cog, 1, guild)
-        self.team2_select = TeamSelect(cog, 2, guild)
+        # Split teams by conference to respect Discord's 25-option limit
+        teams_list = list(cog.teams.values())
+        
+        # AFC teams (16 teams)
+        afc_teams = [team for team in teams_list if team['conference'] == 'AFC']
+        afc_teams.sort(key=lambda x: x['name'])  # Sort alphabetically within conference
+        
+        # NFC teams (16 teams)
+        nfc_teams = [team for team in teams_list if team['conference'] == 'NFC']
+        nfc_teams.sort(key=lambda x: x['name'])  # Sort alphabetically within conference
+        
+        # Create team selectors for Team 1 (AFC and NFC)
+        self.team1_afc_select = TeamSelect(cog, 1, guild, afc_teams, "AFC")
+        self.team1_nfc_select = TeamSelect(cog, 1, guild, nfc_teams, "NFC")
+        
+        # Create team selectors for Team 2 (AFC and NFC)
+        self.team2_afc_select = TeamSelect(cog, 2, guild, afc_teams, "AFC")
+        self.team2_nfc_select = TeamSelect(cog, 2, guild, nfc_teams, "NFC")
         
         # Add team selectors
-        self.add_item(self.team1_select)
-        self.add_item(self.team2_select)
+        self.add_item(self.team1_afc_select)
+        self.add_item(self.team1_nfc_select)
+        self.add_item(self.team2_afc_select)
+        self.add_item(self.team2_nfc_select)
         
         # Add create button
         self.create_button = CreateGOTWButton(cog)

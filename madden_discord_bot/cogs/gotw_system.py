@@ -36,6 +36,19 @@ class LockButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await self.cog.handle_lock_poll(interaction)
 
+class ResultsButton(discord.ui.Button):
+    def __init__(self, cog):
+        super().__init__(
+            style=discord.ButtonStyle.secondary,
+            label="Show Results",
+            custom_id="show_results",
+            emoji="📊"
+        )
+        self.cog = cog
+    
+    async def callback(self, interaction: discord.Interaction):
+        await self.cog.handle_show_results(interaction)
+
 class GOTWView(discord.ui.View):
     def __init__(self, cog, team1, team2, is_locked=False):
         super().__init__(timeout=None)  # No timeout
@@ -47,6 +60,9 @@ class GOTWView(discord.ui.View):
         # Create buttons for voting
         self.add_item(VoteButton(team1, cog, disabled=is_locked))
         self.add_item(VoteButton(team2, cog, disabled=is_locked))
+        
+        # Add results button (always available)
+        self.add_item(ResultsButton(cog))
         
         # Add lock button (only if not locked and user has permission)
         if not is_locked:
@@ -155,7 +171,7 @@ class GOTWSystem(commands.Cog):
     
     @app_commands.command(name="gotw", description="Game of the Week commands")
     @app_commands.describe(
-        action="Action to perform: create, vote, results, list, clear",
+        action="Action to perform: create, vote, list, clear",
         team1="First team (name or abbreviation)",
         team2="Second team (name or abbreviation)"
     )
@@ -165,14 +181,12 @@ class GOTWSystem(commands.Cog):
             await self.create_gotw(interaction, team1, team2)
         elif action.lower() == "vote":
             await self.show_vote_card(interaction)
-        elif action.lower() == "results":
-            await self.show_results(interaction)
         elif action.lower() == "list":
             await self.list_teams(interaction)
         elif action.lower() == "clear":
             await self.clear_gotw(interaction)
         else:
-            await interaction.response.send_message("❌ Invalid action. Use: create, vote, results, list, or clear", ephemeral=True)
+            await interaction.response.send_message("❌ Invalid action. Use: create, vote, list, or clear", ephemeral=True)
     
     async def create_gotw(self, interaction: discord.Interaction, team1_name: str, team2_name: str):
         """Create a new Game of the Week"""
@@ -372,9 +386,9 @@ class GOTWSystem(commands.Cog):
                 name="📋 Available Commands",
                 value="• `/gotw create <team1> <team2>` - Create a new matchup\n"
                       "• `/gotw vote` - Show current voting card\n"
-                      "• `/gotw results` - Show detailed results\n"
                       "• `/gotw list` - List all NFL teams\n"
-                      "• `/gotw clear` - Clear current GOTW",
+                      "• `/gotw clear` - Clear current GOTW\n"
+                      "• **📊 Show Results** - Use the button on the GOTW card",
                 inline=False
             )
             
@@ -470,6 +484,14 @@ class GOTWSystem(commands.Cog):
         await self.update_vote_message(interaction.message, is_locked=True)
         
         await interaction.response.send_message("🔒 **Poll locked!** No more votes can be cast.", ephemeral=True)
+
+    async def handle_show_results(self, interaction: discord.Interaction):
+        """Handle showing results from the button"""
+        if not self.current_gotw:
+            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+            return
+        
+        await self.show_results(interaction)
 
     async def update_vote_message(self, message, is_locked=None):
         """Update the vote message with current counts and lock status"""

@@ -100,8 +100,8 @@ class TeamSelect(discord.ui.Select):
         if selected_team_abbrev:
             team = self.cog.teams.get(selected_team_abbrev.upper())
             if team:
-                emoji = self.cog.get_team_emoji(self.guild, team['abbreviation'])
-                self.placeholder = f"{emoji} {team['name']}"
+                # Use just the team name without emoji to avoid Discord's raw format issue
+                self.placeholder = f"✓ {team['name']}"
             else:
                 self.placeholder = f"Team {self.team_number} Selected"
         else:

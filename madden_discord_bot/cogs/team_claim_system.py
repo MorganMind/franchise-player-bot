@@ -69,8 +69,11 @@ class ClaimTeamButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         view: TeamClaimView = self.view
         if view.selected_team:
+            # Defer the response first to avoid conflicts
+            await interaction.response.defer(ephemeral=True)
+            # Process the claim
             await self.cog.claim_team(interaction, view.selected_team)
-            # Dismiss the setup message after successful claim
+            # Delete the original ephemeral message
             try:
                 await interaction.delete_original_response()
             except:
@@ -78,20 +81,6 @@ class ClaimTeamButton(discord.ui.Button):
         else:
             await interaction.response.send_message("❌ Please select a team first!", ephemeral=True)
 
-class DismissButton(discord.ui.Button):
-    def __init__(self):
-        super().__init__(
-            style=discord.ButtonStyle.secondary,
-            label="Dismiss",
-            custom_id="dismiss_claim",
-            emoji="❌"
-        )
-    
-    async def callback(self, interaction: discord.Interaction):
-        try:
-            await interaction.delete_original_response()
-        except:
-            await interaction.response.send_message("Setup dismissed.", ephemeral=True)
 
 class TeamClaimView(discord.ui.View):
     def __init__(self, cog, guild):
@@ -120,9 +109,6 @@ class TeamClaimView(discord.ui.View):
         # Add claim button
         self.claim_button = ClaimTeamButton(cog)
         self.add_item(self.claim_button)
-        
-        # Add dismiss button
-        self.add_item(DismissButton())
     
     def update_claim_button(self):
         """Update the claim button state based on selection"""
@@ -257,12 +243,12 @@ class TeamClaimSystem(commands.Cog):
     async def claim_team(self, interaction: discord.Interaction, team_abbrev: str):
         """Process team claim"""
         if not self.supabase:
-            await interaction.response.send_message("❌ Database connection error. Please try again later.", ephemeral=True)
+            await interaction.followup.send("❌ Database connection error. Please try again later.", ephemeral=True)
             return
         
         team_data = self.teams.get(team_abbrev.upper())
         if not team_data:
-            await interaction.response.send_message("❌ Invalid team selected.", ephemeral=True)
+            await interaction.followup.send("❌ Invalid team selected.", ephemeral=True)
             return
         
         # Check if team is already claimed by someone else
@@ -270,7 +256,7 @@ class TeamClaimSystem(commands.Cog):
         if existing_claim and existing_claim != str(interaction.user.id):
             existing_user = self.bot.get_user(int(existing_claim))
             user_name = existing_user.display_name if existing_user else "Unknown User"
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"❌ **{team_data['name']}** is already claimed by **{user_name}**!\n"
                 f"Each team can only be claimed by one person.",
                 ephemeral=True
@@ -280,7 +266,7 @@ class TeamClaimSystem(commands.Cog):
         # Check if user is claiming the same team they already have
         current_team = await self.get_user_team(interaction.user.id)
         if current_team == team_abbrev.upper():
-            await interaction.response.send_message(
+            await interaction.followup.send(
                 f"✅ You already have **{team_data['name']}** claimed!",
                 ephemeral=True
             )
@@ -315,9 +301,9 @@ class TeamClaimSystem(commands.Cog):
             embed.set_thumbnail(url=interaction.user.display_avatar.url)
             embed.set_footer(text=f"Claimed by {interaction.user.display_name}")
             
-            await interaction.response.send_message(embed=embed)
+            await interaction.followup.send(embed=embed)
         else:
-            await interaction.response.send_message("❌ Failed to claim team. Please try again.", ephemeral=True)
+            await interaction.followup.send("❌ Failed to claim team. Please try again.", ephemeral=True)
 
     async def get_user_team(self, user_id):
         """Get the team claimed by a user"""

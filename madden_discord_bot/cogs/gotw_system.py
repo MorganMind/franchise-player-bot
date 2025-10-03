@@ -26,6 +26,7 @@ class VoteButton(discord.ui.Button):
         self.gotw_id = gotw_id
     
     async def callback(self, interaction: discord.Interaction):
+        logger.info(f"🔍 VoteButton callback: team={self.team['abbreviation']}, gotw_id={self.gotw_id}")
         await self.cog.handle_vote(interaction, self.team['abbreviation'], self.gotw_id)
 
 class LockButton(discord.ui.Button):
@@ -306,49 +307,49 @@ class GOTWSystem(commands.Cog):
                     logger.info(f"Loaded {len(self.teams)} teams from {self.teams_file}")
             else:
                 # Create default teams data if file doesn't exist
-                teams_data = {
-                    "teams": [
-                        {"name": "Arizona Cardinals", "abbreviation": "ARI", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/Arizona_Cardinals_logo.svg", "emoji": "🃏"},
-                        {"name": "Atlanta Falcons", "abbreviation": "ATL", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c5/Atlanta_Falcons_logo.svg", "emoji": "🦅"},
-                        {"name": "Baltimore Ravens", "abbreviation": "BAL", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/1/16/Baltimore_Ravens_logo.svg", "emoji": "🐦‍⬛"},
-                        {"name": "Buffalo Bills", "abbreviation": "BUF", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/Buffalo_Bills_logo.svg", "emoji": "🦬"},
-                        {"name": "Carolina Panthers", "abbreviation": "CAR", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/5c/Carolina_Panthers_logo.svg", "emoji": "🐆"},
-                        {"name": "Chicago Bears", "abbreviation": "CHI", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/5c/Chicago_Bears_logo.svg", "emoji": "🐻"},
-                        {"name": "Cincinnati Bengals", "abbreviation": "CIN", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Cincinnati_Bengals_logo.svg", "emoji": "🐯"},
-                        {"name": "Cleveland Browns", "abbreviation": "CLE", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/d/d9/Cleveland_Browns_logo.svg", "emoji": "🐕"},
-                        {"name": "Dallas Cowboys", "abbreviation": "DAL", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/47/Dallas_Cowboys_logo.svg", "emoji": "⭐"},
-                        {"name": "Denver Broncos", "abbreviation": "DEN", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/44/Denver_Broncos_logo.svg", "emoji": "🐎"},
-                        {"name": "Detroit Lions", "abbreviation": "DET", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/71/Detroit_Lions_logo.svg", "emoji": "🦁"},
-                        {"name": "Green Bay Packers", "abbreviation": "GB", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/50/Green_Bay_Packers_logo.svg", "emoji": "🧀"},
-                        {"name": "Houston Texans", "abbreviation": "HOU", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/f/f2/Houston_Texans_logo.svg", "emoji": "🤠"},
-                        {"name": "Indianapolis Colts", "abbreviation": "IND", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/0/00/Indianapolis_Colts_logo.svg", "emoji": "🐎"},
-                        {"name": "Jacksonville Jaguars", "abbreviation": "JAX", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/74/Jacksonville_Jaguars_logo.svg", "emoji": "🐆"},
-                        {"name": "Kansas City Chiefs", "abbreviation": "KC", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/e/e1/Kansas_City_Chiefs_logo.svg", "emoji": "🏹"},
-                        {"name": "Las Vegas Raiders", "abbreviation": "LV", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/48/Las_Vegas_Raiders_logo.svg", "emoji": "🏴‍☠️"},
-                        {"name": "Los Angeles Chargers", "abbreviation": "LAC", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/NFL_Chargers_logo.svg", "emoji": "⚡"},
-                        {"name": "Los Angeles Rams", "abbreviation": "LAR", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Los_Angeles_Rams_logo.svg", "emoji": "🐏"},
-                        {"name": "Miami Dolphins", "abbreviation": "MIA", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/37/Miami_Dolphins_logo.svg", "emoji": "🐬"},
-                        {"name": "Minnesota Vikings", "abbreviation": "MIN", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/48/Minnesota_Vikings_logo.svg", "emoji": "🛡️"},
-                        {"name": "New England Patriots", "abbreviation": "NE", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/b/b9/New_England_Patriots_logo.svg", "emoji": "🇺🇸"},
-                        {"name": "New Orleans Saints", "abbreviation": "NO", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/50/New_Orleans_Saints_logo.svg", "emoji": "⛪"},
-                        {"name": "New York Giants", "abbreviation": "NYG", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/6/60/New_York_Giants_logo.svg", "emoji": "👹"},
-                        {"name": "New York Jets", "abbreviation": "NYJ", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/3a/New_York_Jets_logo.svg", "emoji": "✈️"},
-                        {"name": "Philadelphia Eagles", "abbreviation": "PHI", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/8e/Philadelphia_Eagles_logo.svg", "emoji": "🦅"},
-                        {"name": "Pittsburgh Steelers", "abbreviation": "PIT", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/d/de/Pittsburgh_Steelers_logo.svg", "emoji": "⚫"},
-                        {"name": "San Francisco 49ers", "abbreviation": "SF", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/3a/San_Francisco_49ers_logo.svg", "emoji": "💎"},
-                        {"name": "Seattle Seahawks", "abbreviation": "SEA", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/2/24/Seattle_Seahawks_logo.svg", "emoji": "🦅"},
-                        {"name": "Tampa Bay Buccaneers", "abbreviation": "TB", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/a/a2/Tampa_Bay_Buccaneers_logo.svg", "emoji": "☠️"},
-                        {"name": "Tennessee Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg", "emoji": "⚔️"},
-                        {"name": "Washington Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg", "emoji": "⚔️"}
-                    ]
-                }
-                
-                # Save teams data
-                os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
-                with open(self.teams_file, 'w') as f:
-                    json.dump(teams_data, f, indent=2)
-                
-                self.teams = {team['abbreviation']: team for team in teams_data['teams']}
+        teams_data = {
+            "teams": [
+                {"name": "Arizona Cardinals", "abbreviation": "ARI", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/Arizona_Cardinals_logo.svg", "emoji": "🃏"},
+                {"name": "Atlanta Falcons", "abbreviation": "ATL", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c5/Atlanta_Falcons_logo.svg", "emoji": "🦅"},
+                {"name": "Baltimore Ravens", "abbreviation": "BAL", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/1/16/Baltimore_Ravens_logo.svg", "emoji": "🐦‍⬛"},
+                {"name": "Buffalo Bills", "abbreviation": "BUF", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/Buffalo_Bills_logo.svg", "emoji": "🦬"},
+                {"name": "Carolina Panthers", "abbreviation": "CAR", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/5c/Carolina_Panthers_logo.svg", "emoji": "🐆"},
+                {"name": "Chicago Bears", "abbreviation": "CHI", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/5c/Chicago_Bears_logo.svg", "emoji": "🐻"},
+                {"name": "Cincinnati Bengals", "abbreviation": "CIN", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Cincinnati_Bengals_logo.svg", "emoji": "🐯"},
+                {"name": "Cleveland Browns", "abbreviation": "CLE", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/d/d9/Cleveland_Browns_logo.svg", "emoji": "🐕"},
+                {"name": "Dallas Cowboys", "abbreviation": "DAL", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/47/Dallas_Cowboys_logo.svg", "emoji": "⭐"},
+                {"name": "Denver Broncos", "abbreviation": "DEN", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/44/Denver_Broncos_logo.svg", "emoji": "🐎"},
+                {"name": "Detroit Lions", "abbreviation": "DET", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/71/Detroit_Lions_logo.svg", "emoji": "🦁"},
+                {"name": "Green Bay Packers", "abbreviation": "GB", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/50/Green_Bay_Packers_logo.svg", "emoji": "🧀"},
+                {"name": "Houston Texans", "abbreviation": "HOU", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/f/f2/Houston_Texans_logo.svg", "emoji": "🤠"},
+                {"name": "Indianapolis Colts", "abbreviation": "IND", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/0/00/Indianapolis_Colts_logo.svg", "emoji": "🐎"},
+                {"name": "Jacksonville Jaguars", "abbreviation": "JAX", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/74/Jacksonville_Jaguars_logo.svg", "emoji": "🐆"},
+                {"name": "Kansas City Chiefs", "abbreviation": "KC", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/e/e1/Kansas_City_Chiefs_logo.svg", "emoji": "🏹"},
+                {"name": "Las Vegas Raiders", "abbreviation": "LV", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/48/Las_Vegas_Raiders_logo.svg", "emoji": "🏴‍☠️"},
+                {"name": "Los Angeles Chargers", "abbreviation": "LAC", "conference": "AFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/NFL_Chargers_logo.svg", "emoji": "⚡"},
+                {"name": "Los Angeles Rams", "abbreviation": "LAR", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Los_Angeles_Rams_logo.svg", "emoji": "🐏"},
+                {"name": "Miami Dolphins", "abbreviation": "MIA", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/37/Miami_Dolphins_logo.svg", "emoji": "🐬"},
+                {"name": "Minnesota Vikings", "abbreviation": "MIN", "conference": "NFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/4/48/Minnesota_Vikings_logo.svg", "emoji": "🛡️"},
+                {"name": "New England Patriots", "abbreviation": "NE", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/b/b9/New_England_Patriots_logo.svg", "emoji": "🇺🇸"},
+                {"name": "New Orleans Saints", "abbreviation": "NO", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/5/50/New_Orleans_Saints_logo.svg", "emoji": "⛪"},
+                {"name": "New York Giants", "abbreviation": "NYG", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/6/60/New_York_Giants_logo.svg", "emoji": "👹"},
+                {"name": "New York Jets", "abbreviation": "NYJ", "conference": "AFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/3a/New_York_Jets_logo.svg", "emoji": "✈️"},
+                {"name": "Philadelphia Eagles", "abbreviation": "PHI", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/8e/Philadelphia_Eagles_logo.svg", "emoji": "🦅"},
+                {"name": "Pittsburgh Steelers", "abbreviation": "PIT", "conference": "AFC", "division": "North", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/d/de/Pittsburgh_Steelers_logo.svg", "emoji": "⚫"},
+                {"name": "San Francisco 49ers", "abbreviation": "SF", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/3/3a/San_Francisco_49ers_logo.svg", "emoji": "💎"},
+                {"name": "Seattle Seahawks", "abbreviation": "SEA", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/2/24/Seattle_Seahawks_logo.svg", "emoji": "🦅"},
+                {"name": "Tampa Bay Buccaneers", "abbreviation": "TB", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/a/a2/Tampa_Bay_Buccaneers_logo.svg", "emoji": "☠️"},
+                {"name": "Tennessee Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg", "emoji": "⚔️"},
+                {"name": "Washington Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg", "emoji": "⚔️"}
+            ]
+        }
+        
+        # Save teams data
+        os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
+        with open(self.teams_file, 'w') as f:
+            json.dump(teams_data, f, indent=2)
+        
+        self.teams = {team['abbreviation']: team for team in teams_data['teams']}
                 logger.info(f"Created default teams data with {len(self.teams)} teams")
         except Exception as e:
             logger.error(f"Error loading teams data: {e}")
@@ -365,7 +366,7 @@ class GOTWSystem(commands.Cog):
                     # Handle both old and new data formats
                     if 'active_gotws' in data:
                         self.active_gotws = data.get('active_gotws', {})
-                        self.votes = data.get('votes', {})
+                    self.votes = data.get('votes', {})
                     else:
                         # Migrate from old format
                         self.active_gotws = {}
@@ -531,6 +532,8 @@ class GOTWSystem(commands.Cog):
     
     async def show_gotw_card(self, interaction: discord.Interaction, team1=None, team2=None, gotw_id=None):
         """Display a GOTW card"""
+        logger.info(f"🔍 show_gotw_card called: gotw_id={gotw_id}, team1={team1['abbreviation'] if team1 else None}, team2={team2['abbreviation'] if team2 else None}")
+        
         if not team1 or not team2:
             await interaction.response.send_message("❌ No teams provided for GOTW", ephemeral=True)
             return
@@ -595,17 +598,27 @@ class GOTWSystem(commands.Cog):
         # Get the message ID from the interaction response
         # For response messages, we need to fetch the message after sending
         try:
+            logger.info(f"🔍 Attempting to store message_id for GOTW {gotw_id}")
             # Wait a moment for the message to be sent
             await asyncio.sleep(0.1)
             # Get the message from the channel
-            async for message in interaction.channel.history(limit=1):
+            message_found = False
+            async for message in interaction.channel.history(limit=5):
+                logger.info(f"🔍 Checking message: {message.id}, author={message.author}, embeds={len(message.embeds) if message.embeds else 0}")
                 if message.author == self.bot.user and message.embeds and "GAME OF THE WEEK" in message.embeds[0].title:
                     self.active_gotws[gotw_id]['message_id'] = message.id
                     self.save_gotw_data()
-                    logger.info(f"Stored message_id {message.id} for GOTW {gotw_id}")
+                    logger.info(f"✅ Stored message_id {message.id} for GOTW {gotw_id}")
+                    message_found = True
                     break
+            
+            if not message_found:
+                logger.warning(f"⚠️ Could not find GOTW message to store message_id for {gotw_id}")
+                
         except Exception as e:
-            logger.error(f"Failed to store message_id for GOTW {gotw_id}: {e}")
+            logger.error(f"❌ Failed to store message_id for GOTW {gotw_id}: {e}")
+            import traceback
+            logger.error(f"❌ Traceback: {traceback.format_exc()}")
     
     async def show_vote_card(self, interaction: discord.Interaction):
         """Show the current GOTW voting card"""
@@ -775,11 +788,16 @@ class GOTWSystem(commands.Cog):
     
     async def handle_vote(self, interaction: discord.Interaction, team_abbreviation: str, gotw_id: str):
         """Handle a user's vote"""
+        logger.info(f"🔍 handle_vote called: gotw_id={gotw_id}, team={team_abbreviation}, user={interaction.user.id}")
+        logger.info(f"🔍 Active GOTWs: {list(self.active_gotws.keys())}")
+        
         if gotw_id not in self.active_gotws:
+            logger.error(f"❌ GOTW {gotw_id} not found in active_gotws")
             await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
             return
         
         gotw_data = self.active_gotws[gotw_id]
+        logger.info(f"🔍 Found GOTW data: {gotw_data.get('id', 'no_id')}")
         
         # Check if poll is locked
         if gotw_data.get('is_locked', False):
@@ -816,10 +834,16 @@ class GOTWSystem(commands.Cog):
         try:
             # Find the specific GOTW message using stored message ID
             message_id = gotw_data.get('message_id')
+            logger.info(f"🔍 Attempting to update message: message_id={message_id}")
+            
             if message_id:
+                logger.info(f"🔍 Fetching message by ID: {message_id}")
                 message = await interaction.channel.fetch_message(message_id)
+                logger.info(f"🔍 Found message, updating vote display")
                 await self.update_vote_message(message, gotw_id)
+                logger.info(f"✅ Successfully updated vote message")
             else:
+                logger.warning(f"⚠️ No message_id stored for GOTW {gotw_id}, using fallback search")
                 # Fallback: find by searching (less reliable)
                 async for message in interaction.channel.history(limit=50):
                     if (message.embeds and 
@@ -827,10 +851,13 @@ class GOTWSystem(commands.Cog):
                         message.embeds[0].title and 
                         "GAME OF THE WEEK" in message.embeds[0].title and
                         message.author == self.bot.user):
+                        logger.info(f"🔍 Found GOTW message by search, updating")
                         await self.update_vote_message(message, gotw_id)
                         break
         except Exception as e:
-            logger.error(f"Failed to update vote message: {e}")
+            logger.error(f"❌ Failed to update vote message: {e}")
+            import traceback
+            logger.error(f"❌ Traceback: {traceback.format_exc()}")
             # Don't fail the vote if message update fails
 
     async def handle_lock_poll(self, interaction: discord.Interaction, gotw_id: str):

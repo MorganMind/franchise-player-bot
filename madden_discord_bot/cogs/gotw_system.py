@@ -49,6 +49,21 @@ class ResultsButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await self.cog.handle_show_results(interaction)
 
+class DeclareWinnerButton(discord.ui.Button):
+    def __init__(self, cog, team_abbreviation, team_name, team_emoji):
+        super().__init__(
+            style=discord.ButtonStyle.success,
+            label=f"Winner: {team_name}",
+            custom_id=f"winner_{team_abbreviation}",
+            emoji=team_emoji
+        )
+        self.cog = cog
+        self.team_abbreviation = team_abbreviation
+        self.team_name = team_name
+    
+    async def callback(self, interaction: discord.Interaction):
+        await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name)
+
 class GOTWView(discord.ui.View):
     def __init__(self, cog, team1, team2, is_locked=False):
         super().__init__(timeout=None)  # No timeout
@@ -218,7 +233,11 @@ class GOTWSystem(commands.Cog):
             'votes': {},
             'is_locked': False,
             'locked_by': None,
-            'locked_at': None
+            'locked_at': None,
+            'winner_declared': False,
+            'winner_team': None,
+            'winner_declared_by': None,
+            'winner_declared_at': None
         }
         
         # Clear previous votes
@@ -330,6 +349,26 @@ class GOTWSystem(commands.Cog):
                 value=f"{team1['name']}: {team1_percentage:.1f}%\n{team2['name']}: {team2_percentage:.1f}%",
                 inline=False
             )
+        
+        # Check if winner has already been declared
+        winner_declared = self.current_gotw.get('winner_declared', False)
+        if winner_declared:
+            winner_team = self.current_gotw.get('winner_team')
+            winner_name = team1['name'] if winner_team == team1['abbreviation'] else team2['name']
+            embed.add_field(
+                name="🏆 Winner Declared",
+                value=f"**{winner_name}** won! Points have been awarded to voters.",
+                inline=False
+            )
+            embed.color = 0xffd700  # Gold color for winner declared
+        else:
+            # Add winner declaration buttons for commish
+            view = discord.ui.View(timeout=None)
+            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1['emoji']))
+            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2['emoji']))
+            
+            await interaction.response.send_message(embed=embed, view=view)
+            return
         
         await interaction.response.send_message(embed=embed)
     
@@ -492,6 +531,78 @@ class GOTWSystem(commands.Cog):
             return
         
         await self.show_results(interaction)
+
+    async def handle_declare_winner(self, interaction: discord.Interaction, team_abbreviation: str, team_name: str):
+        """Handle declaring a winner and awarding points"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to declare a winner.", ephemeral=True)
+            return
+        
+        if not self.current_gotw:
+            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+            return
+        
+        # Check if winner already declared
+        if self.current_gotw.get('winner_declared', False):
+            await interaction.response.send_message("❌ Winner has already been declared for this poll!", ephemeral=True)
+            return
+        
+        # Get voters for the winning team
+        winning_voters = [user_id for user_id, vote in self.votes.items() if vote == team_abbreviation]
+        
+        # Award points to winning voters
+        points_awarded = 0
+        if winning_voters:
+            # Import points system to award points
+            points_cog = self.bot.get_cog('PointsSystemSupabase')
+            if points_cog:
+                for user_id in winning_voters:
+                    try:
+                        await points_cog.add_user_points(int(user_id), 1)
+                        points_awarded += 1
+                        logger.info(f"Awarded 1 point to user {user_id} for winning GOTW vote")
+                    except Exception as e:
+                        logger.error(f"Error awarding points to user {user_id}: {e}")
+            else:
+                logger.error("PointsSystemSupabase cog not found - cannot award points")
+        
+        # Mark winner as declared
+        self.current_gotw['winner_declared'] = True
+        self.current_gotw['winner_team'] = team_abbreviation
+        self.current_gotw['winner_declared_by'] = interaction.user.id
+        self.current_gotw['winner_declared_at'] = datetime.now().isoformat()
+        
+        self.save_gotw_data()
+        
+        # Create success embed
+        embed = discord.Embed(
+            title="🏆 Winner Declared!",
+            description=f"**{team_name}** has been declared the winner!",
+            color=0xffd700
+        )
+        
+        embed.add_field(
+            name="📊 Points Awarded",
+            value=f"**{points_awarded}** voters received **+1 point** each",
+            inline=False
+        )
+        
+        if winning_voters:
+            embed.add_field(
+                name="🎉 Winning Voters",
+                value="\n".join([f"<@{user_id}>" for user_id in winning_voters]),
+                inline=False
+            )
+        else:
+            embed.add_field(
+                name="😔 No Winning Voters",
+                value="No one voted for the winning team",
+                inline=False
+            )
+        
+        embed.set_footer(text=f"Declared by {interaction.user.display_name}")
+        
+        await interaction.response.send_message(embed=embed)
 
     async def update_vote_message(self, message, is_locked=None):
         """Update the vote message with current counts and lock status"""

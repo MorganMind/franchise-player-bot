@@ -1234,6 +1234,22 @@ class StreamManager(commands.Cog):
                 ephemeral=True
             )
 
+    def has_admin_permission(self, interaction):
+        """Check if user has commish role or administrator permissions"""
+        # Check if user has administrator permission
+        if interaction.user.guild_permissions.administrator:
+            logger.info(f"Allowing {interaction.user.display_name} to use admin commands (Administrator)")
+            return True
+        
+        # Check if user has commish role
+        commish_role = discord.utils.get(interaction.guild.roles, name="commish")
+        if commish_role and commish_role in interaction.user.roles:
+            logger.info(f"Allowing {interaction.user.display_name} to use admin commands (@commish role)")
+            return True
+        
+        logger.info(f"Denying {interaction.user.display_name} access to admin commands")
+        return False
+
     @app_commands.command(name="addstreampoint", description="Add a stream point to a user (Commish only)")
     @app_commands.describe(user="User to add stream point to")
     async def add_stream_point(self, interaction: discord.Interaction, user: discord.Member):

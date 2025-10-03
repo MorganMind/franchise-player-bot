@@ -9,13 +9,14 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class TeamSelect(discord.ui.Select):
-    def __init__(self, cog, guild):
+    def __init__(self, cog, guild, teams_subset, menu_number):
         self.cog = cog
         self.guild = guild
+        self.menu_number = menu_number
         
-        # Create options from teams
+        # Create options from teams subset
         options = []
-        for team in cog.teams.values():
+        for team in teams_subset:
             emoji = cog.get_team_emoji(guild, team['abbreviation'])
             options.append(discord.SelectOption(
                 label=team['name'],
@@ -25,22 +26,30 @@ class TeamSelect(discord.ui.Select):
             ))
         
         super().__init__(
-            placeholder="Select your team",
+            placeholder=f"Select your team (Menu {menu_number})",
             min_values=1,
             max_values=1,
-            options=options[:25]  # Discord limit
+            options=options
         )
     
     async def callback(self, interaction: discord.Interaction):
         selected_abbrev = self.values[0]
         selected_team_data = self.cog.teams.get(selected_abbrev.upper())
         
-        # Update the placeholder to show the selected team
-        self.placeholder = f"✓ {selected_team_data['name']}"
-        
         # Update the parent view's selected team
         view: TeamClaimView = self.view
         view.selected_team = selected_abbrev
+        
+        # Update both select menus to show the selected team
+        for item in view.children:
+            if isinstance(item, TeamSelect):
+                if item == self:
+                    # This is the menu that was selected
+                    item.placeholder = f"✓ {selected_team_data['name']}"
+                else:
+                    # This is the other menu - reset its placeholder
+                    item.placeholder = f"Select your team (Menu {item.menu_number})"
+        
         view.update_claim_button()
         
         # Update the message to reflect the new selection
@@ -91,9 +100,20 @@ class TeamClaimView(discord.ui.View):
         self.guild = guild
         self.selected_team = None
         
-        # Add team selector
-        team_select = TeamSelect(cog, guild)
-        self.add_item(team_select)
+        # Split teams into two groups to respect Discord's 25-option limit
+        teams_list = list(cog.teams.values())
+        teams_list.sort(key=lambda x: x['name'])  # Sort alphabetically
+        
+        # First 16 teams (AFC teams + some NFC teams)
+        teams_menu1 = teams_list[:16]
+        # Remaining 16 teams (remaining NFC teams)
+        teams_menu2 = teams_list[16:]
+        
+        # Add team selectors
+        team_select1 = TeamSelect(cog, guild, teams_menu1, 1)
+        team_select2 = TeamSelect(cog, guild, teams_menu2, 2)
+        self.add_item(team_select1)
+        self.add_item(team_select2)
         
         # Add claim button
         self.claim_button = ClaimTeamButton(cog)

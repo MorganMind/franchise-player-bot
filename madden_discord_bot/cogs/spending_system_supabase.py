@@ -430,7 +430,7 @@ class SpendingSystemSupabase(commands.Cog):
             app_commands.Choice(name=p, value=p) for p in [
                 "QB", "RB", "WR", "TE",
                 "LT/RT", "LG/RG", "C",
-                "EDGE", "LB", "CB", "S",
+                "EDGE", "DT", "LB", "CB", "S",
                 "FB", "K", "P"
             ]
         ]

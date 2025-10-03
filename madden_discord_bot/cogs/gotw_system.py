@@ -306,13 +306,47 @@ class GOTWSystem(commands.Cog):
                 team_abbrev = parts[1]
                 logger.info(f"Handling old format vote button for team: {team_abbrev}")
                 
-                # Find the most recent active GOTW that contains this team
-                for gotw_id, gotw_data in self.active_gotws.items():
-                    if (gotw_data.get('team1', {}).get('abbreviation') == team_abbrev or 
-                        gotw_data.get('team2', {}).get('abbreviation') == team_abbrev):
-                        logger.info(f"Found matching GOTW {gotw_id} for old vote button")
-                        await self.handle_vote(interaction, team_abbrev, gotw_id)
+                # Find the correct GOTW by looking at the message that contains this button
+                # We need to find which GOTW message this button belongs to
+                try:
+                    # Get the message that contains this button
+                    message = interaction.message
+                    if message and message.id:
+                        # Look for a GOTW with this message_id
+                        for gotw_id, gotw_data in self.active_gotws.items():
+                            if gotw_data.get('message_id') == message.id:
+                                # Check if this team is in this specific GOTW
+                                if (gotw_data.get('team1', {}).get('abbreviation') == team_abbrev or 
+                                    gotw_data.get('team2', {}).get('abbreviation') == team_abbrev):
+                                    logger.info(f"Found matching GOTW {gotw_id} for old vote button by message_id")
+                                    await self.handle_vote(interaction, team_abbrev, gotw_id)
+                                    return
+                    
+                    # Fallback: if we can't find by message_id, try to find the oldest GOTW with this team
+                    # This helps when message_id isn't stored properly
+                    oldest_gotw = None
+                    oldest_timestamp = float('inf')
+                    for gotw_id, gotw_data in self.active_gotws.items():
+                        if (gotw_data.get('team1', {}).get('abbreviation') == team_abbrev or 
+                            gotw_data.get('team2', {}).get('abbreviation') == team_abbrev):
+                            # Try to extract timestamp from gotw_id
+                            try:
+                                timestamp = int(gotw_id.split('_')[-1])
+                                if timestamp < oldest_timestamp:
+                                    oldest_timestamp = timestamp
+                                    oldest_gotw = gotw_id
+                            except:
+                                # If we can't parse timestamp, use this as fallback
+                                if oldest_gotw is None:
+                                    oldest_gotw = gotw_id
+                    
+                    if oldest_gotw:
+                        logger.info(f"Found oldest GOTW {oldest_gotw} for old vote button")
+                        await self.handle_vote(interaction, team_abbrev, oldest_gotw)
                         return
+                        
+                except Exception as e:
+                    logger.error(f"Error finding GOTW for old vote button: {e}")
                 
                 # If no active GOTW found, try to find in current_gotw (fallback)
                 if hasattr(self, 'current_gotw') and self.current_gotw:

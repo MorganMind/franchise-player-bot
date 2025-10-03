@@ -388,26 +388,57 @@ class GOTWSystem(commands.Cog):
 
     
     @app_commands.command(name="gotw", description="Create a Game of the Week matchup")
-    async def gotw(self, interaction: discord.Interaction):
-        """Main GOTW command - directly starts team selection"""
-        await self.setup_gotw_creation(interaction)
+    @app_commands.describe(
+        team1="First team for the matchup",
+        team2="Second team for the matchup"
+    )
+    async def gotw(self, interaction: discord.Interaction, team1: str = None, team2: str = None):
+        """Main GOTW command - can use parameters or interactive setup"""
+        if team1 and team2:
+            # Direct creation with parameters
+            await self.create_gotw(interaction, team1, team2)
+        else:
+            # Interactive setup
+            await self.setup_gotw_creation(interaction)
+    
+    @gotw.autocomplete('team1')
+    @gotw.autocomplete('team2')
+    async def team_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete for team selection"""
+        teams = []
+        for team in self.teams.values():
+            if current.lower() in team['name'].lower() or current.lower() in team['abbreviation'].lower():
+                emoji = self.get_team_emoji(interaction.guild, team['abbreviation'])
+                teams.append(app_commands.Choice(
+                    name=f"{emoji} {team['name']} ({team['abbreviation']})",
+                    value=team['abbreviation']
+                ))
+        
+        # Sort by name and return first 25
+        teams.sort(key=lambda x: x.name)
+        return teams[:25]
     
     async def setup_gotw_creation(self, interaction: discord.Interaction):
         """Setup interactive GOTW creation with team selection"""
         embed = discord.Embed(
             title="⭐ Create Game of the Week",
-            description="Select two teams for the matchup",
+            description="Use the `/gotw` command with team parameters for easy team selection!",
             color=0x00ff00
         )
         
         embed.add_field(
-            name="Instructions",
-            value="1. Select Team 1 from either AFC or NFC dropdown\n2. Select Team 2 from either AFC or NFC dropdown\n3. Click 'Create GOTW' when both teams are selected\n\n**Note:** Teams are split by conference to show all 32 teams",
+            name="How to Use:",
+            value="Type `/gotw team1:` and start typing a team name - autocomplete will show all 32 teams!\n\n**Example:**\n`/gotw team1: Patriots team2: Bills`\n\n**Benefits:**\n• All 32 teams accessible\n• Smart autocomplete filtering\n• No complex dropdowns\n• Fast team selection",
             inline=False
         )
         
-        view = GOTWSetupView(self, interaction.guild)
-        await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+        embed.add_field(
+            name="Alternative:",
+            value="You can also use `/gotw` without parameters for the interactive setup if you prefer dropdowns.",
+            inline=False
+        )
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
     
     async def create_gotw(self, interaction: discord.Interaction, team1_abbrev: str, team2_abbrev: str):
         """Create a new Game of the Week"""

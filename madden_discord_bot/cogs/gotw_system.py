@@ -50,6 +50,10 @@ class ResultsButton(discord.ui.Button):
         self.cog = cog
     
     async def callback(self, interaction: discord.Interaction):
+        # Check if user is administrator
+        if not interaction.user.guild_permissions.administrator:
+            await interaction.response.send_message("❌ Only administrators can view results.", ephemeral=True)
+            return
         await self.cog.handle_show_results(interaction)
 
 class DeclareWinnerButton(discord.ui.Button):

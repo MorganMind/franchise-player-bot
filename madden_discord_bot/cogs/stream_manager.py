@@ -1233,22 +1233,60 @@ class StreamManager(commands.Cog):
             return
         
         try:
-            # Add 1 stream point to the user
-            points_earned = 1
-            new_total = await self.add_user_points(user.id, points_earned, "stream")
+            # Import Supabase client
+            from config.supabase_config import supabase
             
-            # Get current stream points for display
-            current_stream_points = await self.get_user_stream_points(user.id)
+            # Get current stream points and total points
+            result = supabase.table("users").select("stream_points, total_points").eq("id", str(user.id)).execute()
+            
+            if result.data:
+                current_stream_points = result.data[0].get("stream_points", 0)
+                current_total_points = result.data[0].get("total_points", 0)
+                
+                # Add 1 stream point (bypassing the 8-point limit for corrections)
+                new_stream_points = current_stream_points + 1
+                new_total_points = current_total_points + 1
+                
+                # Update both stream_points and total_points
+                supabase.table("users").upsert(
+                    {
+                        "id": str(user.id), 
+                        "stream_points": new_stream_points,
+                        "total_points": new_total_points
+                    },
+                    on_conflict="id"
+                ).execute()
+                
+                logger.info(f"Manually added 1 stream point to user {user.id}. Stream points: {new_stream_points}, Total: {new_total_points}")
+                
+            else:
+                # User doesn't exist, create them with 1 stream point
+                new_stream_points = 1
+                new_total_points = 1
+                supabase.table("users").upsert(
+                    {
+                        "id": str(user.id), 
+                        "stream_points": new_stream_points,
+                        "total_points": new_total_points
+                    },
+                    on_conflict="id"
+                ).execute()
+                
+                logger.info(f"Created new user {user.id} with 1 stream point")
+            
+            # Get final values for display
+            current_stream_points = new_stream_points
+            new_total = new_total_points
             
             embed = discord.Embed(
                 title="🎯 Stream Point Added",
-                description=f"Successfully added **{points_earned}** stream point to **{user.display_name}**",
+                description=f"Successfully added **1** stream point to **{user.display_name}**",
                 color=0x00ff00
             )
             
             embed.add_field(
                 name="Stream Points",
-                value=f"**{current_stream_points}/8**",
+                value=f"**{current_stream_points}**" + (f"/8" if current_stream_points <= 8 else " (over limit)"),
                 inline=True
             )
             

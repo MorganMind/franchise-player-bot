@@ -104,6 +104,7 @@ class MaddenBot(commands.Bot):
     async def on_ready(self):
         print(f'✅ {self.user} has connected to Discord!')
         print(f'✅ Bot is in {len(self.guilds)} guilds')
+        print(f'🚀 Bot version: 2025-10-03-v2 (Team Claim System Enabled)')
         for guild in self.guilds:
             print(f"  - {guild.name} (ID: {guild.id})")
         

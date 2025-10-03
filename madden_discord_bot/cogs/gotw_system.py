@@ -9,12 +9,13 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 class VoteButton(discord.ui.Button):
-    def __init__(self, team, cog):
+    def __init__(self, team, cog, disabled=False):
         super().__init__(
             style=discord.ButtonStyle.primary,
             label=f"Vote {team['name']}",
             custom_id=f"vote_{team['abbreviation']}",
-            emoji=team.get('emoji', '🏈')
+            emoji=team.get('emoji', '🏈'),
+            disabled=disabled
         )
         self.team = team
         self.cog = cog
@@ -22,16 +23,34 @@ class VoteButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await self.cog.handle_vote(interaction, self.team['abbreviation'])
 
+class LockButton(discord.ui.Button):
+    def __init__(self, cog):
+        super().__init__(
+            style=discord.ButtonStyle.danger,
+            label="Lock Poll",
+            custom_id="lock_poll",
+            emoji="🔒"
+        )
+        self.cog = cog
+    
+    async def callback(self, interaction: discord.Interaction):
+        await self.cog.handle_lock_poll(interaction)
+
 class GOTWView(discord.ui.View):
-    def __init__(self, cog, team1, team2):
+    def __init__(self, cog, team1, team2, is_locked=False):
         super().__init__(timeout=None)  # No timeout
         self.cog = cog
         self.team1 = team1
         self.team2 = team2
+        self.is_locked = is_locked
         
         # Create buttons for voting
-        self.add_item(VoteButton(team1, cog))
-        self.add_item(VoteButton(team2, cog))
+        self.add_item(VoteButton(team1, cog, disabled=is_locked))
+        self.add_item(VoteButton(team2, cog, disabled=is_locked))
+        
+        # Add lock button (only if not locked and user has permission)
+        if not is_locked:
+            self.add_item(LockButton(cog))
 
 class GOTWSystem(commands.Cog):
     def __init__(self, bot):
@@ -182,7 +201,10 @@ class GOTWSystem(commands.Cog):
             'team2': team2,
             'created_by': interaction.user.id,
             'created_at': datetime.now().isoformat(),
-            'votes': {}
+            'votes': {},
+            'is_locked': False,
+            'locked_by': None,
+            'locked_at': None
         }
         
         # Clear previous votes
@@ -245,7 +267,8 @@ class GOTWSystem(commands.Cog):
         embed.set_footer(text="Click the buttons below to vote!")
         
         # Create view with voting buttons
-        view = GOTWView(self, team1, team2)
+        is_locked = self.current_gotw.get('is_locked', False)
+        view = GOTWView(self, team1, team2, is_locked=is_locked)
         
         await interaction.response.send_message(embed=embed, view=view)
     
@@ -376,10 +399,28 @@ class GOTWSystem(commands.Cog):
     
 
     
+    def has_admin_permission(self, interaction):
+        """Check if user has commish role or administrator permissions"""
+        # Check if user has administrator permission
+        if interaction.user.guild_permissions.administrator:
+            return True
+        
+        # Check if user has commish role
+        commish_role = discord.utils.get(interaction.guild.roles, name="commish")
+        if commish_role and commish_role in interaction.user.roles:
+            return True
+        
+        return False
+
     async def handle_vote(self, interaction: discord.Interaction, team_abbreviation: str):
         """Handle a user's vote"""
         if not self.current_gotw:
             await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+            return
+        
+        # Check if poll is locked
+        if self.current_gotw.get('is_locked', False):
+            await interaction.response.send_message("🔒 **Poll is locked!** No more votes can be cast.", ephemeral=True)
             return
         
         user_id = str(interaction.user.id)
@@ -402,9 +443,35 @@ class GOTWSystem(commands.Cog):
         self.save_gotw_data()
         
         # Update the original message with new vote counts
+        await self.update_vote_message(interaction.message)
+
+    async def handle_lock_poll(self, interaction: discord.Interaction):
+        """Handle locking the poll"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to lock the poll.", ephemeral=True)
+            return
+        
+        if not self.current_gotw:
+            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+            return
+        
+        # Lock the poll
+        self.current_gotw['is_locked'] = True
+        self.current_gotw['locked_by'] = interaction.user.id
+        self.current_gotw['locked_at'] = datetime.now().isoformat()
+        
+        self.save_gotw_data()
+        
+        # Update the message with locked status
+        await self.update_vote_message(interaction.message, is_locked=True)
+        
+        await interaction.response.send_message("🔒 **Poll locked!** No more votes can be cast.", ephemeral=True)
+
+    async def update_vote_message(self, message, is_locked=None):
+        """Update the vote message with current counts and lock status"""
         try:
-            # Get the original message
-            message = interaction.message
+            if not self.current_gotw:
+                return
             
             # Update the embed
             embed = message.embeds[0]
@@ -421,7 +488,19 @@ class GOTWSystem(commands.Cog):
                     field.value = f"{team1['emoji']} {team1['name']}: **{team1_votes}**\n{team2['emoji']} {team2['name']}: **{team2_votes}**"
                     break
             
-            await message.edit(embed=embed)
+            # Update footer based on lock status
+            if is_locked is None:
+                is_locked = self.current_gotw.get('is_locked', False)
+            
+            if is_locked:
+                embed.set_footer(text="🔒 Poll Locked - No more votes can be cast")
+            else:
+                embed.set_footer(text="Click the buttons below to vote!")
+            
+            # Create new view with updated lock status
+            view = GOTWView(self, team1, team2, is_locked=is_locked)
+            
+            await message.edit(embed=embed, view=view)
             
         except Exception as e:
             logger.error(f"Error updating vote message: {e}")

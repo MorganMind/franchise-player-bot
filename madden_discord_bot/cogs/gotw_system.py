@@ -365,7 +365,7 @@ class GOTWSystem(commands.Cog):
                     # Handle both old and new data formats
                     if 'active_gotws' in data:
                         self.active_gotws = data.get('active_gotws', {})
-                    self.votes = data.get('votes', {})
+                        self.votes = data.get('votes', {})
                     else:
                         # Migrate from old format
                         self.active_gotws = {}

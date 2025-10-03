@@ -77,6 +77,14 @@ class MaddenBot(commands.Bot):
             print(f"❌ Failed to load NFL Schedule cog: {e}")
             return
         
+        # Load our Team Claim System cog
+        try:
+            await self.load_extension('cogs.team_claim_system')
+            print("✅ Team Claim System cog loaded")
+        except Exception as e:
+            print(f"❌ Failed to load Team Claim System cog: {e}")
+            return
+        
         # Sync slash commands
         try:
             print("🔄 Starting command sync...")

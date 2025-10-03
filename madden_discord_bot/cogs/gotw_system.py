@@ -349,7 +349,7 @@ class GOTWSystem(commands.Cog):
         
         embed.add_field(
             name="📊 Current Votes",
-            value=f"{team1['emoji']} {team1['name']}: **{team1_votes}**\n{team2['emoji']} {team2['name']}: **{team2_votes}**",
+            value=f"{team1_emoji} {team1['name']}: **{team1_votes}**\n{team2_emoji} {team2['name']}: **{team2_votes}**",
             inline=False
         )
         
@@ -561,7 +561,15 @@ class GOTWSystem(commands.Cog):
         
         # Update the original message with new vote counts
         try:
-            await self.update_vote_message(interaction.message)
+            # Find the original GOTW message in the channel
+            async for message in interaction.channel.history(limit=50):
+                if (message.embeds and 
+                    len(message.embeds) > 0 and 
+                    message.embeds[0].title and 
+                    "GAME OF THE WEEK" in message.embeds[0].title and
+                    message.author == self.bot.user):
+                    await self.update_vote_message(message)
+                    break
         except Exception as e:
             logger.error(f"Failed to update vote message: {e}")
             # Don't fail the vote if message update fails
@@ -692,10 +700,14 @@ class GOTWSystem(commands.Cog):
             logger.info(f"Total votes in self.votes: {len(self.votes)}")
             logger.info(f"Votes dict: {self.votes}")
             
+            # Get custom emojis with fallbacks
+            team1_emoji = self.get_team_emoji(message.guild, team1['abbreviation'])
+            team2_emoji = self.get_team_emoji(message.guild, team2['abbreviation'])
+            
             # Update the votes field
             for field in embed.fields:
                 if field.name == "📊 Current Votes":
-                    field.value = f"{team1['emoji']} {team1['name']}: **{team1_votes}**\n{team2['emoji']} {team2['name']}: **{team2_votes}**"
+                    field.value = f"{team1_emoji} {team1['name']}: **{team1_votes}**\n{team2_emoji} {team2['name']}: **{team2_votes}**"
                     logger.info(f"Updated field value: {field.value}")
                     break
             

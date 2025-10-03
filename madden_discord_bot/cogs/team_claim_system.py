@@ -26,7 +26,7 @@ class TeamSelect(discord.ui.Select):
             ))
         
         super().__init__(
-            placeholder=f"Select your team (Menu {menu_number})",
+            placeholder=f"Select your team ({menu_number})",
             min_values=1,
             max_values=1,
             options=options
@@ -48,7 +48,7 @@ class TeamSelect(discord.ui.Select):
                     item.placeholder = f"✓ {selected_team_data['name']}"
                 else:
                     # This is the other menu - reset its placeholder
-                    item.placeholder = f"Select your team (Menu {item.menu_number})"
+                    item.placeholder = f"Select your team ({item.menu_number})"
         
         view.update_claim_button()
         
@@ -100,18 +100,20 @@ class TeamClaimView(discord.ui.View):
         self.guild = guild
         self.selected_team = None
         
-        # Split teams into two groups to respect Discord's 25-option limit
+        # Split teams by conference to respect Discord's 25-option limit
         teams_list = list(cog.teams.values())
-        teams_list.sort(key=lambda x: x['name'])  # Sort alphabetically
         
-        # First 16 teams (AFC teams + some NFC teams)
-        teams_menu1 = teams_list[:16]
-        # Remaining 16 teams (remaining NFC teams)
-        teams_menu2 = teams_list[16:]
+        # AFC teams (16 teams)
+        afc_teams = [team for team in teams_list if team['conference'] == 'AFC']
+        afc_teams.sort(key=lambda x: x['name'])  # Sort alphabetically within conference
+        
+        # NFC teams (16 teams)
+        nfc_teams = [team for team in teams_list if team['conference'] == 'NFC']
+        nfc_teams.sort(key=lambda x: x['name'])  # Sort alphabetically within conference
         
         # Add team selectors
-        team_select1 = TeamSelect(cog, guild, teams_menu1, 1)
-        team_select2 = TeamSelect(cog, guild, teams_menu2, 2)
+        team_select1 = TeamSelect(cog, guild, afc_teams, "AFC")
+        team_select2 = TeamSelect(cog, guild, nfc_teams, "NFC")
         self.add_item(team_select1)
         self.add_item(team_select2)
         

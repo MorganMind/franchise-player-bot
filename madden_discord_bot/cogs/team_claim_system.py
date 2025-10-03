@@ -107,11 +107,21 @@ class TeamClaimSystem(commands.Cog):
         """Load NFL teams data"""
         if os.path.exists(self.teams_file):
             with open(self.teams_file, 'r') as f:
-                teams_list = json.load(f)
+                teams_data = json.load(f)
+                # Handle both direct list and wrapped in "teams" object
+                if isinstance(teams_data, dict) and 'teams' in teams_data:
+                    teams_list = teams_data['teams']
+                elif isinstance(teams_data, list):
+                    teams_list = teams_data
+                else:
+                    logger.error(f"Unexpected teams data format: {type(teams_data)}")
+                    teams_list = []
+                
                 self.teams = {team['abbreviation'].upper(): team for team in teams_list}
             logger.info(f"Loaded {len(self.teams)} NFL teams.")
         else:
             logger.error(f"Teams data file not found: {self.teams_file}")
+            self.teams = {}
 
     def get_team_emoji(self, guild, team_abbreviation):
         """Get custom emoji for team with fallback to Unicode emoji"""

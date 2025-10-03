@@ -95,13 +95,29 @@ class TeamSelect(discord.ui.Select):
             options=options[:25]  # Discord limit
         )
     
+    def update_placeholder(self, selected_team_abbrev=None):
+        """Update the placeholder to show selected team"""
+        if selected_team_abbrev:
+            team = self.cog.teams.get(selected_team_abbrev.upper())
+            if team:
+                emoji = self.cog.get_team_emoji(self.guild, team['abbreviation'])
+                self.placeholder = f"{emoji} {team['name']}"
+            else:
+                self.placeholder = f"Team {self.team_number} Selected"
+        else:
+            self.placeholder = f"Select Team {self.team_number}"
+    
     async def callback(self, interaction: discord.Interaction):
         # Update the view's selected teams
         view = self.view
         if self.team_number == 1:
             view.team1_selected = self.values[0]
+            # Update this select's placeholder
+            self.update_placeholder(self.values[0])
         else:
             view.team2_selected = self.values[0]
+            # Update this select's placeholder
+            self.update_placeholder(self.values[0])
         
         # Update the create button state
         view.update_create_button()
@@ -141,9 +157,13 @@ class GOTWSetupView(discord.ui.View):
         self.team1_selected = None
         self.team2_selected = None
         
+        # Create team selectors and store references
+        self.team1_select = TeamSelect(cog, 1, guild)
+        self.team2_select = TeamSelect(cog, 2, guild)
+        
         # Add team selectors
-        self.add_item(TeamSelect(cog, 1, guild))
-        self.add_item(TeamSelect(cog, 2, guild))
+        self.add_item(self.team1_select)
+        self.add_item(self.team2_select)
         
         # Add create button
         self.create_button = CreateGOTWButton(cog)
@@ -298,22 +318,10 @@ class GOTWSystem(commands.Cog):
             return '🏈'
 
     
-    @app_commands.command(name="gotw", description="Game of the Week commands")
-    @app_commands.describe(
-        action="Action to perform: create, vote, list, clear"
-    )
-    async def gotw(self, interaction: discord.Interaction, action: str):
-        """Main GOTW command"""
-        if action.lower() == "create":
-            await self.setup_gotw_creation(interaction)
-        elif action.lower() == "vote":
-            await self.show_vote_card(interaction)
-        elif action.lower() == "list":
-            await self.list_teams(interaction)
-        elif action.lower() == "clear":
-            await self.clear_gotw(interaction)
-        else:
-            await interaction.response.send_message("❌ Invalid action. Use: create, vote, list, or clear", ephemeral=True)
+    @app_commands.command(name="gotw", description="Create a Game of the Week matchup")
+    async def gotw(self, interaction: discord.Interaction):
+        """Main GOTW command - directly starts team selection"""
+        await self.setup_gotw_creation(interaction)
     
     async def setup_gotw_creation(self, interaction: discord.Interaction):
         """Setup interactive GOTW creation with team selection"""
@@ -602,7 +610,7 @@ class GOTWSystem(commands.Cog):
             return True
         
         return False
-
+    
     async def handle_vote(self, interaction: discord.Interaction, team_abbreviation: str):
         """Handle a user's vote"""
         if not self.current_gotw:

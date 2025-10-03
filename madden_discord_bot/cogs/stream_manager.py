@@ -1019,7 +1019,7 @@ class StreamManager(commands.Cog):
             
             embed.add_field(
                 name="📺 Watch Now",
-                value=f"[Click here to watch!]({stream_url})" if stream_url else "Join their voice channel to watch",
+                value=f"[Click here to watch!](https://discord.com/channels/1039342526206844980/1167311841668632607)",
                 inline=False
             )
             
@@ -1065,7 +1065,7 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.add_field(
                             name="📺 Watch Now",
-                            value=f"[Watch in Discord]({stream_url})" if stream_url else "Join their voice channel",
+                            value=f"[Click here to watch!](https://discord.com/channels/1039342526206844980/1167311841668632607)",
                             inline=False
                         )
                         

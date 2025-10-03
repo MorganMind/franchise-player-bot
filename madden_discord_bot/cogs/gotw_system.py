@@ -62,22 +62,23 @@ class ResultsButton(discord.ui.Button):
         await self.cog.handle_show_results(interaction, self.gotw_id)
 
 class DeclareWinnerButton(discord.ui.Button):
-    def __init__(self, cog, team_abbreviation, team_name, team_emoji, guild=None):
+    def __init__(self, cog, team_abbreviation, team_name, team_emoji, gotw_id: str, guild=None):
         # Get custom emoji with fallback
         emoji = cog.get_team_emoji(guild, team_abbreviation) if guild else team_emoji
         
         super().__init__(
             style=discord.ButtonStyle.success,
             label=f"Winner: {team_name}",
-            custom_id=f"winner_{team_abbreviation}",
+            custom_id=f"winner_{team_abbreviation}_{gotw_id}",
             emoji=emoji
         )
         self.cog = cog
         self.team_abbreviation = team_abbreviation
         self.team_name = team_name
+        self.gotw_id = gotw_id
     
     async def callback(self, interaction: discord.Interaction):
-        await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name)
+        await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name, self.gotw_id)
 
 class TeamSelect(discord.ui.Select):
     def __init__(self, cog, team_number, guild, teams_subset, conference_name):
@@ -672,9 +673,9 @@ class GOTWSystem(commands.Cog):
             )
         
         # Check if winner has already been declared
-        winner_declared = self.current_gotw.get('winner_declared', False)
+        winner_declared = gotw_data.get('winner_declared', False)
         if winner_declared:
-            winner_team = self.current_gotw.get('winner_team')
+            winner_team = gotw_data.get('winner_team')
             winner_name = team1['name'] if winner_team == team1['abbreviation'] else team2['name']
             embed.add_field(
                 name="🏆 Winner Declared",
@@ -685,8 +686,8 @@ class GOTWSystem(commands.Cog):
         else:
             # Add winner declaration buttons for commish
             view = discord.ui.View(timeout=None)
-            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1_emoji, guild=interaction.guild))
-            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2_emoji, guild=interaction.guild))
+            view.add_item(DeclareWinnerButton(self, team1['abbreviation'], team1['name'], team1_emoji, gotw_id, guild=interaction.guild))
+            view.add_item(DeclareWinnerButton(self, team2['abbreviation'], team2['name'], team2_emoji, gotw_id, guild=interaction.guild))
             
             await interaction.response.send_message(embed=embed, view=view)
             return
@@ -713,17 +714,6 @@ class GOTWSystem(commands.Cog):
         
         await interaction.response.send_message(embed=embed)
     
-    async def clear_gotw(self, interaction: discord.Interaction):
-        """Clear the current GOTW"""
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
-            return
-        
-        self.current_gotw = None
-        self.votes = {}
-        self.save_gotw_data()
-        
-        await interaction.response.send_message("✅ Game of the Week cleared!", ephemeral=True)
     
     async def setup_gotw_channel(self, interaction: discord.Interaction):
         """Setup a dedicated GOTW channel"""
@@ -882,23 +872,26 @@ class GOTWSystem(commands.Cog):
         
         await interaction.response.send_message("🔒 **Poll locked!** No more votes can be cast.", ephemeral=True)
 
-    async def handle_declare_winner(self, interaction: discord.Interaction, team_abbreviation: str, team_name: str):
+    async def handle_declare_winner(self, interaction: discord.Interaction, team_abbreviation: str, team_name: str, gotw_id: str):
         """Handle declaring a winner and awarding points"""
         if not self.has_admin_permission(interaction):
             await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to declare a winner.", ephemeral=True)
             return
         
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+        if gotw_id not in self.active_gotws:
+            await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
             return
         
+        gotw_data = self.active_gotws[gotw_id]
+        
         # Check if winner already declared
-        if self.current_gotw.get('winner_declared', False):
+        if gotw_data.get('winner_declared', False):
             await interaction.response.send_message("❌ Winner has already been declared for this poll!", ephemeral=True)
             return
         
-        # Get voters for the winning team
-        winning_voters = [user_id for user_id, vote in self.votes.items() if vote == team_abbreviation]
+        # Get voters for the winning team from this specific poll
+        poll_votes = self.votes.get(gotw_id, {})
+        winning_voters = [user_id for user_id, vote in poll_votes.items() if vote == team_abbreviation]
         
         # Award points to winning voters
         points_awarded = 0
@@ -917,10 +910,10 @@ class GOTWSystem(commands.Cog):
                 logger.error("PointsSystemSupabase cog not found - cannot award points")
         
         # Mark winner as declared
-        self.current_gotw['winner_declared'] = True
-        self.current_gotw['winner_team'] = team_abbreviation
-        self.current_gotw['winner_declared_by'] = interaction.user.id
-        self.current_gotw['winner_declared_at'] = datetime.now().isoformat()
+        gotw_data['winner_declared'] = True
+        gotw_data['winner_team'] = team_abbreviation
+        gotw_data['winner_declared_by'] = interaction.user.id
+        gotw_data['winner_declared_at'] = datetime.now().isoformat()
         
         self.save_gotw_data()
         

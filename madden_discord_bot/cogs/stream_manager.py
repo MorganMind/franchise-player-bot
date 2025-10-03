@@ -98,6 +98,18 @@ class StreamManager(commands.Cog):
             logger.error(f"Error getting user points from Supabase: {e}")
             return 0
     
+    async def get_user_stream_points(self, user_id):
+        """Get user's current stream points from Supabase"""
+        try:
+            from config.supabase_config import supabase
+            response = supabase.table("users").select("stream_points").eq("id", str(user_id)).execute()
+            if response.data and len(response.data) > 0:
+                return response.data[0].get("stream_points", 0)
+            return 0
+        except Exception as e:
+            logger.error(f"Error getting user stream points from Supabase: {e}")
+            return 0
+    
     async def check_stream_cooldown(self, user_id):
         """Check if user is on cooldown for stream points"""
         try:
@@ -132,17 +144,64 @@ class StreamManager(commands.Cog):
     async def add_user_points(self, user_id, points_to_add, point_type="stream"):
         """Add points to user's account using Supabase"""
         try:
-            # Import the points system cog to add points via Supabase
-            points_cog = self.bot.get_cog('PointsSystemSupabase')
-            if points_cog:
-                # Add points using the Supabase system
-                await points_cog.add_user_points(user_id, points_to_add)
-                # Get the new total
-                new_total = await points_cog.get_user_points(user_id)
-                return new_total
+            # Import Supabase client
+            from config.supabase_config import supabase
+            
+            if point_type == "stream":
+                # Check current stream points
+                result = supabase.table("users").select("stream_points, total_points").eq("id", str(user_id)).execute()
+                
+                if result.data:
+                    current_stream_points = result.data[0].get("stream_points", 0)
+                    current_total_points = result.data[0].get("total_points", 0)
+                    
+                    # Check if user has reached the 8 stream points limit
+                    if current_stream_points >= 8:
+                        logger.info(f"User {user_id} has reached stream points limit (8), not adding more stream points")
+                        return current_total_points  # Return current total without adding
+                    
+                    # Calculate new values
+                    new_stream_points = min(current_stream_points + points_to_add, 8)  # Cap at 8
+                    points_actually_added = new_stream_points - current_stream_points
+                    new_total_points = current_total_points + points_actually_added
+                    
+                    # Update both stream_points and total_points
+                    supabase.table("users").upsert(
+                        {
+                            "id": str(user_id), 
+                            "stream_points": new_stream_points,
+                            "total_points": new_total_points
+                        },
+                        on_conflict="id"
+                    ).execute()
+                    
+                    logger.info(f"Added {points_actually_added} stream points to user {user_id}. Stream points: {new_stream_points}/8, Total: {new_total_points}")
+                    return new_total_points
+                else:
+                    # User doesn't exist, create them
+                    new_stream_points = min(points_to_add, 8)
+                    supabase.table("users").upsert(
+                        {
+                            "id": str(user_id), 
+                            "stream_points": new_stream_points,
+                            "total_points": new_stream_points
+                        },
+                        on_conflict="id"
+                    ).execute()
+                    
+                    logger.info(f"Created new user {user_id} with {new_stream_points} stream points")
+                    return new_stream_points
             else:
-                logger.error("PointsSystemSupabase cog not found")
-                return 0
+                # For non-stream points, use the regular points system
+                points_cog = self.bot.get_cog('PointsSystemSupabase')
+                if points_cog:
+                    await points_cog.add_user_points(user_id, points_to_add)
+                    new_total = await points_cog.get_user_points(user_id)
+                    return new_total
+                else:
+                    logger.error("PointsSystemSupabase cog not found")
+                    return 0
+                    
         except Exception as e:
             logger.error(f"Error adding user points via Supabase: {e}")
             return 0
@@ -350,7 +409,9 @@ class StreamManager(commands.Cog):
                 logger.warning(f"No profile image available for {username}, using fallback")
                 embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")  # Twitch emoji fallback
             
-            embed.set_footer(text=f"Total Points: {new_total:,}")
+            # Get current stream points for display
+            current_stream_points = await self.get_user_stream_points(interaction.user.id)
+            embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
             # Post in the current channel
             await interaction.response.send_message(embed=embed)
@@ -898,7 +959,9 @@ class StreamManager(commands.Cog):
             else:
                 embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
             
-            embed.set_footer(text=f"Total Points: {new_total:,} | Auto-detected")
+            # Get current stream points for display
+            current_stream_points = await self.get_user_stream_points(member.id)
+            embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8 | Auto-detected")
             
             # Cross-post to hardcoded stream channel
             # Hardcoded channel ID: 1039342527330910265
@@ -1045,7 +1108,9 @@ class StreamManager(commands.Cog):
                 # No registered stream link, use Discord icon
                 embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")
             
-            embed.set_footer(text=f"Total Points: {new_total:,}")
+            # Get current stream points for display
+            current_stream_points = await self.get_user_stream_points(interaction.user.id)
+            embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
             # Cross-post to hardcoded stream channel if different from current channel
             # Hardcoded channel ID: 1039342527330910265

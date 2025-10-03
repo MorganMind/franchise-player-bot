@@ -548,6 +548,79 @@ class PointsSystemSupabase(commands.Cog):
                 "❌ An error occurred while fetching the leaderboard.", 
                 ephemeral=True
             )
+    
+    @app_commands.command(name="clearstreampoints", description="Clear stream points from a user (Commish only)")
+    @app_commands.describe(user="User to clear stream points from")
+    async def clear_stream_points(self, interaction: discord.Interaction, user: discord.Member):
+        """Clear stream points from a specific user (Commish only)"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message(
+                "❌ You need administrator permissions or the 'commish' role to use this command.", 
+                ephemeral=True
+            )
+            return
+        
+        try:
+            # Get current stream points and total points
+            from config.supabase_config import supabase
+            result = supabase.table("users").select("stream_points, total_points").eq("id", str(user.id)).execute()
+            
+            if not result.data:
+                await interaction.response.send_message(
+                    f"ℹ️ {user.display_name} doesn't have any points to clear.", 
+                    ephemeral=True
+                )
+                return
+            
+            current_stream_points = result.data[0].get("stream_points", 0)
+            current_total_points = result.data[0].get("total_points", 0)
+            
+            if current_stream_points == 0:
+                await interaction.response.send_message(
+                    f"ℹ️ {user.display_name} doesn't have any stream points to clear.", 
+                    ephemeral=True
+                )
+                return
+            
+            # Calculate new total points (subtract stream points from total)
+            new_total_points = current_total_points - current_stream_points
+            
+            # Update user to have 0 stream points and reduced total points
+            supabase.table("users").upsert(
+                {
+                    "id": str(user.id),
+                    "stream_points": 0,
+                    "total_points": new_total_points
+                },
+                on_conflict="id"
+            ).execute()
+            
+            embed = discord.Embed(
+                title="🎯 Stream Points Cleared",
+                description=f"Successfully cleared stream points for **{user.display_name}**",
+                color=0xff6b6b
+            )
+            embed.add_field(
+                name="Stream Points",
+                value=f"{current_stream_points} → **0**",
+                inline=True
+            )
+            embed.add_field(
+                name="Total Points",
+                value=f"{current_total_points:,} → **{new_total_points:,}**",
+                inline=True
+            )
+            embed.set_thumbnail(url=user.display_avatar.url)
+            embed.set_footer(text=f"Cleared by {interaction.user.display_name}")
+            
+            await interaction.response.send_message(embed=embed)
+            
+        except Exception as e:
+            logger.error(f"Error in clear_stream_points: {e}")
+            await interaction.response.send_message(
+                "❌ An error occurred while clearing stream points.", 
+                ephemeral=True
+            )
 
 async def setup(bot):
     await bot.add_cog(PointsSystemSupabase(bot))

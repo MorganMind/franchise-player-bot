@@ -308,7 +308,7 @@ class TeamClaimSystem(commands.Cog):
             
             embed.add_field(
                 name="Benefits",
-                value="• Your team affiliation will show in GOTW polls\n• You'll get +2 points when your team wins GOTW\n• Team integration in future features",
+                value="• You'll get +2 points when your team wins GOTW\n• Team integration in future features",
                 inline=False
             )
             

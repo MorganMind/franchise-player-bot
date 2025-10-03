@@ -43,22 +43,26 @@ class SpendingSystemSupabase(commands.Cog):
                 ("Awareness", "AWR"),
                 ("Break Sack", "BSK"),
                 ("Carrying", "CAR"),
+                ("Juke Move", "JUK"),
+                ("Spin Move", "SPN"),
+                ("Break Tackle", "BTK"),
             ],
             "RB": [
-                ("Carrying", "CAR"),("Ball Carrier Vision", "BCV"),("Stiff Arm", "SFA"),("Spin Move", "SPM"),
-                ("Juke Move", "JKM"),("Trucking", "TRK"),("Break Tackle", "BTK"),("Catching", "CTH"),
+                ("Carrying", "CAR"),("Ball Carrier Vision", "BCV"),("Stiff Arm", "SFA"),("Spin Move", "SPN"),
+                ("Juke Move", "JUK"),("Trucking", "TRK"),("Break Tackle", "BTK"),("Catching", "CTH"),
                 ("Catch in Traffic", "CIT"),("Short Route Running", "SRR"),("Medium Route Running", "MRR"),
                 ("Release", "RLS"),("Awareness", "AWR")
             ],
             "WR": [
                 ("Catching", "CTH"),("Catch in Traffic", "CIT"),("Spectacular Catch", "SPC"),("Release", "RLS"),
                 ("Short Route Running", "SRR"),("Medium Route Running", "MRR"),("Deep Route Running", "DRR"),
-                ("Awareness", "AWR")
+                ("Awareness", "AWR"),("Juke Move", "JUK"),("Spin Move", "SPN"),("Break Tackle", "BTK")
             ],
             "TE": [
                 ("Catching", "CTH"),("Catch in Traffic", "CIT"),("Spectacular Catch", "SPC"),("Release", "RLS"),
                 ("Short Route Running", "SRR"),("Medium Route Running", "MRR"),("Run Block", "RBK"),
-                ("Pass Block", "PBK"),("Lead Block", "LBK"),("Impact Block", "IBK"),("Awareness", "AWR")
+                ("Pass Block", "PBK"),("Lead Block", "LBK"),("Impact Block", "IBK"),("Awareness", "AWR"),
+                ("Juke Move", "JUK"),("Spin Move", "SPN"),("Break Tackle", "BTK")
             ],
             "LT/RT": [
                 ("Pass Block", "PBK"),("Pass Block Power", "PBP"),("Pass Block Finesse", "PBF"),("Run Block", "RBK"),
@@ -99,7 +103,7 @@ class SpendingSystemSupabase(commands.Cog):
             "FB": [
                 ("Run Block", "RBK"),("Lead Block", "LBK"),("Impact Block", "IBK"),("Catching", "CTH"),
                 ("Catch in Traffic", "CIT"),("Short Route Running", "SRR"),("Trucking", "TRK"),("Stiff Arm", "SFA"),
-                ("Carrying", "CAR"),("Awareness", "AWR")
+                ("Carrying", "CAR"),("Awareness", "AWR"),("Juke Move", "JUK"),("Spin Move", "SPN"),("Break Tackle", "BTK")
             ],
             "K": [
                 ("Kick Accuracy", "KAC"),("Awareness", "AWR")

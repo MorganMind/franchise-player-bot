@@ -353,9 +353,10 @@ class StreamManager(commands.Cog):
             # Post in the current channel
             await interaction.response.send_message(embed=embed)
             
-            # Cross-post to designated stream channel if different from current channel
-            designated_channel_id = self.get_stream_channel(interaction.guild.id)
-            if designated_channel_id and designated_channel_id != interaction.channel.id:
+            # Cross-post to hardcoded stream channel if different from current channel
+            # Hardcoded channel ID: 1039342527330910265
+            designated_channel_id = 1039342527330910265
+            if designated_channel_id != interaction.channel.id:
                 try:
                     designated_channel = interaction.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
@@ -897,8 +898,9 @@ class StreamManager(commands.Cog):
             
             embed.set_footer(text=f"Total Points: {new_total:,} | Auto-detected")
             
-            # Post in designated stream channel if set
-            designated_channel_id = self.get_stream_channel(member.guild.id)
+            # Cross-post to hardcoded stream channel
+            # Hardcoded channel ID: 1039342527330910265
+            designated_channel_id = 1039342527330910265
             if designated_channel_id:
                 try:
                     designated_channel = member.guild.get_channel(int(designated_channel_id))
@@ -1043,9 +1045,10 @@ class StreamManager(commands.Cog):
             
             embed.set_footer(text=f"Total Points: {new_total:,}")
             
-            # Post in designated stream channel if set
-            designated_channel_id = self.get_stream_channel(interaction.guild.id)
-            if designated_channel_id and designated_channel_id != interaction.channel.id:
+            # Cross-post to hardcoded stream channel if different from current channel
+            # Hardcoded channel ID: 1039342527330910265
+            designated_channel_id = 1039342527330910265
+            if designated_channel_id != interaction.channel.id:
                 try:
                     designated_channel = interaction.guild.get_channel(int(designated_channel_id))
                     if designated_channel:

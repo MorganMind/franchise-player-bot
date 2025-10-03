@@ -9,22 +9,23 @@ from datetime import datetime, timedelta
 logger = logging.getLogger(__name__)
 
 class VoteButton(discord.ui.Button):
-    def __init__(self, team, cog, disabled=False, guild=None):
+    def __init__(self, team, cog, gotw_id, disabled=False, guild=None):
         # Get custom emoji with fallback
         emoji = cog.get_team_emoji(guild, team['abbreviation']) if guild else team.get('emoji', '🏈')
         
         super().__init__(
             style=discord.ButtonStyle.primary,
             label=f"Vote {team['name']}",
-            custom_id=f"vote_{team['abbreviation']}",
+            custom_id=f"vote_{gotw_id}_{team['abbreviation']}",
             emoji=emoji,
             disabled=disabled
         )
         self.team = team
         self.cog = cog
+        self.gotw_id = gotw_id
     
     async def callback(self, interaction: discord.Interaction):
-        await self.cog.handle_vote(interaction, self.team['abbreviation'])
+        await self.cog.handle_vote(interaction, self.team['abbreviation'], self.gotw_id)
 
 class LockButton(discord.ui.Button):
     def __init__(self, cog):
@@ -252,17 +253,18 @@ class GOTWSetupView(discord.ui.View):
             pass  # Ignore if message is already deleted
 
 class GOTWView(discord.ui.View):
-    def __init__(self, cog, team1, team2, is_locked=False, guild=None):
+    def __init__(self, cog, team1, team2, gotw_id, is_locked=False, guild=None):
         super().__init__(timeout=None)  # No timeout
         self.cog = cog
         self.team1 = team1
         self.team2 = team2
+        self.gotw_id = gotw_id
         self.is_locked = is_locked
         self.guild = guild
         
         # Create buttons for voting
-        self.add_item(VoteButton(team1, cog, disabled=is_locked, guild=guild))
-        self.add_item(VoteButton(team2, cog, disabled=is_locked, guild=guild))
+        self.add_item(VoteButton(team1, cog, gotw_id, disabled=is_locked, guild=guild))
+        self.add_item(VoteButton(team2, cog, gotw_id, disabled=is_locked, guild=guild))
         
         # Add results button (always available)
         self.add_item(ResultsButton(cog))
@@ -276,8 +278,8 @@ class GOTWSystem(commands.Cog):
         self.bot = bot
         self.gotw_file = "data/gotw.json"
         self.teams_file = "data/nfl_teams.json"
-        self.current_gotw = None
-        self.votes = {}
+        self.active_gotws = {}  # Dictionary of message_id -> gotw_data
+        self.votes = {}  # Dictionary of message_id -> votes
         self.load_gotw_data()
         self.load_teams()
         logger.info("✅ GOTWSystem cog initialized")
@@ -336,20 +338,29 @@ class GOTWSystem(commands.Cog):
             if os.path.exists(self.gotw_file):
                 with open(self.gotw_file, 'r') as f:
                     data = json.load(f)
-                    self.current_gotw = data.get('current_gotw')
+                    # Handle both old and new data formats
+                    if 'active_gotws' in data:
+                        self.active_gotws = data.get('active_gotws', {})
                     self.votes = data.get('votes', {})
+                    else:
+                        # Migrate from old format
+                        self.active_gotws = {}
+                        self.votes = {}
+                        if data.get('current_gotw'):
+                            # Convert old single GOTW to new format (if we had a message_id)
+                            logger.info("Migrating from old GOTW format")
             else:
                 self.save_gotw_data()
         except Exception as e:
             logger.error(f"Error loading GOTW data: {e}")
-            self.current_gotw = None
+            self.active_gotws = {}
             self.votes = {}
     
     def save_gotw_data(self):
         """Save GOTW data to JSON file"""
         try:
             data = {
-                'current_gotw': self.current_gotw,
+                'active_gotws': self.active_gotws,
                 'votes': self.votes
             }
             with open(self.gotw_file, 'w') as f:
@@ -467,13 +478,15 @@ class GOTWSystem(commands.Cog):
             await interaction.response.send_message("❌ Cannot create GOTW with the same team", ephemeral=True)
             return
         
-        # Create new GOTW
-        self.current_gotw = {
+        # Create new GOTW with unique ID
+        gotw_id = f"{interaction.user.id}_{int(datetime.now().timestamp())}"
+        
+        gotw_data = {
+            'id': gotw_id,
             'team1': team1,
             'team2': team2,
             'created_by': interaction.user.id,
             'created_at': datetime.now().isoformat(),
-            'votes': {},
             'is_locked': False,
             'locked_by': None,
             'locked_at': None,
@@ -483,22 +496,20 @@ class GOTWSystem(commands.Cog):
             'winner_declared_at': None
         }
         
-        # Clear previous votes
-        self.votes = {}
+        # Store the GOTW data
+        self.active_gotws[gotw_id] = gotw_data
+        self.votes[gotw_id] = {}
         
         self.save_gotw_data()
         
         # Show the GOTW card
-        await self.show_gotw_card(interaction)
+        await self.show_gotw_card(interaction, team1, team2, gotw_id)
     
-    async def show_gotw_card(self, interaction: discord.Interaction):
-        """Display the current GOTW card"""
-        if not self.current_gotw:
-            await interaction.response.send_message("❌ No Game of the Week currently set", ephemeral=True)
+    async def show_gotw_card(self, interaction: discord.Interaction, team1=None, team2=None, gotw_id=None):
+        """Display a GOTW card"""
+        if not team1 or not team2:
+            await interaction.response.send_message("❌ No teams provided for GOTW", ephemeral=True)
             return
-        
-        team1 = self.current_gotw['team1']
-        team2 = self.current_gotw['team2']
         
         # Create embed
         embed = discord.Embed(

@@ -448,14 +448,8 @@ class StreamManager(commands.Cog):
             embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
             # Post in the current channel with league mention
-            league_role = discord.utils.get(interaction.guild.roles, name="league")
-            logger.info(f"Looking for 'league' role in guild {interaction.guild.name}. Found: {league_role}")
-            if not league_role:
-                # Try case-insensitive search
-                league_role = discord.utils.get(interaction.guild.roles, name__iexact="league")
-                logger.info(f"Case-insensitive search for 'league' role. Found: {league_role}")
-            league_mention = league_role.mention if league_role else "@league"
-            logger.info(f"Using league mention: {league_mention}")
+            league_role = discord.utils.get(interaction.guild.roles, name="League")
+            league_mention = league_role.mention if league_role else "@League"
             await interaction.response.send_message(content=league_mention, embed=embed)
             
             # Cross-post to hardcoded stream channel if different from current channel
@@ -494,8 +488,8 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        league_role = discord.utils.get(interaction.guild.roles, name="league")
-                        league_mention = league_role.mention if league_role else "@league"
+                        league_role = discord.utils.get(interaction.guild.roles, name="League")
+                        league_mention = league_role.mention if league_role else "@League"
                         await designated_channel.send(content=league_mention, embed=cross_post_embed)
                         
                 except Exception as e:
@@ -1014,8 +1008,8 @@ class StreamManager(commands.Cog):
                 try:
                     designated_channel = member.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
-                        league_role = discord.utils.get(member.guild.roles, name="league")
-                        league_mention = league_role.mention if league_role else "@league"
+                        league_role = discord.utils.get(member.guild.roles, name="League")
+                        league_mention = league_role.mention if league_role else "@League"
                         await designated_channel.send(content=league_mention, embed=embed)
                         logger.info(f"Auto-announced stream for {member.display_name} in {designated_channel.name}")
                 except Exception as e:
@@ -1187,15 +1181,15 @@ class StreamManager(commands.Cog):
                         
                         cross_post_embed.set_footer(text=f"Originally posted in #{interaction.channel.name}")
                         
-                        league_role = discord.utils.get(interaction.guild.roles, name="league")
-                        league_mention = league_role.mention if league_role else "@league"
+                        league_role = discord.utils.get(interaction.guild.roles, name="League")
+                        league_mention = league_role.mention if league_role else "@League"
                         await designated_channel.send(content=league_mention, embed=cross_post_embed)
                         
                 except Exception as e:
                     logger.error(f"Error cross-posting Discord stream: {e}")
             
-            league_role = discord.utils.get(interaction.guild.roles, name="league")
-            league_mention = league_role.mention if league_role else "@league"
+            league_role = discord.utils.get(interaction.guild.roles, name="League")
+            league_mention = league_role.mention if league_role else "@League"
             await interaction.response.send_message(content=league_mention, embed=embed)
             
         except Exception as e:
@@ -1292,7 +1286,7 @@ class StreamManager(commands.Cog):
             )
             
             # Check specifically for league role
-            league_role = discord.utils.get(interaction.guild.roles, name="league")
+            league_role = discord.utils.get(interaction.guild.roles, name="League")
             if league_role:
                 embed.add_field(
                     name="✅ League Role Found",

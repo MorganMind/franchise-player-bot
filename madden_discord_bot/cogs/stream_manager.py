@@ -1332,6 +1332,8 @@ class StreamManager(commands.Cog):
             
         except Exception as e:
             logger.error(f"Error in add_stream_point: {e}")
+            import traceback
+            logger.error(f"Full traceback: {traceback.format_exc()}")
             await interaction.response.send_message(
                 "❌ An error occurred while adding stream point.", 
                 ephemeral=True

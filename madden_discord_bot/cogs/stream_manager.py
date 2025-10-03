@@ -176,6 +176,14 @@ class StreamManager(commands.Cog):
                     ).execute()
                     
                     logger.info(f"Added {points_actually_added} stream points to user {user_id}. Stream points: {new_stream_points}/8, Total: {new_total_points}")
+                    
+                    # Verify the update worked by reading back from database
+                    verify_result = supabase.table("users").select("stream_points, total_points").eq("id", str(user_id)).execute()
+                    if verify_result.data:
+                        verified_stream_points = verify_result.data[0].get("stream_points", 0)
+                        verified_total_points = verify_result.data[0].get("total_points", 0)
+                        logger.info(f"Verified database values - Stream: {verified_stream_points}, Total: {verified_total_points}")
+                    
                     return new_total_points
                 else:
                     # User doesn't exist, create them
@@ -190,6 +198,14 @@ class StreamManager(commands.Cog):
                     ).execute()
                     
                     logger.info(f"Created new user {user_id} with {new_stream_points} stream points")
+                    
+                    # Verify the creation worked by reading back from database
+                    verify_result = supabase.table("users").select("stream_points, total_points").eq("id", str(user_id)).execute()
+                    if verify_result.data:
+                        verified_stream_points = verify_result.data[0].get("stream_points", 0)
+                        verified_total_points = verify_result.data[0].get("total_points", 0)
+                        logger.info(f"Verified new user database values - Stream: {verified_stream_points}, Total: {verified_total_points}")
+                    
                     return new_stream_points
             else:
                 # For non-stream points, use the regular points system
@@ -375,6 +391,12 @@ class StreamManager(commands.Cog):
             points_earned = 1
             new_total = await self.add_user_points(interaction.user.id, points_earned, "stream")
             
+            # Get current stream points for display (AFTER adding points)
+            current_stream_points = await self.get_user_stream_points(interaction.user.id)
+            
+            # Debug logging
+            logger.info(f"Stream points after adding: {current_stream_points}, new_total: {new_total}")
+            
             # Create stream announcement embed
             embed = discord.Embed(
                 title="🎮 Live Stream Started!",
@@ -409,8 +431,7 @@ class StreamManager(commands.Cog):
                 logger.warning(f"No profile image available for {username}, using fallback")
                 embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/1009146ff.png")  # Twitch emoji fallback
             
-            # Get current stream points for display
-            current_stream_points = await self.get_user_stream_points(interaction.user.id)
+            # Set footer with updated values
             embed.set_footer(text=f"Total Points: {new_total:,} | Stream Points: {current_stream_points}/8")
             
             # Post in the current channel

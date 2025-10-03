@@ -303,7 +303,11 @@ class GOTWSystem(commands.Cog):
         is_locked = self.current_gotw.get('is_locked', False)
         view = GOTWView(self, team1, team2, is_locked=is_locked)
         
-        await interaction.response.send_message(embed=embed, view=view)
+        # Get league role for mention
+        league_role = discord.utils.get(interaction.guild.roles, name="League")
+        league_mention = league_role.mention if league_role else "@League"
+        
+        await interaction.response.send_message(content=league_mention, embed=embed, view=view)
     
     async def show_vote_card(self, interaction: discord.Interaction):
         """Show the current GOTW voting card"""
@@ -500,7 +504,11 @@ class GOTWSystem(commands.Cog):
         logger.info(f"Votes after save: {self.votes}")
         
         # Update the original message with new vote counts
-        await self.update_vote_message(interaction.message)
+        try:
+            await self.update_vote_message(interaction.message)
+        except Exception as e:
+            logger.error(f"Failed to update vote message: {e}")
+            # Don't fail the vote if message update fails
 
     async def handle_lock_poll(self, interaction: discord.Interaction):
         """Handle locking the poll"""
@@ -602,7 +610,11 @@ class GOTWSystem(commands.Cog):
         
         embed.set_footer(text=f"Declared by {interaction.user.display_name}")
         
-        await interaction.response.send_message(embed=embed)
+        # Get league role for mention
+        league_role = discord.utils.get(interaction.guild.roles, name="League")
+        league_mention = league_role.mention if league_role else "@League"
+        
+        await interaction.response.send_message(content=league_mention, embed=embed)
 
     async def update_vote_message(self, message, is_locked=None):
         """Update the vote message with current counts and lock status"""
@@ -643,7 +655,11 @@ class GOTWSystem(commands.Cog):
             # Create new view with updated lock status
             view = GOTWView(self, team1, team2, is_locked=is_locked)
             
-            await message.edit(embed=embed, view=view)
+            # Get league role for mention
+            league_role = discord.utils.get(message.guild.roles, name="League")
+            league_mention = league_role.mention if league_role else "@League"
+            
+            await message.edit(content=league_mention, embed=embed, view=view)
             logger.info("Successfully updated vote message")
             
         except Exception as e:

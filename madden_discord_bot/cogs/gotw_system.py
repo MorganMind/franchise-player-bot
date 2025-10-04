@@ -418,7 +418,7 @@ class GOTWSystem(commands.Cog):
                 {"name": "Tampa Bay Buccaneers", "abbreviation": "TB", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/a/a2/Tampa_Bay_Buccaneers_logo.svg", "emoji": "☠️"},
                 {"name": "Tennessee Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg", "emoji": "⚔️"},
                 {"name": "Washington Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg", "emoji": "⚔️"}
-                ]
+            ]
                 }
                 
                 # Save teams data
@@ -645,18 +645,54 @@ class GOTWSystem(commands.Cog):
         # Add the poll to active_gotws
         self.active_gotws[gotw_id] = gotw_data
         
-        # Create votes data - we'll need to map Discord usernames to user IDs
-        # For now, we'll create placeholder votes that can be updated
-        votes_data = {
-            # Washington Commanders voters (5 votes)
-            "placeholder_raiders_nash": "WAS",
-            "placeholder_cardinals_moon": "WAS", 
-            "placeholder_commanders_rich": "WAS",
-            "placeholder_bears_ihateea": "WAS",
-            "placeholder_bucs_chef": "WAS",
-            # Tennessee Titans voters (1 vote)
-            "placeholder_bengals_cam": "TEN"
-        }
+        # Create votes data using team claims to get real user IDs
+        votes_data = {}
+        
+        # Get team claim system to look up users by their claimed teams
+        team_claim_cog = self.bot.get_cog('TeamClaimSystem')
+        
+        if team_claim_cog:
+            # Map the voters to their claimed teams
+            voter_team_mapping = {
+                "raiders_nash": "LV",      # Raiders | Nash
+                "cardinals_moon": "ARI",   # Cardinals | Moon  
+                "commanders_rich": "WAS",  # Commanders' 1.5x 🏆 | Rich
+                "bears_ihateea": "CHI",    # Da Bears 🐻 | IHateElectronicArts
+                "bucs_chef": "TB",         # Bucs | Chef Unc 🍔
+                "bengals_cam": "CIN"       # Bengals (cam panthers)
+            }
+            
+            # Look up each user by their claimed team
+            for voter_key, team_abbrev in voter_team_mapping.items():
+                try:
+                    # Get the user who claimed this team
+                    team_claim = team_claim_cog.get_team_claim(team_abbrev)
+                    if team_claim:
+                        user_id = team_claim.get('user_id')
+                        if user_id:
+                            # Determine which team they voted for based on the original poll
+                            if team_abbrev in ["LV", "ARI", "WAS", "CHI", "TB"]:
+                                votes_data[str(user_id)] = "WAS"  # Washington Commanders
+                            elif team_abbrev == "CIN":
+                                votes_data[str(user_id)] = "TEN"  # Tennessee Titans
+                            logger.info(f"✅ Mapped {voter_key} (team {team_abbrev}) to user {user_id}")
+                        else:
+                            logger.warning(f"⚠️ No user_id found for team claim {team_abbrev}")
+                    else:
+                        logger.warning(f"⚠️ No team claim found for {team_abbrev}")
+                except Exception as e:
+                    logger.error(f"❌ Error looking up team claim for {team_abbrev}: {e}")
+        else:
+            logger.warning("⚠️ TeamClaimSystem cog not found, using placeholder votes")
+            # Fallback to placeholder votes if team claim system not available
+            votes_data = {
+                "placeholder_raiders_nash": "WAS",
+                "placeholder_cardinals_moon": "WAS", 
+                "placeholder_commanders_rich": "WAS",
+                "placeholder_bears_ihateea": "WAS",
+                "placeholder_bucs_chef": "WAS",
+                "placeholder_bengals_cam": "TEN"
+            }
         
         self.votes[gotw_id] = votes_data
         
@@ -677,7 +713,24 @@ class GOTWSystem(commands.Cog):
         except Exception as e:
             logger.error(f"Error updating message_id: {e}")
         
-        await interaction.response.send_message("✅ **Commanders vs Titans poll recreated successfully!**\n\n**Note:** The votes are currently placeholder data. You'll need to manually update the user IDs in the database to match the actual Discord users who voted.", ephemeral=True)
+        # Count how many real users were mapped
+        real_votes = sum(1 for user_id in votes_data.keys() if not user_id.startswith('placeholder_'))
+        placeholder_votes = len(votes_data) - real_votes
+        
+        message = f"✅ **Commanders vs Titans poll recreated successfully!**\n\n"
+        message += f"**Votes mapped:** {real_votes} real users, {placeholder_votes} placeholders\n\n"
+        
+        if real_votes > 0:
+            message += "🎯 **Real users will get points when winner is declared!**\n"
+            message += "The system automatically looked up users by their claimed teams.\n\n"
+        
+        if placeholder_votes > 0:
+            message += "⚠️ **Some users couldn't be mapped** (they may not have claimed teams yet).\n"
+            message += "These will show as placeholder votes but won't get points.\n\n"
+        
+        message += "The poll is now fully functional with fresh buttons!"
+        
+        await interaction.response.send_message(message, ephemeral=True)
     
     async def setup_gotw_creation(self, interaction: discord.Interaction):
         """Setup interactive GOTW creation with team selection"""

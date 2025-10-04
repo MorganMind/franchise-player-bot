@@ -245,7 +245,7 @@ class TeamClaimSystem(commands.Cog):
         
         embed.add_field(
             name="Benefits",
-            value="• Get +2 points when your team wins GOTW\n• Team integration in streams and upgrades",
+            value="• Get +2 points when your team wins GOTW\n• Team integration in game channels, streams and upgrades",
             inline=False
         )
         
@@ -306,7 +306,7 @@ class TeamClaimSystem(commands.Cog):
             
             embed.add_field(
                 name="Benefits",
-                value="• You'll get +2 points when your team wins GOTW\n• Team integration in future features",
+                value="• You'll get +2 points when your team wins GOTW\n• Team integration in game channels, streams and upgrades",
                 inline=False
             )
             

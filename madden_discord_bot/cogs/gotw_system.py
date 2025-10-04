@@ -44,38 +44,50 @@ class GOTWSystem(commands.Cog):
     @gotw.autocomplete('team1')
     async def team1_autocomplete(self, interaction: discord.Interaction, current: str):
         """Autocomplete for team1 parameter"""
-        return await self.get_team_autocomplete(current)
+        try:
+            return await self.get_team_autocomplete(current)
+        except Exception as e:
+            logger.error(f"Error in team1 autocomplete: {e}")
+            return []
 
     @gotw.autocomplete('team2')
     async def team2_autocomplete(self, interaction: discord.Interaction, current: str):
         """Autocomplete for team2 parameter"""
-        return await self.get_team_autocomplete(current)
+        try:
+            return await self.get_team_autocomplete(current)
+        except Exception as e:
+            logger.error(f"Error in team2 autocomplete: {e}")
+            return []
 
     async def get_team_autocomplete(self, current: str):
         """Get team autocomplete options"""
-        if not self.teams:
-            return []
-        
-        # Filter teams based on current input
-        matches = []
-        current_lower = current.lower()
-        
-        for team in self.teams.values():
-            team_name = team.get('name', '')
-            team_abbr = team.get('abbreviation', '')
+        try:
+            if not self.teams:
+                return []
             
-            # Check if current input matches team name or abbreviation
-            if (current_lower in team_name.lower() or 
-                current_lower in team_abbr.lower()):
-                matches.append(
-                    app_commands.Choice(
-                        name=f"{team_abbr} - {team_name}",
-                        value=team_abbr
+            # Filter teams based on current input
+            matches = []
+            current_lower = current.lower()
+            
+            for team in self.teams.values():
+                team_name = team.get('name', '')
+                team_abbr = team.get('abbreviation', '')
+                
+                # Check if current input matches team name or abbreviation
+                if (current_lower in team_name.lower() or 
+                    current_lower in team_abbr.lower()):
+                    matches.append(
+                        app_commands.Choice(
+                            name=f"{team_abbr} - {team_name}",
+                            value=team_abbr
+                        )
                     )
-                )
-        
-        # Return top 25 matches
-        return matches[:25]
+            
+            # Return top 25 matches
+            return matches[:25]
+        except Exception as e:
+            logger.error(f"Error in get_team_autocomplete: {e}")
+            return []
     
     def load_teams(self):
         """Load NFL teams data"""

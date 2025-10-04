@@ -1162,6 +1162,14 @@ class GOTWSystem(commands.Cog):
             return
         
         custom_id = interaction.data.get('custom_id', '')
+        
+        # Skip if this is a new-format interaction (already handled by button callbacks)
+        if custom_id.startswith('vote_') and '_' in custom_id and not custom_id.startswith('vote_recreated'):
+            parts = custom_id.split('_')
+            if len(parts) >= 3:  # New format: vote_gotw_id_team
+                # This is a new-format button, skip old-format handling
+                return
+        
         logger.info(f"🔍 Old-format interaction detected: {custom_id}")
         logger.info(f"🔍 Interaction message ID: {interaction.message.id}")
         logger.info(f"🔍 Active GOTWs: {list(self.active_gotws.keys())}")
@@ -1301,25 +1309,8 @@ class GOTWSystem(commands.Cog):
             league_role = discord.utils.get(message.guild.roles, name="League")
             league_mention = league_role.mention if league_role else "@League"
             
-            try:
-                await message.edit(content=league_mention, embed=embed, view=view)
-                logger.info(f"✅ Successfully updated vote message with gotw_id: {gotw_id}")
-            except discord.HTTPException as e:
-                if e.status == 429:  # Rate limited
-                    logger.warning(f"⚠️ Rate limited when updating message for gotw_id: {gotw_id}")
-                    logger.warning(f"⚠️ Retrying in 1 second...")
-                    await asyncio.sleep(1)
-                    try:
-                        await message.edit(content=league_mention, embed=embed, view=view)
-                        logger.info(f"✅ Successfully updated vote message after retry with gotw_id: {gotw_id}")
-                    except Exception as retry_e:
-                        logger.error(f"❌ Failed to update message even after retry: {retry_e}")
-                else:
-                    logger.error(f"❌ HTTP error updating vote message: {e}")
-                    raise
-            except Exception as e:
-                logger.error(f"❌ Unexpected error updating vote message: {e}")
-                raise
+            await message.edit(content=league_mention, embed=embed, view=view)
+            logger.info(f"✅ Successfully updated vote message with gotw_id: {gotw_id}")
             
         except Exception as e:
             logger.error(f"Error updating vote message: {e}")

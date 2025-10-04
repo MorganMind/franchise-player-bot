@@ -63,19 +63,25 @@ class MaddenBot(commands.Bot):
         
         # Load our GOTW system cog
         try:
+            print("🔄 Loading GOTW system cog...")
             await self.load_extension('cogs.gotw_system')
             print("✅ GOTW system cog loaded")
         except Exception as e:
             print(f"❌ Failed to load GOTW system cog: {e}")
-            return
+            import traceback
+            traceback.print_exc()
+            print("⚠️ Continuing without GOTW system...")
         
         # Load our NFL Schedule cog
         try:
+            print("🔄 Loading NFL Schedule cog...")
             await self.load_extension('cogs.nfl_schedule')
             print("✅ NFL Schedule cog loaded")
         except Exception as e:
             print(f"❌ Failed to load NFL Schedule cog: {e}")
-            return
+            import traceback
+            traceback.print_exc()
+            print("⚠️ Continuing without NFL Schedule...")
         
         # Load our Team Claim System cog
         try:

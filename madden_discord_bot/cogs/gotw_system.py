@@ -284,7 +284,9 @@ class GOTWView(discord.ui.View):
         self.guild = guild
         
         # Create buttons for voting
+        logger.info(f"🔍 Creating VoteButton for {team1['abbreviation']} with gotw_id: {gotw_id}")
         self.add_item(VoteButton(team1, cog, gotw_id, disabled=is_locked, guild=guild))
+        logger.info(f"🔍 Creating VoteButton for {team2['abbreviation']} with gotw_id: {gotw_id}")
         self.add_item(VoteButton(team2, cog, gotw_id, disabled=is_locked, guild=guild))
         
         # Add results button (always available)
@@ -561,6 +563,7 @@ class GOTWSystem(commands.Cog):
         
         # Create new GOTW with unique ID
         gotw_id = f"{interaction.user.id}_{int(datetime.now().timestamp())}"
+        logger.info(f"🔍 Creating new GOTW with ID: {gotw_id}")
         
         gotw_data = {
             'id': gotw_id,
@@ -643,6 +646,7 @@ class GOTWSystem(commands.Cog):
         
         # Create view with voting buttons
         is_locked = self.active_gotws[gotw_id].get('is_locked', False)
+        logger.info(f"🔍 Creating GOTWView with gotw_id: {gotw_id}")
         view = GOTWView(self, team1, team2, gotw_id, is_locked=is_locked, guild=interaction.guild)
         
         # Get league role for mention

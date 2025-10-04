@@ -39,7 +39,7 @@ class GOTWSystem(commands.Cog):
     @app_commands.describe(team1="First team", team2="Second team")
     async def gotw(self, interaction: discord.Interaction, team1: str, team2: str):
         """Create a Game of the Week poll"""
-        await interaction.response.send_message("GOTW command placeholder - not implemented yet", ephemeral=True)
+        await self.create_poll(interaction, team1, team2)
 
     @gotw.autocomplete('team1')
     async def team1_autocomplete(self, interaction: discord.Interaction, current: str):

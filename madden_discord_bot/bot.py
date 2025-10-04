@@ -79,13 +79,15 @@ class MaddenBot(commands.Bot):
         
         # Load our Team Claim System cog
         try:
+            print("🔄 Loading Team Claim System cog...")
             await self.load_extension('cogs.team_claim_system')
             print("✅ Team Claim System cog loaded successfully")
         except Exception as e:
             print(f"❌ Failed to load Team Claim System cog: {e}")
             import traceback
             traceback.print_exc()
-            return
+            print("⚠️ Continuing without Team Claim System...")
+            # Don't return here, let other cogs load
         
         # Sync slash commands
         try:

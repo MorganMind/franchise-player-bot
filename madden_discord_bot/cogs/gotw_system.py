@@ -1116,6 +1116,9 @@ class GOTWSystem(commands.Cog):
             return
         
         custom_id = interaction.data.get('custom_id', '')
+        logger.info(f"🔍 Old-format interaction detected: {custom_id}")
+        logger.info(f"🔍 Interaction message ID: {interaction.message.id}")
+        logger.info(f"🔍 Active GOTWs: {list(self.active_gotws.keys())}")
         
         # Handle old-format vote buttons (without gotw_id)
         if custom_id.startswith('vote_') and '_' in custom_id:

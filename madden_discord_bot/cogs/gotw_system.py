@@ -878,6 +878,7 @@ class GOTWSystem(commands.Cog):
             await interaction.response.send_message(f"✅ Vote recorded for {team_abbreviation}!", ephemeral=True)
         
         logger.info(f"Votes before save: {self.votes}")
+        logger.info(f"Vote count for this poll: {len(self.votes.get(gotw_id, {}))}")
         self.save_gotw_data()
         logger.info(f"Votes after save: {self.votes}")
         
@@ -890,9 +891,9 @@ class GOTWSystem(commands.Cog):
             if message_id:
                 logger.info(f"🔍 Fetching message by ID: {message_id}")
                 message = await interaction.channel.fetch_message(message_id)
-                logger.info(f"🔍 Found message, updating vote display")
+                logger.info(f"🔍 Found message, updating vote display for gotw_id: {gotw_id}")
                 await self.update_vote_message(message, gotw_id)
-                logger.info(f"✅ Successfully updated vote message")
+                logger.info(f"✅ Successfully updated vote message for gotw_id: {gotw_id}")
             else:
                 logger.warning(f"⚠️ No message_id stored for GOTW {gotw_id}, using fallback search")
                 # Fallback: find by searching (less reliable)

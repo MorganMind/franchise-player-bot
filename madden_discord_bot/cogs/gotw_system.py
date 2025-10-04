@@ -407,15 +407,19 @@ class GOTWSystem(commands.Cog):
                 {"name": "Tennessee Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg", "emoji": "⚔️"},
                 {"name": "Washington Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg", "emoji": "⚔️"}
             ]
-        }
+                }
                 
                 # Save teams data
-                os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
-                with open(self.teams_file, 'w') as f:
-                    json.dump(teams_data, f, indent=2)
-                
-                self.teams = {team['abbreviation']: team for team in teams_data['teams']}
-                logger.info(f"Created default teams data with {len(self.teams)} teams")
+                try:
+                    os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
+                    with open(self.teams_file, 'w') as f:
+                        json.dump(teams_data, f, indent=2)
+                    
+                    self.teams = {team['abbreviation']: team for team in teams_data['teams']}
+                    logger.info(f"Created default teams data with {len(self.teams)} teams")
+                except Exception as e:
+                    logger.error(f"Error creating default teams data: {e}")
+                    self.teams = {}
         except Exception as e:
             logger.error(f"Error loading teams data: {e}")
             self.teams = {}

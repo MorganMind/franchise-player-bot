@@ -80,6 +80,20 @@ class DeclareWinnerButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await self.cog.handle_declare_winner(interaction, self.team_abbreviation, self.team_name, self.gotw_id)
 
+class UndoWinnerButton(discord.ui.Button):
+    def __init__(self, cog, gotw_id: str):
+        super().__init__(
+            style=discord.ButtonStyle.danger,
+            label="Undo Winner Declaration",
+            custom_id=f"undo_winner_{gotw_id}",
+            emoji="↩️"
+        )
+        self.cog = cog
+        self.gotw_id = gotw_id
+    
+    async def callback(self, interaction: discord.Interaction):
+        await self.cog.handle_undo_winner(interaction, self.gotw_id)
+
 class TeamSelect(discord.ui.Select):
     def __init__(self, cog, team_number, guild, teams_subset, conference_name):
         self.cog = cog
@@ -897,6 +911,8 @@ class GOTWSystem(commands.Cog):
         
         # Award points to winning voters
         points_awarded = 0
+        team_claim_points_awarded = 0
+        
         if winning_voters:
             # Import points system to award points
             points_cog = self.bot.get_cog('PointsSystemSupabase')
@@ -910,6 +926,33 @@ class GOTWSystem(commands.Cog):
                         logger.error(f"Error awarding points to user {user_id}: {e}")
             else:
                 logger.error("PointsSystemSupabase cog not found - cannot award points")
+        
+        # Award team claim points (2 points to winning team claimer, 1 point to losing team claimer)
+        team_claim_cog = self.bot.get_cog('TeamClaimSystem')
+        if team_claim_cog:
+            try:
+                # Get winning team claimer
+                winning_team_claimer = await team_claim_cog.get_team_claim(team_abbreviation)
+                if winning_team_claimer:
+                    try:
+                        await points_cog.add_user_points(int(winning_team_claimer['user_id']), 2)
+                        team_claim_points_awarded += 2
+                        logger.info(f"Awarded 2 points to team claimer {winning_team_claimer['user_id']} for {team_abbreviation} winning")
+                    except Exception as e:
+                        logger.error(f"Error awarding team claim points to {winning_team_claimer['user_id']}: {e}")
+                
+                # Get losing team claimer
+                losing_team_abbrev = team1['abbreviation'] if team_abbreviation == team2['abbreviation'] else team2['abbreviation']
+                losing_team_claimer = await team_claim_cog.get_team_claim(losing_team_abbrev)
+                if losing_team_claimer:
+                    try:
+                        await points_cog.add_user_points(int(losing_team_claimer['user_id']), 1)
+                        team_claim_points_awarded += 1
+                        logger.info(f"Awarded 1 point to team claimer {losing_team_claimer['user_id']} for {losing_team_abbrev} losing")
+                    except Exception as e:
+                        logger.error(f"Error awarding team claim points to {losing_team_claimer['user_id']}: {e}")
+            except Exception as e:
+                logger.error(f"Error processing team claim points: {e}")
         
         # Mark winner as declared
         gotw_data['winner_declared'] = True
@@ -926,9 +969,14 @@ class GOTWSystem(commands.Cog):
             color=0xffd700
         )
         
+        # Build points awarded message
+        points_message = f"**{points_awarded}** voters received **+1 point** each"
+        if team_claim_points_awarded > 0:
+            points_message += f"\n**Team Claims:** {team_claim_points_awarded} points awarded"
+        
         embed.add_field(
             name="📊 Points Awarded",
-            value=f"**{points_awarded}** voters received **+1 point** each",
+            value=points_message,
             inline=False
         )
         
@@ -947,11 +995,119 @@ class GOTWSystem(commands.Cog):
         
         embed.set_footer(text=f"Declared by {interaction.user.display_name}")
         
+        # Create view with undo button
+        view = discord.ui.View(timeout=None)
+        view.add_item(UndoWinnerButton(self, gotw_id))
+        
         # Get league role for mention
         league_role = discord.utils.get(interaction.guild.roles, name="League")
         league_mention = league_role.mention if league_role else "@League"
         
-        await interaction.response.send_message(content=league_mention, embed=embed)
+        await interaction.response.send_message(content=league_mention, embed=embed, view=view)
+
+    async def handle_undo_winner(self, interaction: discord.Interaction, gotw_id: str):
+        """Handle undoing a winner declaration and removing awarded points"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to undo a winner declaration.", ephemeral=True)
+            return
+        
+        if gotw_id not in self.active_gotws:
+            await interaction.response.send_message("❌ This poll no longer exists", ephemeral=True)
+            return
+        
+        gotw_data = self.active_gotws[gotw_id]
+        
+        # Check if winner was declared
+        if not gotw_data.get('winner_declared', False):
+            await interaction.response.send_message("❌ No winner has been declared for this poll!", ephemeral=True)
+            return
+        
+        team_abbreviation = gotw_data.get('winner_team')
+        if not team_abbreviation:
+            await interaction.response.send_message("❌ No winning team found to undo!", ephemeral=True)
+            return
+        
+        team1 = gotw_data['team1']
+        team2 = gotw_data['team2']
+        
+        # Get voters for the winning team from this specific poll
+        poll_votes = self.votes.get(gotw_id, {})
+        winning_voters = [user_id for user_id, vote in poll_votes.items() if vote == team_abbreviation]
+        
+        # Remove points from winning voters
+        points_removed = 0
+        team_claim_points_removed = 0
+        
+        if winning_voters:
+            # Import points system to remove points
+            points_cog = self.bot.get_cog('PointsSystemSupabase')
+            if points_cog:
+                for user_id in winning_voters:
+                    try:
+                        await points_cog.add_user_points(int(user_id), -1)  # Remove 1 point
+                        points_removed += 1
+                        logger.info(f"Removed 1 point from user {user_id} for undoing GOTW vote")
+                    except Exception as e:
+                        logger.error(f"Error removing points from user {user_id}: {e}")
+            else:
+                logger.error("PointsSystemSupabase cog not found - cannot remove points")
+        
+        # Remove team claim points (2 points from winning team claimer, 1 point from losing team claimer)
+        team_claim_cog = self.bot.get_cog('TeamClaimSystem')
+        if team_claim_cog:
+            try:
+                # Remove points from winning team claimer
+                winning_team_claimer = await team_claim_cog.get_team_claim(team_abbreviation)
+                if winning_team_claimer:
+                    try:
+                        await points_cog.add_user_points(int(winning_team_claimer['user_id']), -2)  # Remove 2 points
+                        team_claim_points_removed += 2
+                        logger.info(f"Removed 2 points from team claimer {winning_team_claimer['user_id']} for undoing {team_abbreviation} win")
+                    except Exception as e:
+                        logger.error(f"Error removing team claim points from {winning_team_claimer['user_id']}: {e}")
+                
+                # Remove points from losing team claimer
+                losing_team_abbrev = team1['abbreviation'] if team_abbreviation == team2['abbreviation'] else team2['abbreviation']
+                losing_team_claimer = await team_claim_cog.get_team_claim(losing_team_abbrev)
+                if losing_team_claimer:
+                    try:
+                        await points_cog.add_user_points(int(losing_team_claimer['user_id']), -1)  # Remove 1 point
+                        team_claim_points_removed += 1
+                        logger.info(f"Removed 1 point from team claimer {losing_team_claimer['user_id']} for undoing {losing_team_abbrev} loss")
+                    except Exception as e:
+                        logger.error(f"Error removing team claim points from {losing_team_claimer['user_id']}: {e}")
+            except Exception as e:
+                logger.error(f"Error processing team claim point removal: {e}")
+        
+        # Reset winner declaration
+        gotw_data['winner_declared'] = False
+        gotw_data.pop('winner_team', None)
+        gotw_data.pop('winner_declared_by', None)
+        gotw_data.pop('winner_declared_at', None)
+        
+        self.save_gotw_data()
+        
+        # Create success embed
+        embed = discord.Embed(
+            title="↩️ Winner Declaration Undone!",
+            description=f"Winner declaration for **{team_abbreviation}** has been undone!",
+            color=0xff6b6b
+        )
+        
+        # Build points removed message
+        points_message = f"**{points_removed}** voters had **-1 point** removed"
+        if team_claim_points_removed > 0:
+            points_message += f"\n**Team Claims:** {team_claim_points_removed} points removed"
+        
+        embed.add_field(
+            name="📊 Points Removed",
+            value=points_message,
+            inline=False
+        )
+        
+        embed.set_footer(text=f"Undone by {interaction.user.display_name}")
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
     async def update_vote_message(self, message, gotw_id, is_locked=None):
         """Update the vote message with current counts and lock status"""

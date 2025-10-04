@@ -1190,8 +1190,12 @@ class GOTWSystem(commands.Cog):
                         if "GAME OF THE WEEK" in embed.title:
                             # Try to find the gotw_id by looking at the message content or searching active polls
                             # For now, we'll try to find a poll that matches this message
+                            logger.info(f"🔍 Looking for poll with message ID: {message.id}")
+                            logger.info(f"🔍 Available polls and their message IDs:")
                             for gotw_id, gotw_data in self.active_gotws.items():
-                                if gotw_data.get('message_id') == message.id:
+                                stored_message_id = gotw_data.get('message_id')
+                                logger.info(f"  - {gotw_id}: message_id={stored_message_id}")
+                                if stored_message_id == message.id:
                                     logger.info(f"🔍 Found matching poll: {gotw_id}")
                                     await self.handle_vote(interaction, team_abbrev, gotw_id)
                                     return
@@ -1246,8 +1250,12 @@ class GOTWSystem(commands.Cog):
                     embed = message.embeds[0]
                     if "GAME OF THE WEEK" in embed.title:
                         # Find the poll by message ID
+                        logger.info(f"🔍 Looking for poll with message ID: {message.id}")
+                        logger.info(f"🔍 Available polls and their message IDs:")
                         for gotw_id, gotw_data in self.active_gotws.items():
-                            if gotw_data.get('message_id') == message.id:
+                            stored_message_id = gotw_data.get('message_id')
+                            logger.info(f"  - {gotw_id}: message_id={stored_message_id}")
+                            if stored_message_id == message.id:
                                 logger.info(f"🔍 Found poll for results: {gotw_id}")
                                 await self.handle_show_results(interaction, gotw_id)
                                 return

@@ -116,27 +116,23 @@ class StreamManager(commands.Cog):
             # Import Supabase client
             from config.supabase_config import supabase
             
-            # Get user's point history from Supabase
-            result = supabase.table("users").select("point_history").eq("id", user_id).execute()
+            # Get user's stream points from Supabase
+            result = supabase.table("users").select("stream_points").eq("id", user_id).execute()
             
             if result.data:
                 user_data = result.data[0]
-                history = user_data.get("point_history", [])
-                current_time = time.time()
+                stream_points = user_data.get("stream_points", 0)
                 
-                # Look for the most recent stream point entry
-                for entry in reversed(history):
-                    if entry.get("type") == "stream":
-                        last_stream_time = entry.get("timestamp", 0)
-                        time_since_last = current_time - last_stream_time
-                        
-                        if time_since_last < self.STREAM_COOLDOWN:
-                            remaining_time = self.STREAM_COOLDOWN - time_since_last
-                            return False, remaining_time
-                        break
+                # If user has reached the 8 point limit, they can still stream but won't get more points
+                # This effectively removes the cooldown once they hit the limit
+                if stream_points >= 8:
+                    return True, 0  # No cooldown, but no more points
                 
+                # For users under 8 points, we'll use a simple approach
+                # Since we don't have point_history, we'll allow streaming
+                # The cooldown is handled by the 45-minute limit in the main stream detection
                 return True, 0  # No cooldown
-            return True, 0  # No history, no cooldown
+            return True, 0  # No user data, no cooldown
         except Exception as e:
             logger.error(f"Error checking stream cooldown: {e}")
             return True, 0  # Default to no cooldown on error

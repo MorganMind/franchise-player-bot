@@ -1225,8 +1225,8 @@ class GOTWSystem(commands.Cog):
             return
         
         # Handle old-format results button
-        elif custom_id == 'show_results':
-            logger.info(f"🔍 Handling old-format results button")
+        elif custom_id == 'show_results' or custom_id.startswith('show_results_recreated'):
+            logger.info(f"🔍 Handling old-format results button: {custom_id}")
             try:
                 message = interaction.message
                 if message and message.embeds:

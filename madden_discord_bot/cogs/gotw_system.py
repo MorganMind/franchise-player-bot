@@ -303,10 +303,35 @@ class GOTWSystem(commands.Cog):
         self.teams_file = "data/nfl_teams.json"
         self.active_gotws = {}  # Dictionary of message_id -> gotw_data
         self.votes = {}  # Dictionary of message_id -> votes
+        
+        # Hardcoded poll data for Washington/Tennessee poll
+        self.hardcoded_poll_id = "recreated_1759543801"
+        self.hardcoded_votes = {
+            "WAS": set(),  # Set of user IDs who voted for Washington
+            "TEN": set()   # Set of user IDs who voted for Tennessee
+        }
+        # Initialize with original voters (using fake user IDs for now)
+        self.hardcoded_votes["WAS"] = {123456789, 234567890, 345678901, 456789012, 567890123, 678901234, 789012345, 890123456}
+        self.hardcoded_votes["TEN"] = {901234567, 12345678}
+        
         self.load_gotw_data()
         self.load_teams()
         logger.info("✅ GOTWSystem cog initialized")
     
+    async def get_voter_display_names(self, user_ids, guild):
+        """Get display names for a list of user IDs"""
+        voter_names = []
+        for user_id in user_ids:
+            try:
+                member = guild.get_member(user_id)
+                if member:
+                    voter_names.append(f"@{member.display_name}")
+                else:
+                    # Fallback to user ID if member not found
+                    voter_names.append(f"@{user_id}")
+            except:
+                voter_names.append(f"@{user_id}")
+        return voter_names
     
     def load_teams(self):
         """Load NFL teams data"""
@@ -1170,27 +1195,66 @@ class GOTWSystem(commands.Cog):
             logger.info(f"🔍 Handling hardcoded Washington/Tennessee poll: {custom_id}")
             
             if custom_id == 'vote_recreated_1759543801_WAS':
-                await interaction.response.send_message("✅ Vote recorded for Washington Commanders!", ephemeral=True)
+                # Record actual vote
+                user_id = interaction.user.id
+                
+                # Remove user from other team's votes (if they voted before)
+                self.hardcoded_votes["TEN"].discard(user_id)
+                
+                # Add user to Washington votes
+                if user_id in self.hardcoded_votes["WAS"]:
+                    await interaction.response.send_message("✅ You already voted for Washington Commanders!", ephemeral=True)
+                else:
+                    self.hardcoded_votes["WAS"].add(user_id)
+                    await interaction.response.send_message("✅ Vote recorded for Washington Commanders!", ephemeral=True)
+                    
             elif custom_id == 'vote_recreated_1759543801_TEN':
-                await interaction.response.send_message("✅ Vote recorded for Tennessee Titans!", ephemeral=True)
+                # Record actual vote
+                user_id = interaction.user.id
+                
+                # Remove user from other team's votes (if they voted before)
+                self.hardcoded_votes["WAS"].discard(user_id)
+                
+                # Add user to Tennessee votes
+                if user_id in self.hardcoded_votes["TEN"]:
+                    await interaction.response.send_message("✅ You already voted for Tennessee Titans!", ephemeral=True)
+                else:
+                    self.hardcoded_votes["TEN"].add(user_id)
+                    await interaction.response.send_message("✅ Vote recorded for Tennessee Titans!", ephemeral=True)
             elif custom_id == 'show_results_recreated_1759543801':
+                # Get real-time vote counts
+                was_votes = len(self.hardcoded_votes["WAS"])
+                ten_votes = len(self.hardcoded_votes["TEN"])
+                total_votes = was_votes + ten_votes
+                
+                # Calculate percentages
+                was_percentage = (was_votes / total_votes * 100) if total_votes > 0 else 0
+                ten_percentage = (ten_votes / total_votes * 100) if total_votes > 0 else 0
+                
+                # Get voter display names
+                was_voter_names = await self.get_voter_display_names(self.hardcoded_votes["WAS"], interaction.guild)
+                ten_voter_names = await self.get_voter_display_names(self.hardcoded_votes["TEN"], interaction.guild)
+                
                 # Create detailed results embed matching original format
                 embed = discord.Embed(
                     title="📊 GOTW Voting Results",
                     color=0x00ff00
                 )
                 
-                # Add detailed breakdown
+                # Add detailed breakdown with real-time data
+                was_voters_text = "\n".join(was_voter_names) if was_voter_names else "No votes yet"
+                ten_voters_text = "\n".join(ten_voter_names) if ten_voter_names else "No votes yet"
+                
                 embed.add_field(
                     name="Detailed breakdown of votes",
-                    value="**Washington Commanders (8 votes):**\n@Raiders | Nash\n@Texans | TK\n@Falcons | T20\n@Ravens\n@Buffalo Chicken Dip|Sir Bitties\n@PHINS |Lincoln|7x\n@Commanders' 1.5x | Rich\n@DA BOYS | chris657\n\n**Tennessee Titans (2 votes):**\n@Giants/Meza 5x\n@JJ McCarthy is the (Saints)",
+                    value=f"**Washington Commanders ({was_votes} votes):**\n{was_voters_text}\n\n**Tennessee Titans ({ten_votes} votes):**\n{ten_voters_text}",
                     inline=False
                 )
                 
-                # Add percentages
+                # Add percentages with real-time data
                 embed.add_field(
                     name="Final Results",
-                    value="**Washington Commanders: 80.0%**\n**Tennessee Titans: 20.0%**",
+                    value=f"**Washington Commanders: {was_percentage:.1f}%**\n**Tennessee Titans: {ten_percentage:.1f}%**",
                     inline=False
                 )
                 

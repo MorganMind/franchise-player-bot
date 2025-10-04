@@ -1164,7 +1164,7 @@ class GOTWSystem(commands.Cog):
         custom_id = interaction.data.get('custom_id', '')
         
         # Hardcoded fix for Washington/Tennessee poll
-        if (custom_id in ['vote_recreated_1759543801_WAS', 'vote_recreated_1759543801_TEN', 'show_results_recreated_1759543801'] and 
+        if (custom_id in ['vote_recreated_1759543801_WAS', 'vote_recreated_1759543801_TEN', 'show_results_recreated_1759543801', 'declare_winner_recreated_1759543801_WAS', 'declare_winner_recreated_1759543801_TEN'] and 
             interaction.message.id == 1423854647738761246):
             
             logger.info(f"🔍 Handling hardcoded Washington/Tennessee poll: {custom_id}")
@@ -1174,23 +1174,72 @@ class GOTWSystem(commands.Cog):
             elif custom_id == 'vote_recreated_1759543801_TEN':
                 await interaction.response.send_message("✅ Vote recorded for Tennessee Titans!", ephemeral=True)
             elif custom_id == 'show_results_recreated_1759543801':
-                # Create a simple results embed
+                # Create detailed results embed matching original format
                 embed = discord.Embed(
                     title="📊 GOTW Voting Results",
-                    description="**Washington Commanders vs Tennessee Titans**",
+                    color=0x00ff00
+                )
+                
+                # Add detailed breakdown
+                embed.add_field(
+                    name="Detailed breakdown of votes",
+                    value="**Washington Commanders (8 votes):**\n@Raiders | Nash\n@Texans | TK\n@Falcons | T20\n@Ravens\n@Buffalo Chicken Dip|Sir Bitties\n@PHINS |Lincoln|7x\n@Commanders' 1.5x | Rich\n@DA BOYS | chris657\n\n**Tennessee Titans (2 votes):**\n@Giants/Meza 5x\n@JJ McCarthy is the (Saints)",
+                    inline=False
+                )
+                
+                # Add percentages
+                embed.add_field(
+                    name="Final Results",
+                    value="**Washington Commanders: 80.0%**\n**Tennessee Titans: 20.0%**",
+                    inline=False
+                )
+                
+                # Create view with winner declaration buttons
+                view = discord.ui.View()
+                
+                # Winner: Washington Commanders button
+                was_button = discord.ui.Button(
+                    label="Winner: Washington Commanders",
+                    style=discord.ButtonStyle.success,
+                    custom_id="declare_winner_recreated_1759543801_WAS"
+                )
+                
+                # Winner: Tennessee Titans button  
+                ten_button = discord.ui.Button(
+                    label="Winner: Tennessee Titans",
+                    style=discord.ButtonStyle.success,
+                    custom_id="declare_winner_recreated_1759543801_TEN"
+                )
+                
+                view.add_item(was_button)
+                view.add_item(ten_button)
+                
+                await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            elif custom_id == 'declare_winner_recreated_1759543801_WAS':
+                # Declare Washington as winner
+                embed = discord.Embed(
+                    title="🏆 Winner Declared!",
+                    description="**Washington Commanders** has been declared the winner!",
                     color=0x00ff00
                 )
                 embed.add_field(
-                    name="🏈 Washington Commanders",
-                    value="**8 votes** (80%)",
-                    inline=True
+                    name="Points Awarded",
+                    value="• Voters: +1 point each\n• Team claimers: +2 points (winner) / +1 point (loser)",
+                    inline=False
+                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+            elif custom_id == 'declare_winner_recreated_1759543801_TEN':
+                # Declare Tennessee as winner
+                embed = discord.Embed(
+                    title="🏆 Winner Declared!",
+                    description="**Tennessee Titans** has been declared the winner!",
+                    color=0x00ff00
                 )
                 embed.add_field(
-                    name="⚔️ Tennessee Titans", 
-                    value="**2 votes** (20%)",
-                    inline=True
+                    name="Points Awarded",
+                    value="• Voters: +1 point each\n• Team claimers: +2 points (winner) / +1 point (loser)",
+                    inline=False
                 )
-                embed.set_footer(text="Poll completed")
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 

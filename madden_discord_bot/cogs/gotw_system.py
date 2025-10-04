@@ -1109,6 +1109,96 @@ class GOTWSystem(commands.Cog):
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    @commands.Cog.listener()
+    async def on_interaction(self, interaction: discord.Interaction):
+        """Handle old-format button interactions for backward compatibility"""
+        if not interaction.type == discord.InteractionType.component:
+            return
+        
+        custom_id = interaction.data.get('custom_id', '')
+        
+        # Handle old-format vote buttons (without gotw_id)
+        if custom_id.startswith('vote_') and '_' in custom_id:
+            parts = custom_id.split('_')
+            if len(parts) == 2:  # Old format: vote_TEAM
+                team_abbrev = parts[1]
+                logger.info(f"🔍 Handling old-format vote button: {team_abbrev}")
+                
+                # Find the poll this button belongs to by searching for the message
+                try:
+                    # Get the message that contains this button
+                    message = interaction.message
+                    if message and message.embeds:
+                        embed = message.embeds[0]
+                        if "GAME OF THE WEEK" in embed.title:
+                            # Try to find the gotw_id by looking at the message content or searching active polls
+                            # For now, we'll try to find a poll that matches this message
+                            for gotw_id, gotw_data in self.active_gotws.items():
+                                if gotw_data.get('message_id') == message.id:
+                                    logger.info(f"🔍 Found matching poll: {gotw_id}")
+                                    await self.handle_vote(interaction, team_abbrev, gotw_id)
+                                    return
+                            
+                            # If no exact match, try to find by team match
+                            for gotw_id, gotw_data in self.active_gotws.items():
+                                team1 = gotw_data.get('team1', {})
+                                team2 = gotw_data.get('team2', {})
+                                if (team1.get('abbreviation') == team_abbrev or 
+                                    team2.get('abbreviation') == team_abbrev):
+                                    logger.info(f"🔍 Found poll by team match: {gotw_id}")
+                                    await self.handle_vote(interaction, team_abbrev, gotw_id)
+                                    return
+                    
+                    # If we can't find a matching poll, send error
+                    await interaction.response.send_message("❌ Could not find the poll for this vote. The poll may have expired.", ephemeral=True)
+                    
+                except Exception as e:
+                    logger.error(f"Error handling old-format vote: {e}")
+                    await interaction.response.send_message("❌ Error processing vote. Please try again.", ephemeral=True)
+                return
+        
+        # Handle old-format lock button
+        elif custom_id == 'lock_poll':
+            logger.info(f"🔍 Handling old-format lock button")
+            try:
+                message = interaction.message
+                if message and message.embeds:
+                    embed = message.embeds[0]
+                    if "GAME OF THE WEEK" in embed.title:
+                        # Find the poll by message ID
+                        for gotw_id, gotw_data in self.active_gotws.items():
+                            if gotw_data.get('message_id') == message.id:
+                                logger.info(f"🔍 Found poll for lock: {gotw_id}")
+                                await self.handle_lock_poll(interaction, gotw_id)
+                                return
+                
+                await interaction.response.send_message("❌ Could not find the poll to lock.", ephemeral=True)
+            except Exception as e:
+                logger.error(f"Error handling old-format lock: {e}")
+                await interaction.response.send_message("❌ Error locking poll. Please try again.", ephemeral=True)
+            return
+        
+        # Handle old-format results button
+        elif custom_id == 'show_results':
+            logger.info(f"🔍 Handling old-format results button")
+            try:
+                message = interaction.message
+                if message and message.embeds:
+                    embed = message.embeds[0]
+                    if "GAME OF THE WEEK" in embed.title:
+                        # Find the poll by message ID
+                        for gotw_id, gotw_data in self.active_gotws.items():
+                            if gotw_data.get('message_id') == message.id:
+                                logger.info(f"🔍 Found poll for results: {gotw_id}")
+                                await self.handle_show_results(interaction, gotw_id)
+                                return
+                
+                await interaction.response.send_message("❌ Could not find the poll to show results.", ephemeral=True)
+            except Exception as e:
+                logger.error(f"Error handling old-format results: {e}")
+                await interaction.response.send_message("❌ Error showing results. Please try again.", ephemeral=True)
+            return
+
     async def update_vote_message(self, message, gotw_id, is_locked=None):
         """Update the vote message with current counts and lock status"""
         try:

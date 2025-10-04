@@ -35,6 +35,48 @@ class GOTWSystem(commands.Cog):
         
         logger.info(f"✅ GOTWSystemSupabase cog initialized")
     
+    @app_commands.command(name="gotw", description="Create a Game of the Week poll")
+    @app_commands.describe(team1="First team", team2="Second team")
+    async def gotw(self, interaction: discord.Interaction, team1: str, team2: str):
+        """Create a Game of the Week poll"""
+        await interaction.response.send_message("GOTW command placeholder - not implemented yet", ephemeral=True)
+
+    @gotw.autocomplete('team1')
+    async def team1_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete for team1 parameter"""
+        return await self.get_team_autocomplete(current)
+
+    @gotw.autocomplete('team2')
+    async def team2_autocomplete(self, interaction: discord.Interaction, current: str):
+        """Autocomplete for team2 parameter"""
+        return await self.get_team_autocomplete(current)
+
+    async def get_team_autocomplete(self, current: str):
+        """Get team autocomplete options"""
+        if not self.teams:
+            return []
+        
+        # Filter teams based on current input
+        matches = []
+        current_lower = current.lower()
+        
+        for team in self.teams.values():
+            team_name = team.get('name', '')
+            team_abbr = team.get('abbreviation', '')
+            
+            # Check if current input matches team name or abbreviation
+            if (current_lower in team_name.lower() or 
+                current_lower in team_abbr.lower()):
+                matches.append(
+                    app_commands.Choice(
+                        name=f"{team_abbr} - {team_name}",
+                        value=team_abbr
+                    )
+                )
+        
+        # Return top 25 matches
+        return matches[:25]
+    
     def load_teams(self):
         """Load NFL teams data"""
         try:
@@ -122,7 +164,7 @@ class GOTWSystem(commands.Cog):
             embed.add_field(
                 name=f"{team2.get('emoji', '🏈')} {team2['name']}",
                 value=f"Conference: {team2['conference']}\nDivision: {team2['division']}",
-            inline=True
+                inline=True
             )
             
             embed.set_footer(text="Click the buttons below to vote!")
@@ -526,48 +568,6 @@ class LockButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         await self.cog.lock_poll(interaction, self.poll_id)
-
-    @app_commands.command(name="gotw", description="Create a Game of the Week poll")
-    @app_commands.describe(team1="First team", team2="Second team")
-    async def gotw(self, interaction: discord.Interaction, team1: str, team2: str):
-        """Create a Game of the Week poll"""
-        await interaction.response.send_message("GOTW command placeholder - not implemented yet", ephemeral=True)
-
-    @gotw.autocomplete('team1')
-    async def team1_autocomplete(self, interaction: discord.Interaction, current: str):
-        """Autocomplete for team1 parameter"""
-        return await self.get_team_autocomplete(current)
-
-    @gotw.autocomplete('team2')
-    async def team2_autocomplete(self, interaction: discord.Interaction, current: str):
-        """Autocomplete for team2 parameter"""
-        return await self.get_team_autocomplete(current)
-
-    async def get_team_autocomplete(self, current: str):
-        """Get team autocomplete options"""
-        if not self.teams:
-            return []
-        
-        # Filter teams based on current input
-        matches = []
-        current_lower = current.lower()
-        
-        for team in self.teams.values():
-            team_name = team.get('name', '')
-            team_abbr = team.get('abbreviation', '')
-            
-            # Check if current input matches team name or abbreviation
-            if (current_lower in team_name.lower() or 
-                current_lower in team_abbr.lower()):
-                matches.append(
-                    app_commands.Choice(
-                        name=f"{team_abbr} - {team_name}",
-                        value=team_abbr
-                    )
-                )
-        
-        # Return top 25 matches
-        return matches[:25]
 
 async def setup(bot):
     await bot.add_cog(GOTWSystem(bot))

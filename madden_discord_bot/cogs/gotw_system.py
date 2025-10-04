@@ -5,6 +5,7 @@ import json
 import os
 import logging
 import asyncio
+import time
 from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
@@ -599,6 +600,84 @@ class GOTWSystem(commands.Cog):
         
         view = RepostGOTWView(self)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    @app_commands.command(name="gotw_recreate_commanders_titans", description="ONE-TIME: Recreate the Commanders vs Titans poll with all voters")
+    async def gotw_recreate_commanders_titans(self, interaction: discord.Interaction):
+        """ONE-TIME command to recreate the Commanders vs Titans poll with all voters"""
+        if not self.has_admin_permission(interaction):
+            await interaction.response.send_message("❌ You need administrator permissions or the 'commish' role to recreate polls.", ephemeral=True)
+            return
+        
+        # Create the poll data
+        gotw_id = f"recreated_{int(time.time())}"
+        
+        # Team data
+        team1 = {
+            "name": "Washington Commanders",
+            "abbreviation": "WAS",
+            "conference": "NFC",
+            "division": "East",
+            "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg",
+            "emoji": "⚔️"
+        }
+        
+        team2 = {
+            "name": "Tennessee Titans", 
+            "abbreviation": "TEN",
+            "conference": "AFC",
+            "division": "South",
+            "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg",
+            "emoji": "⚔️"
+        }
+        
+        # Create GOTW data
+        gotw_data = {
+            'id': gotw_id,
+            'team1': team1,
+            'team2': team2,
+            'created_by': interaction.user.id,
+            'created_at': datetime.now().isoformat(),
+            'is_locked': False,
+            'winner_declared': False,
+            'message_id': None
+        }
+        
+        # Add the poll to active_gotws
+        self.active_gotws[gotw_id] = gotw_data
+        
+        # Create votes data - we'll need to map Discord usernames to user IDs
+        # For now, we'll create placeholder votes that can be updated
+        votes_data = {
+            # Washington Commanders voters (5 votes)
+            "placeholder_raiders_nash": "WAS",
+            "placeholder_cardinals_moon": "WAS", 
+            "placeholder_commanders_rich": "WAS",
+            "placeholder_bears_ihateea": "WAS",
+            "placeholder_bucs_chef": "WAS",
+            # Tennessee Titans voters (1 vote)
+            "placeholder_bengals_cam": "TEN"
+        }
+        
+        self.votes[gotw_id] = votes_data
+        
+        # Save the data
+        self.save_gotw_data()
+        
+        # Create and post the poll
+        await self.show_gotw_card(interaction, team1, team2, gotw_id)
+        
+        # Update message_id
+        try:
+            await asyncio.sleep(0.1)
+            async for message in interaction.channel.history(limit=1):
+                if message.author == self.bot.user and message.embeds:
+                    gotw_data['message_id'] = message.id
+                    self.save_gotw_data()
+                    break
+        except Exception as e:
+            logger.error(f"Error updating message_id: {e}")
+        
+        await interaction.response.send_message("✅ **Commanders vs Titans poll recreated successfully!**\n\n**Note:** The votes are currently placeholder data. You'll need to manually update the user IDs in the database to match the actual Discord users who voted.", ephemeral=True)
     
     async def setup_gotw_creation(self, interaction: discord.Interaction):
         """Setup interactive GOTW creation with team selection"""

@@ -383,7 +383,7 @@ class GOTWSystem(commands.Cog):
                     logger.info(f"Loaded {len(self.teams)} teams from {self.teams_file}")
             else:
                 # Create default teams data if file doesn't exist
-                teams_data = {
+        teams_data = {
             "teams": [
                 {"name": "Arizona Cardinals", "abbreviation": "ARI", "conference": "NFC", "division": "West", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/7/72/Arizona_Cardinals_logo.svg", "emoji": "🃏"},
                 {"name": "Atlanta Falcons", "abbreviation": "ATL", "conference": "NFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c5/Atlanta_Falcons_logo.svg", "emoji": "🦅"},
@@ -418,14 +418,14 @@ class GOTWSystem(commands.Cog):
                 {"name": "Tennessee Titans", "abbreviation": "TEN", "conference": "AFC", "division": "South", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/c/c1/Tennessee_Titans_logo.svg", "emoji": "⚔️"},
                 {"name": "Washington Commanders", "abbreviation": "WAS", "conference": "NFC", "division": "East", "helmet_url": "https://upload.wikimedia.org/wikipedia/en/8/81/Washington_Commanders_logo.svg", "emoji": "⚔️"}
             ]
-                }
-                
-                # Save teams data
-                os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
-                with open(self.teams_file, 'w') as f:
-                    json.dump(teams_data, f, indent=2)
-                
-                self.teams = {team['abbreviation']: team for team in teams_data['teams']}
+        }
+        
+        # Save teams data
+        os.makedirs(os.path.dirname(self.teams_file), exist_ok=True)
+        with open(self.teams_file, 'w') as f:
+            json.dump(teams_data, f, indent=2)
+        
+        self.teams = {team['abbreviation']: team for team in teams_data['teams']}
                 logger.info(f"Created default teams data with {len(self.teams)} teams")
         except Exception as e:
             logger.error(f"Error loading teams data: {e}")
@@ -442,8 +442,13 @@ class GOTWSystem(commands.Cog):
                     # Handle both old and new data formats
                     if 'active_gotws' in data:
                         self.active_gotws = data.get('active_gotws', {})
-                        self.votes = data.get('votes', {})
+                    self.votes = data.get('votes', {})
                         logger.info(f"Loaded {len(self.active_gotws)} active GOTWs from new format")
+                        logger.info(f"Active GOTW IDs: {list(self.active_gotws.keys())}")
+                        for gotw_id, gotw_data in self.active_gotws.items():
+                            team1 = gotw_data.get('team1', {}).get('name', 'Unknown')
+                            team2 = gotw_data.get('team2', {}).get('name', 'Unknown')
+                            logger.info(f"  - {gotw_id}: {team1} vs {team2}")
                     else:
                         # Migrate from old format
                         logger.info("Migrating from old GOTW format")
@@ -578,6 +583,12 @@ class GOTWSystem(commands.Cog):
         if not self.active_gotws:
             await interaction.response.send_message("❌ No active polls found to repost.", ephemeral=True)
             return
+        
+        logger.info(f"🔍 Repost command called - found {len(self.active_gotws)} active polls")
+        for gotw_id, gotw_data in self.active_gotws.items():
+            team1 = gotw_data.get('team1', {}).get('name', 'Unknown')
+            team2 = gotw_data.get('team2', {}).get('name', 'Unknown')
+            logger.info(f"  - Available for repost: {gotw_id}: {team1} vs {team2}")
         
         # Create embed with list of active polls
         embed = discord.Embed(
@@ -1245,7 +1256,7 @@ class GOTWSystem(commands.Cog):
                 # Find the poll this button belongs to by searching for the message
                 try:
                     # Get the message that contains this button
-                    message = interaction.message
+            message = interaction.message
                     if message and message.embeds:
                         embed = message.embeds[0]
                         if "GAME OF THE WEEK" in embed.title:

@@ -10,7 +10,7 @@ from supabase import create_client, Client
 
 logger = logging.getLogger(__name__)
 
-class GOTWSystem(commands.Cog):
+class GOTWSystemSupabase(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.teams_file = "data/nfl_teams.json"
@@ -34,7 +34,7 @@ class GOTWSystem(commands.Cog):
         self.load_teams()
         
         logger.info(f"✅ GOTWSystemSupabase cog initialized")
-    
+
     def load_teams(self):
         """Load NFL teams data"""
         try:
@@ -71,8 +71,8 @@ class GOTWSystem(commands.Cog):
             
             if not team1 or not team2:
                 await interaction.response.send_message("❌ Invalid team selection.", ephemeral=True)
-            return
-        
+                return
+            
             # Generate unique poll ID
             poll_id = f"{interaction.user.id}_{int(datetime.now().timestamp())}"
             
@@ -85,7 +85,7 @@ class GOTWSystem(commands.Cog):
                 'team2_abbr': team2_abbr,
                 'channel_id': interaction.channel.id,
                 'guild_id': interaction.guild.id,
-            'created_by': interaction.user.id,
+                'created_by': interaction.user.id,
                 'is_locked': False,
                 'winner_declared': False
             }
@@ -465,9 +465,9 @@ class GOTWSystem(commands.Cog):
                         value=f"{total_votes}",
                         inline=True
                     )
-            
-            await message.edit(embed=embed)
-            
+                
+                await message.edit(embed=embed)
+                
         except Exception as e:
             logger.error(f"Error updating vote message: {e}")
 
@@ -528,4 +528,4 @@ class LockButton(discord.ui.Button):
         await self.cog.lock_poll(interaction, self.poll_id)
 
 async def setup(bot):
-    await bot.add_cog(GOTWSystem(bot))
+    await bot.add_cog(GOTWSystemSupabase(bot))

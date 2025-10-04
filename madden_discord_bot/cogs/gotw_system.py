@@ -1182,7 +1182,7 @@ class GOTWSystem(commands.Cog):
         elif custom_id == 'show_results':
             logger.info(f"🔍 Handling old-format results button")
             try:
-                message = interaction.message
+            message = interaction.message
                 if message and message.embeds:
                     embed = message.embeds[0]
                     if "GAME OF THE WEEK" in embed.title:

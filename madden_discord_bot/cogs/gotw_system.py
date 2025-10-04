@@ -327,8 +327,29 @@ class GOTWSystem(commands.Cog):
                 if member:
                     voter_names.append(f"@{member.display_name}")
                 else:
-                    # Fallback to user ID if member not found
-                    voter_names.append(f"@{user_id}")
+                    # For hardcoded poll, use original voter names instead of user IDs
+                    if user_id in self.hardcoded_votes["WAS"] or user_id in self.hardcoded_votes["TEN"]:
+                        # Map fake user IDs to original voter names
+                        original_names = {
+                            123456789: "@Raiders | Nash ⚫",
+                            234567890: "@Texans | TK", 
+                            345678901: "@Falcons | T20",
+                            456789012: "@Ravens 🎱",
+                            567890123: "@Buffalo Chicken Dip|Sir Bitties",
+                            678901234: "@🧡PHINS💙|Lincoln|7x 🏆",
+                            789012345: "@Commanders' 1.5x 🏆| Rich",
+                            890123456: "@DA BOYS 🤠 | chris657",
+                            901234567: "@Giants/Meza 5x 🏆",
+                            12345678: "@JJ McCarthy is the 🐐 (Saints)"
+                        }
+                        voter_names.append(original_names.get(user_id, f"@{user_id}"))
+                    else:
+                        # For real users, try to fetch from Discord API
+                        try:
+                            user = await self.bot.fetch_user(user_id)
+                            voter_names.append(f"@{user.display_name or user.name}")
+                        except:
+                            voter_names.append(f"@{user_id}")
             except:
                 voter_names.append(f"@{user_id}")
         return voter_names

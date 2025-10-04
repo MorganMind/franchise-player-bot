@@ -1293,6 +1293,7 @@ class GOTWSystem(commands.Cog):
                 embed.set_footer(text="Click the buttons below to vote!")
             
             # Create new view with updated lock status
+            logger.info(f"🔍 Creating new GOTWView in update_vote_message with gotw_id: {gotw_id}")
             view = GOTWView(self, team1, team2, gotw_id, is_locked=is_locked, guild=message.guild)
             
             # Get league role for mention
@@ -1300,7 +1301,7 @@ class GOTWSystem(commands.Cog):
             league_mention = league_role.mention if league_role else "@League"
             
             await message.edit(content=league_mention, embed=embed, view=view)
-            logger.info("Successfully updated vote message")
+            logger.info(f"✅ Successfully updated vote message with gotw_id: {gotw_id}")
             
         except Exception as e:
             logger.error(f"Error updating vote message: {e}")

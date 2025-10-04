@@ -1198,6 +1198,8 @@ class GOTWSystem(commands.Cog):
                     
                 except Exception as e:
                     logger.error(f"Error handling old-format vote: {e}")
+                    import traceback
+                    logger.error(f"Traceback: {traceback.format_exc()}")
                     await interaction.response.send_message("❌ Error processing vote. Please try again.", ephemeral=True)
                 return
         

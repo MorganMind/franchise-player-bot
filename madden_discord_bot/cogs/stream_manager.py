@@ -109,6 +109,30 @@ class StreamManager(commands.Cog):
         except Exception as e:
             logger.error(f"Error getting user stream points from Supabase: {e}")
             return 0
+
+    def get_team_info(self, user_id, guild):
+        """Get team claim info for a user"""
+        try:
+            team_claim_cog = self.bot.get_cog('TeamClaimSystem')
+            if not team_claim_cog:
+                return None, None
+            
+            # Get user's claimed team
+            team_claim = team_claim_cog.get_user_team(user_id)
+            if not team_claim:
+                return None, None
+            
+            team_abbrev = team_claim.get('team_abbreviation')
+            if not team_abbrev:
+                return None, None
+            
+            # Get team emoji
+            team_emoji = team_claim_cog.get_team_emoji(guild, team_abbrev)
+            
+            return team_abbrev, team_emoji
+        except Exception as e:
+            logger.error(f"Error getting team info for user {user_id}: {e}")
+            return None, None
     
     async def check_stream_cooldown(self, user_id):
         """Check if user is on cooldown for stream points"""
@@ -406,19 +430,38 @@ class StreamManager(commands.Cog):
             # Debug logging
             logger.info(f"Stream points after adding: {current_stream_points}, new_total: {new_total}")
             
-            # Create stream announcement embed
-            embed = discord.Embed(
-                title="🎮 Live Stream Started!",
-                description=f"**{interaction.user.display_name}** is now streaming Madden!",
-                color=0x9146ff,  # Twitch purple
-                url=stream_link
-            )
+            # Get team info for user
+            team_abbrev, team_emoji = self.get_team_info(interaction.user.id, interaction.guild)
             
-            embed.add_field(
-                name="🎯 Streamer",
-                value=f"**{profile_info['display_name']}**",
-                inline=True
-            )
+            # Create stream announcement embed
+            if team_emoji and team_abbrev:
+                # User has claimed a team - show team integration
+                embed = discord.Embed(
+                    title="🎮 Live Stream Started!",
+                    description=f"{team_emoji} **{interaction.user.display_name}** is now streaming Madden!",
+                    color=0x9146ff,  # Twitch purple
+                    url=stream_link
+                )
+                
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"{team_emoji} **{profile_info['display_name']}**",
+                    inline=True
+                )
+            else:
+                # No team claimed - use original format
+                embed = discord.Embed(
+                    title="🎮 Live Stream Started!",
+                    description=f"**{interaction.user.display_name}** is now streaming Madden!",
+                    color=0x9146ff,  # Twitch purple
+                    url=stream_link
+                )
+                
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"**{profile_info['display_name']}**",
+                    inline=True
+                )
             
             embed.add_field(
                 name="💰 Points Earned",
@@ -456,18 +499,33 @@ class StreamManager(commands.Cog):
                     designated_channel = interaction.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
                         # Create a slightly different embed for the designated channel
-                        cross_post_embed = discord.Embed(
-                            title="🎮 Live Stream Started!",
-                            description=f"**{interaction.user.display_name}** is now streaming Madden!",
-                            color=0x9146ff,
-                            url=stream_link
-                        )
-                        
-                        cross_post_embed.add_field(
-                            name="🎯 Streamer",
-                            value=f"**{profile_info['display_name']}**",
-                            inline=True
-                        )
+                        # Use same team integration for cross-post
+                        if team_emoji and team_abbrev:
+                            cross_post_embed = discord.Embed(
+                                title="🎮 Live Stream Started!",
+                                description=f"{team_emoji} **{interaction.user.display_name}** is now streaming Madden!",
+                                color=0x9146ff,
+                                url=stream_link
+                            )
+                            
+                            cross_post_embed.add_field(
+                                name="🎯 Streamer",
+                                value=f"{team_emoji} **{profile_info['display_name']}**",
+                                inline=True
+                            )
+                        else:
+                            cross_post_embed = discord.Embed(
+                                title="🎮 Live Stream Started!",
+                                description=f"**{interaction.user.display_name}** is now streaming Madden!",
+                                color=0x9146ff,
+                                url=stream_link
+                            )
+                            
+                            cross_post_embed.add_field(
+                                name="🎯 Streamer",
+                                value=f"**{profile_info['display_name']}**",
+                                inline=True
+                            )
                         
                         cross_post_embed.add_field(
                             name="📺 Watch Now",
@@ -962,19 +1020,38 @@ class StreamManager(commands.Cog):
             username = self.extract_twitch_username(stream_link)
             profile_info = await self.get_twitch_profile_info(username)
             
-            # Create stream announcement embed
-            embed = discord.Embed(
-                title="🎮 Live Stream Detected!",
-                description=f"**{member.display_name}** is now streaming!",
-                color=0x9146ff,
-                url=stream_link
-            )
+            # Get team info for user
+            team_abbrev, team_emoji = self.get_team_info(member.id, member.guild)
             
-            embed.add_field(
-                name="🎯 Streamer",
-                value=f"**{profile_info['display_name']}**",
-                inline=True
-            )
+            # Create stream announcement embed
+            if team_emoji and team_abbrev:
+                # User has claimed a team - show team integration
+                embed = discord.Embed(
+                    title="🎮 Live Stream Detected!",
+                    description=f"{team_emoji} **{member.display_name}** is now streaming!",
+                    color=0x9146ff,
+                    url=stream_link
+                )
+                
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"{team_emoji} **{profile_info['display_name']}**",
+                    inline=True
+                )
+            else:
+                # No team claimed - use original format
+                embed = discord.Embed(
+                    title="🎮 Live Stream Detected!",
+                    description=f"**{member.display_name}** is now streaming!",
+                    color=0x9146ff,
+                    url=stream_link
+                )
+                
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"**{profile_info['display_name']}**",
+                    inline=True
+                )
             
             embed.add_field(
                 name="💰 Points Earned",
@@ -1086,13 +1163,22 @@ class StreamManager(commands.Cog):
             stream_name = stream_activity.name if stream_activity else "Unknown"
             stream_url = stream_activity.url if stream_activity else None
             
+            # Get team info for user
+            team_abbrev, team_emoji = self.get_team_info(interaction.user.id, interaction.guild)
+            
             # Determine what type of streaming they're doing
             if is_streaming_activity:
                 stream_type = "Go Live Stream"
-                stream_description = f"**{interaction.user.display_name}** is now streaming in Discord!"
+                if team_emoji and team_abbrev:
+                    stream_description = f"{team_emoji} **{interaction.user.display_name}** is now streaming in Discord!"
+                else:
+                    stream_description = f"**{interaction.user.display_name}** is now streaming in Discord!"
             else:
                 stream_type = "Screen Share"
-                stream_description = f"**{interaction.user.display_name}** is now screen sharing in Discord!"
+                if team_emoji and team_abbrev:
+                    stream_description = f"{team_emoji} **{interaction.user.display_name}** is now screen sharing in Discord!"
+                else:
+                    stream_description = f"**{interaction.user.display_name}** is now screen sharing in Discord!"
             
             # Create verification embed (similar to Twitch stream style)
             embed = discord.Embed(
@@ -1102,11 +1188,18 @@ class StreamManager(commands.Cog):
                 url=stream_url
             )
             
-            embed.add_field(
-                name="🎯 Streamer",
-                value=f"**{interaction.user.display_name}**",
-                inline=True
-            )
+            if team_emoji and team_abbrev:
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"{team_emoji} **{interaction.user.display_name}**",
+                    inline=True
+                )
+            else:
+                embed.add_field(
+                    name="🎯 Streamer",
+                    value=f"**{interaction.user.display_name}**",
+                    inline=True
+                )
             
             embed.add_field(
                 name="📺 Stream Type",
@@ -1155,13 +1248,21 @@ class StreamManager(commands.Cog):
                 try:
                     designated_channel = interaction.guild.get_channel(int(designated_channel_id))
                     if designated_channel:
-                        # Create cross-post embed
-                        cross_post_embed = discord.Embed(
-                            title="🎮 Discord Stream Started!",
-                            description=f"**{interaction.user.display_name}** is streaming in Discord!",
-                            color=0x9146ff,
-                            url=stream_url
-                        )
+                        # Create cross-post embed with team integration
+                        if team_emoji and team_abbrev:
+                            cross_post_embed = discord.Embed(
+                                title="🎮 Discord Stream Started!",
+                                description=f"{team_emoji} **{interaction.user.display_name}** is streaming in Discord!",
+                                color=0x9146ff,
+                                url=stream_url
+                            )
+                        else:
+                            cross_post_embed = discord.Embed(
+                                title="🎮 Discord Stream Started!",
+                                description=f"**{interaction.user.display_name}** is streaming in Discord!",
+                                color=0x9146ff,
+                                url=stream_url
+                            )
                         
                         cross_post_embed.add_field(
                             name="🎮 Stream Activity",

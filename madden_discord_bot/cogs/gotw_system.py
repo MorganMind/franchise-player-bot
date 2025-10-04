@@ -105,28 +105,28 @@ class GOTWSystem(commands.Cog):
     async def show_gotw_card(self, interaction: discord.Interaction, team1: dict, team2: dict, poll_id: str):
         """Show the GOTW card with voting buttons"""
         try:
-        # Create embed
-        embed = discord.Embed(
+            # Create embed
+            embed = discord.Embed(
                 title="⭐ GAME OF THE WEEK ⭐",
                 description=f"**{team1['name']} vs {team2['name']}**",
-            color=0x00ff00
-        )
-        
+                color=0x00ff00
+            )
+            
             # Add team info
-        embed.add_field(
+            embed.add_field(
                 name=f"{team1.get('emoji', '🏈')} {team1['name']}",
-            value=f"Conference: {team1['conference']}\nDivision: {team1['division']}",
-            inline=True
-        )
-        
-        embed.add_field(
+                value=f"Conference: {team1['conference']}\nDivision: {team1['division']}",
+                inline=True
+            )
+            
+            embed.add_field(
                 name=f"{team2.get('emoji', '🏈')} {team2['name']}",
-            value=f"Conference: {team2['conference']}\nDivision: {team2['division']}",
+                value=f"Conference: {team2['conference']}\nDivision: {team2['division']}",
             inline=True
-        )
-        
-        embed.set_footer(text="Click the buttons below to vote!")
-        
+            )
+            
+            embed.set_footer(text="Click the buttons below to vote!")
+            
             # Create view with buttons
             view = GOTWView(self, team1, team2, poll_id)
             
